@@ -1,0 +1,262 @@
+define(function(){
+    var GoogleAPIs = {};
+
+    var clientId = window.configuration.google.clientId;
+    var apiKey = window.configuration.google.apiKey;
+    var scopes = "https://www.googleapis.com/auth/drive " +
+        "https://www.googleapis.com/auth/drive.file " +
+        "https://www.googleapis.com/auth/drive.metadata.readonly " +
+        "https://www.googleapis.com/auth/drive.readonly " +
+        "https://www.googleapis.com/auth/drive.install " +
+        "https://www.googleapis.com/auth/userinfo.profile";
+
+    var initialized = false;
+    var authenticated = false;
+
+    var userInfo = null;
+
+    var fileCache = {};
+
+    GoogleAPIs.checkAuthentication = function(callback){
+        if (!initialized){
+            if (gapi.client == null){
+                var that = this;
+                setTimeout(function(){
+                    that.checkAuthentication(callback);
+                },1);
+                return;
+            }
+            gapi.client.setApiKey(apiKey);
+            window.setTimeout(function(){
+                gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, function (authResult) {
+                    initialized = true;
+                    authenticated = authResult != null && !authResult.error;
+                    if (authenticated){
+                        onAuthenticate(callback);
+                    }
+                    else
+                        callback(authenticated)
+                });
+            },1);
+        }
+        else{
+            callback(authenticated);
+        }
+    };
+
+    GoogleAPIs.authenticate = function(callback){
+        if (initialized){
+            var returnVal = gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, function(authResult){
+                authenticated = authResult != null && !authResult.error;
+                if (authenticated){
+                    onAuthenticate(callback);
+                }
+                else
+                    callback(authenticated);
+            });
+            if (returnVal){
+                if (typeof returnVal.screenX == "undefined" || returnVal.screenX == 0)
+                    return false;
+            }
+            else{
+                return false;
+            }
+
+            return true;
+        }
+        else{
+            callback(authenticated);
+        }
+    };
+
+    function onAuthenticate(callback){
+        if (gapi.client.drive == null){
+            gapi.client.load('drive', 'v2', function(){
+                onAuthenticate(callback);
+            });
+            return;
+        }
+        if (gapi.client.oauth2 == null){
+            gapi.client.load("oauth2", "v2", function(){
+                onAuthenticate(callback);
+            });
+            return;
+        }
+        if (google.picker == null){
+            google.load("picker", "1", {callback:function(){onAuthenticate(callback)}});
+            return;
+        }
+        $.doTimeout(gapi.auth.getToken().expires_in * 500,function(){
+            if (!authenticated)
+                return false;
+            gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true},function(authResult){
+                authenticated = authResult != null && !authResult.error;
+            });
+            return true;
+        });
+        callback(true);
+    }
+
+    GoogleAPIs.showFilePicker = function(callback,options){
+        this.getUserInfo(function(userInfo){
+            var multiSelect = true;
+            var query = null;
+            if (options != null){
+                if (options.multiSelectDisabled != null)
+                    multiSelect = options.multiSelect;
+                query = options.query;
+            }
+            var view = new google.picker.View(google.picker.ViewId.DOCS);
+            view.setMimeTypes("application/octet-stream");
+            if (query != null)
+                view.setQuery(query);
+            var picker = new google.picker.PickerBuilder()
+                //.enableFeature(google.picker.Feature.NAV_HIDDEN)
+                .setAppId(clientId)
+                .setAuthUser(userInfo.id)
+                .setOAuthToken(GoogleAPIs.getAuthToken())
+                .addView(view)
+                .addView(new google.picker.View(google.picker.ViewId.FOLDERS))
+                .addView(new google.picker.DocsUploadView().setIncludeFolders(true))
+                .setCallback(function(data){
+                    if (data.action == google.picker.Action.PICKED)
+                        callback(data);
+                    else if (data.action == google.picker.Action.CANCEL)
+                        callback(null);
+                });
+            if (multiSelect)
+                picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
+            picker = picker.build();
+            picker.setVisible(true);
+        });
+    }
+
+    GoogleAPIs.getUserInfo = function(callback){
+        if (userInfo != null){
+            callback(userInfo);
+            return;
+        }
+        else{
+            this.refreshUserInfo(callback);
+        }
+    }
+
+    GoogleAPIs.getAuthToken = function(){
+        var token = gapi.auth.getToken();
+        for (var member in token){
+            if (typeof token[member] == "object")
+                delete token[member];
+        }
+        return JSON.stringify(token);
+    }
+
+    GoogleAPIs.refreshUserInfo = function(callback){
+        var that = this;
+        gapi.client.oauth2.userinfo.get().execute(function(result){
+            userInfo = result;
+            that.getUserInfo(callback);
+        });
+    }
+
+    GoogleAPIs.uploadBinaryFile = function(filename, contents, callback, progresscallback){
+        if (progresscallback == null) progresscallback = function(){};
+        var boundary = '-------314159265358979323846';
+        var delimiter = "\r\n--" + boundary + "\r\n";
+        var close_delim = "\r\n--" + boundary + "--";
+
+        var contentType = 'application/octet-stream';
+        var metadata = {
+            'title': filename,
+            'mimeType': contentType
+        };
+
+        var base64Data = App.base64ArrayBuffer(contents);
+        var multipartRequestBody =
+            delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files',
+            'method': 'POST',
+            'params': {'uploadType': 'multipart'},
+            'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+        request.execute(function(result){
+            fileCache[result.id] = contents;
+            callback(result);
+        });
+    }
+
+    GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback){
+        if (progresscallback == null) progresscallback = function(){};
+        var boundary = '-------314159265358979323846';
+        var delimiter = "\r\n--" + boundary + "\r\n";
+        var close_delim = "\r\n--" + boundary + "--";
+
+        var contentType = 'application/octet-stream';
+        var metadata = {
+            'mimeType': contentType
+        };
+        // Updating the metadata is optional and you can instead use the value from drive.files.get.
+        var base64Data = App.base64ArrayBuffer(contents);
+        var multipartRequestBody =
+            delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files/' + fileid,
+            'method': 'PUT',
+            'params': {'uploadType': 'multipart', 'alt': 'json'},
+            'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+        request.execute(function(result){
+            fileCache[result.id] = contents;
+            callback(result);
+        });
+
+    }
+
+    GoogleAPIs.getFile = function(fileid,callback,progresscallback){
+        if (progresscallback == null) progresscallback = function(){};
+        progresscallback(0,100);
+        if (fileCache[fileid] != null){
+            callback(fileCache[fileid]);
+            return;
+        }
+        gapi.client.drive.files.get({fileId:fileid,updateViewedDate:true}).execute(function(data){
+            App.downloadBinaryFile(data.downloadUrl,{
+                accessToken: gapi.auth.getToken().access_token,
+                success: function(data){
+                    fileCache[fileid] = data;
+                    callback(data);
+                },
+                error: function(){
+                    callback(null);
+                },
+                onProgress:function(event){
+                    progresscallback(event.loaded,event.total);
+                }
+            });
+        });
+    }
+
+    return GoogleAPIs;
+});

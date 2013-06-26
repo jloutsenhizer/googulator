@@ -1,0 +1,14 @@
+<template id="mainDisplay">
+    <div style="text-align:center">
+        <button id="gameboyOff" disabled>Shut Gameboy Off</button>
+        <button id="fullscreenEnable" disabled>Fullscreen</button>
+    </div>
+    <div id="gbOuterContainer">
+        <div id="gbInnnerContainer">
+            <canvas id="gbLCD" class="hidden" width='160' height='144'></canvas>
+            <div id="noGameLoadedDisplay">No Game Loaded!</div>
+        </div>
+    </div>
+    <div style="text-align: center;">FPS:<span id="FPSCounter"></span></div>
+    <div style="text-align: center;">Volume: <div id="volumeSlider" style="display:inline-block; width:100px"></div><div>WARNING: Turning sound on causes a huge hit on performance. On slower devices, it is recommended you leave it off for optimal speeds</div></div>
+</template>

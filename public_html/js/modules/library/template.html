@@ -1,0 +1,48 @@
+<template id="gameCard">
+    <a class="libraryGameLink" href="#">
+        <div class="libraryGameCard">
+            <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
+            {{title}}
+        </div>
+    </a>
+</template>
+<template id="mainDisplay">
+    <div id='library'></div>
+    <div class="alert alert-success libraryBottom" style="
+    margin-left: 1em;
+    margin-right: 1em;
+">
+        <strong>Want More Games?</strong>
+        <a id="addFromDrive" href="#">Add some of your own</a> or <a id="addFromFree" href="#">Add some from our free library</a>
+    </div>
+</template>
+<template id="saveNotFound">
+    <div class="modal fade" id="chooseRAMDialog">
+        <div class="modal-header">
+            <h3>Save not found!<a href="javascript:$('#chooseRAMDialog').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            The save data for {{title}} cannot be found. Would you like to load it from a file on your drive account or create a new save file?
+        </div>
+        <div class="modal-footer">
+            <button id="loadSave" class="btn">Load</button>
+            <button id="createSave" class="btn">Create</button>
+            <button id="closeBtn" class="btn" onclick="$('#chooseRAMDialog').modal('hide')">Cancel</button>
+        </div>
+    </div>
+</template>
+<template id="GamePicker">
+    <div class="modal fade" id="gamePicker">
+        <div class="modal-header">
+            <h3>Select Base Game for {{patchName}}<a href="javascript:$('#gamePicker').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            {{#games}}
+            <a href="#" class="selectgamelink" gameindex="{{index}}"><div class="center" style="height:144px"><img src="{{image}}" class="pull-left" />{{title}}</div></a>
+            {{/games}}
+        </div>
+        <div class="modal-footer">
+            <button id="closeBtn" class="btn" onclick="$('#gamePicker').modal('hide')">Cancel</button>
+        </div>
+    </div>
+</template>

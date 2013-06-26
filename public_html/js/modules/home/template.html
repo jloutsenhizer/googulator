@@ -1,0 +1,131 @@
+<template id="mainDisplay">
+    <div id="HomeHTML">
+        <h1>Welcome to Googulator!</h1>
+        To make it short and simple, Googulator is a gameboy emulator that you can run in your web browser using your google account!<br>
+        <br>
+        Get started playing games with these simple steps:
+        <ol>
+            <li>Login with your google account (the button is in the top right)</li>
+            <li>Go to the <a href="#" modulename="library">Library Tab</a></li>
+            <li>Add some free games to your library</li>
+            <li>Click one of your games and start playing!</li>
+        </ol>
+        Additionally, for a better experience, you can add your own games from google drive to your library and play them on Googulator!<br>
+        <br>
+        <strong>Changelog:</strong>
+        <div class="changelog">
+            <strong>6/22/2013</strong>
+            <ul>
+                <li>Fixed a crash that sometimes happens when trying to parse google oauth tokens</li>
+            </ul>
+            <strong>6/21/2013</strong>
+            <ul>
+                <li>Fixed a bug that caused the app to fail to initialize correctly sometimes</li>
+                <li>Added webstore install link for chrome users</li>
+            </ul>
+            <strong>6/20/2013</strong>
+            <ul>
+                <li>Improved the speed of the display scaling (this makes fullscreen run smoothly on chromebooks)</li>
+            </ul>
+            <strong>6/15/2013</strong>
+            <ul>
+                <li>Fixed a few emulation bugs</li>
+                <li>Switched to using high resolution jpg images for coverart.... A lot of coverart missing currenlty.</li>
+                <li>Adapted sound implementation from <a href="https://github.com/asterick/JSBoy" target="_blank">JSBoy</a>. Seems to be very glitchy. Will look into better implementation</li>
+                <li>Added volume control</li>
+            </ul>
+            <strong>5/19/2013</strong>
+            <ul>
+                <li>Overlays now are centered properly</li>
+                <li>Game ID convention updated to reduce collisions</li>
+                <li>Fixed gaphics issues in Harry Potter games</li>
+            </ul>
+            <strong>4/24/2013</strong>
+            <ul>
+                <li>Added begginings of offline support (app isn't functional in offline mode just yet)</li>
+                <li>Added support to configure all four controllers for Super Gameboy</li>
+                <li>Added a progress dialog for when the app is updating and the app will automatically reload when an update is ready to be used</li>
+            </ul>
+            <strong>4/18/2013</strong>
+            <ul>
+                <li>fixed some graphics glitches that show up if too many sprites are allowed to be drawn</li>
+            </ul>
+            <strong>4/16/2013</strong>
+            <ul>
+                <li>Added better palette support for SGB</li>
+                <li>Fixed input bugs with SGB multiplayer games</li>
+
+            </ul>
+            <strong>4/13/2013</strong>
+            <ul>
+                <li>Fixed a bug where games would choose nonexistent ROM banks. This corrects many crashes</li>
+                <li>Added Initial Super Gameboy support which consists of:
+                <ul>
+                    <li>Detection Support</li>
+                    <li>Palette Support</li>
+                </ul></li>
+            </ul>
+            <strong>4/11/2013</strong>
+            <ul>
+                <li>Fixed graphics glitches in many games</li>
+            </ul>
+            <strong>4/9/2013</strong>
+            <ul>
+                <li>Added progress bars for loading games and save files</li>
+                <li>Webcam is released when turning off gameboy camera</li>
+                <li>Enabled GBA detection for some games (i.e. Legend of Zelda Oracle of Seasons Advance Shop)</li>
+                <li>Fixed a bug that could make the window use the wrong map, fixes graphics problems in oracle of seasons</li>
+            </ul>
+            <strong>4/7/2013</strong>
+            <ul>
+                <li>Updated game id generation scheme</li>
+                <li>Improved GPU performance</li>
+            </ul>
+            <strong>4/6/2013</strong>
+            <ul>
+                <li>Removed dependency on google plus</li>
+                <li>Fixed Compatibility for the follwoing Games:
+                <ul>
+                    <li>Bart Simpson's Escape From Camp Deadly</li>
+                    <li>Alone in the Dark</li>
+                    <li>Toki Tori</li>
+                </ul></li>
+                <li>Improved Stability</li>
+            </ul>
+            <strong>4/5/2013</strong>
+            <ul>
+                <li>Added support for Gameboy Camera</li>
+            </ul>
+            <strong>3/26/2013</strong>
+            <ul>
+                <li>Added control configuration</li>
+                <li>Added iCade support</li>
+                <li>Added gamepad support</li>
+                <li>Added FPS counter</li>
+            </ul>
+            <strong>3/14/2013</strong>
+            <ul>
+                <li>Added support to load files directly from google drive</li>
+            </ul>
+            <strong>3/13/2013</strong>
+            <ul>
+                <li>Added Display to notify no game is loaded in gameboy</li>
+                <li>It's no longer possible to add nongameboy games to the library</li>
+                <li>Fixed a bug that would break the dialog shown when there's no save present</li>
+                <li>Added support for IPS patches</li>
+            </ul>
+            <strong>3/12/2013</strong>
+            <ul>
+                <li>Login isn't required to view the website anymore</li>
+                <li>Home tab now has content on it</li>
+                <li>Added favicon</li>
+            </ul>
+            <strong>3/9/2013</strong>
+            <ul>
+              <li>Fixed a bug where loading google authentication scripts could crash the site</li>
+              <li>Added option to load existing save file instead of always creating a new one</li>
+            </ul>
+        </div>
+
+    </div>
+</template>

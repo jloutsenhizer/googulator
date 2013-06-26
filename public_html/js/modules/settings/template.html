@@ -1,0 +1,55 @@
+<template id="mainDisplay">
+    <div id="SettingsPane">
+        <div id="Controls">
+            <h3>Controller Settings</h3>
+            <div class="content">
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="inputConfiguration">
+    <div class="inputConfiguration" id="inputConfiguartion-{{player}}"></div>
+        <h4>Player {{playerPlusOne}} input configuration</h4>
+        <label class="checkbox">
+            <input class="enabledCheckbox" type="checkbox" player="{{player}}"> Enabled
+        </label>
+        <div>Input Device: <select class="inputTypeSelector" player="{{player}}">
+            <option>Keyboard</option>
+            <option>iCade</option>
+            <option>Gamepad</option>
+        </select></div>
+        <div class="gamepadSelectorDiv" player="{{player}}">
+            Gamepad: <select class="gamepadSelector" player="{{player}}">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </select>
+        </div>
+        <div>
+            A - <button class="btn rebindBtn" button="a" player="{{player}}">Z</button>
+        </div>
+        <div>
+            B - <button class="btn rebindBtn"  button="b" player="{{player}}">X</button>
+        </div>
+        <div>
+            Start - <button class="btn rebindBtn"  button="start" player="{{player}}">Enter</button>
+        </div>
+        <div>
+            Select - <button class="btn rebindBtn"  button="select" player="{{player}}">Space</button>
+        </div>
+        <div>
+            Up - <button class="btn rebindBtn"  button="up" player="{{player}}">Up</button>
+        </div>
+        <div>
+            Left - <button class="btn rebindBtn"  button="left" player="{{player}}">Left</button>
+        </div>
+        <div>
+            Right - <button class="btn rebindBtn"  button="right" player="{{player}}">Right</button>
+        </div>
+        <div>
+            Down - <button class="btn rebindBtn"  button="down" player="{{player}}">Down</button>
+        </div>
+    </div>
+</template>
