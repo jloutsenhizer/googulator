@@ -106,7 +106,7 @@ define(["nescore/Utils"],function(Utils){
 
         reset: function() {
             this.canvasContext = this.nes.opts.canvas.getContext("2d");
-            this.canvasImageData = this.nes.opts.canvas.getImageData(0, 0, 256, 240);
+            this.canvasImageData = this.canvasContext.getImageData(0, 0, 256, 240);
 
 
             var i;
