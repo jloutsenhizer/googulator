@@ -285,7 +285,7 @@ define(["nescore/utils"],function(Utils){
                 case 5:
                 case 6:
                 case 7:
-                    ret = this.nes.joypad[this.nes.joypad.PLAYER_1][this.joy1StrobeState];
+                    ret = this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.joy1StrobeState];
                     break;
                 case 8:
                 case 9:
@@ -327,7 +327,7 @@ define(["nescore/utils"],function(Utils){
                 case 5:
                 case 6:
                 case 7:
-                    ret = this.nes.joypad[this.nes.joypad.PLAYER_2][this.joy1StrobeState];
+                    ret = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.joy2StrobeState];
                     break;
                 case 8:
                 case 9:

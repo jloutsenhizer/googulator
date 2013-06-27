@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["GameUtils","nescore/PPU","nescore/mappers"],function(GameUtils,PPU,Mappers){
+define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mappers){
     var ROM = function(nes) {
         this.nes = nes;
 
@@ -89,10 +89,10 @@ define(["GameUtils","nescore/PPU","nescore/mappers"],function(GameUtils,PPU,Mapp
         mapperType: null,
         valid: false,
 
-        load: function(data) {
+        load: function(game) {
             var i, j, v;
 
-            this.header = GameUtils.getHeader(data);
+            this.header = game.header;
 
             this.valid = this.header.valid;
 
@@ -116,10 +116,10 @@ define(["GameUtils","nescore/PPU","nescore/mappers"],function(GameUtils,PPU,Mapp
             for (i=0; i < this.romCount; i++) {
                 this.rom[i] = new Uint8Array(16384);
                 for (j=0; j < 16384; j++) {
-                    if (offset+j >= data.length) {
+                    if (offset+j >= game.data.length) {
                         break;
                     }
-                    this.rom[i][j] = data[offset + j]
+                    this.rom[i][j] = game.data[offset + j]
                 }
                 offset += 16384;
             }
@@ -128,10 +128,10 @@ define(["GameUtils","nescore/PPU","nescore/mappers"],function(GameUtils,PPU,Mapp
             for (i=0; i < this.vromCount; i++) {
                 this.vrom[i] = new Uint8Array(4096);
                 for (j=0; j < 4096; j++) {
-                    if (offset+j >= data.length){
+                    if (offset+j >= game.data.length){
                         break;
                     }
-                    this.vrom[i][j] = data[offset + j];
+                    this.vrom[i][j] = game.data[offset + j];
                 }
                 offset += 4096;
             }

@@ -146,3 +146,28 @@ html, body, .mainContainer{
     display:inline;
     background:white;
 }
+
+#nesOuterContainer{
+    text-align:center;
+
+}
+
+#nesOuterContainer.fullscreen{
+    background:black;
+    width:100%;
+}
+
+#nesInnnerContainer{
+    width:320px;
+    height:288px;
+    display:inline-block;
+}
+
+.fullscreen #nesInnnerContainer{
+    width:inherit;
+    height:100%;
+}
+
+#nesLCD{
+    height:100%;
+}

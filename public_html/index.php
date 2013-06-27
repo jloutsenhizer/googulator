@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <?
     include "configuration.php";
-    $tabs = array("home","library","gameboy","settings");
-    $tabNames = array("Home","Library","Gameboy","Settings");
+    $tabs = array("home","library","gameboy","nes","settings");
+    $tabNames = array("Home","Library","Gameboy","NES","Settings");
     $defaultTab = 0;
 ?>
 <html manifest="appcache.php">

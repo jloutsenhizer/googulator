@@ -20,30 +20,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 define([],function(){
     var Joypad = function() {
         this.state = new Array(2);
-        for (var i = 0, li = state.length; i < li; i++){
+        for (var i = 0, li = this.state.length; i < li; i++){
             this.state[i] = new Array(8);
-            for (var j = 0, lj = state[i].length; j < lj; j++){
-                this.state[i][j] = this.KEY_NOT_PRESSED;
+            for (var j = 0, lj = this.state[i].length; j < lj; j++){
+                this.state[i][j] = this.BUTTON_NOT_PRESSED;
             }
         }
     };
 
     Joypad.prototype = {
-        setKey: function(player, key, value) {
+        setButtonState: function(player, key, value) {
             this.state[player][key] = value;
         },
-        keys: {
-            KEY_A: 0,
-            KEY_B: 1,
-            KEY_SELECT: 2,
-            KEY_START: 3,
-            KEY_UP: 4,
-            KEY_DOWN: 5,
-            KEY_LEFT: 6,
-            KEY_RIGHT: 7
-        },
-        KEY_PRESSED: 0x41,
-        KEY_NOT_PRESSED: 0x40,
+        BUTTON_A: 0,
+        BUTTON_B: 1,
+        BUTTON_SELECT: 2,
+        BUTTON_START: 3,
+        BUTTON_UP: 4,
+        BUTTON_DOWN: 5,
+        BUTTON_LEFT: 6,
+        BUTTON_RIGHT: 7,
+        BUTTON_PRESSED: 0x41,
+        BUTTON_NOT_PRESSED: 0x40,
         PLAYER_1: 0,
         PLAYER_2: 1
     };

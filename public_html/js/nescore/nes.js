@@ -23,11 +23,12 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             fpsInterval: 500, // Time between updating FPS in ms
             showDisplay: true,
 
-            emulateSound: false,
+            emulateSound: true,
             sampleRate: 44100, // Sound sample rate in hz
 
             CPU_FREQ_NTSC: 1789772.5, //1789772.72727272d;
-            CPU_FREQ_PAL: 1773447.4
+            CPU_FREQ_PAL: 1773447.4,
+            canvas: null
         };
         if (typeof opts != 'undefined') {
             var key;
@@ -163,20 +164,20 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
 
         reloadRom: function() {
             if (this.romData !== null) {
-                this.loadRom(this.romData);
+                this.loadROM(this.romData);
             }
         },
 
         // Loads a ROM file into the CPU and PPU.
         // The ROM file is validated first.
-        loadRom: function(data) {
+        loadROM: function(game) {
             if (this.isRunning) {
                 this.stop();
             };
 
             // Load ROM file:
             this.rom = new ROM(this);
-            this.rom.load(data);
+            this.rom.load(game);
 
             if (this.rom.valid) {
                 this.reset();
@@ -186,7 +187,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                 }
                 this.mmap.loadROM();
                 this.ppu.setMirroring(this.rom.getMirroringType());
-                this.romData = data;
+                this.romData = game.data;
             }
             return this.rom.valid;
         },

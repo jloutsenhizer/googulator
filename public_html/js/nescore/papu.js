@@ -650,10 +650,10 @@ define([],function(){
 
         writeAudio: function(samples){
             var source = this.audioContext.createBufferSource();
-            source.looping = false;
+            source.loop = false;
             source.buffer = this.audioContext.createBuffer(1, samples.length, samples.length * 4);
             var aux = source.buffer.getChannelData(0);
-            for (var i = 0, li = smaples.length; i < li; i++) {
+            for (var i = 0, li = samples.length; i < li; i++) {
                 aux[i] = samples[i] / 32768;
             }
             source.connect(this.audioContext.destination);
