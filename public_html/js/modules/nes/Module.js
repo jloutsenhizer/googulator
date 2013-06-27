@@ -37,17 +37,16 @@ define(["nescore/nes"], function(NES){
                 setFullScreenMode(true);
             });
         }
-        //TODO: add volume support
-       /* $("#volumeSlider").slider({
+       container.find("#volumeSlider").slider({
             min:0,
             max:1,
             step: 0.01,
-            value: Gameboy.getVolume(),
+            value: nes.getVolume(),
             range: "min",
             slide: function(event,ui){
-                Gameboy.setVolume(ui.value);
+                nes.setVolume(ui.value);
             }
-        });     */
+        });
 
         var prevHeight = 0;
 

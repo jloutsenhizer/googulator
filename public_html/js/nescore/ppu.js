@@ -579,13 +579,13 @@ define(["nescore/utils"],function(Utils){
 
         writeFrame: function(buffer,prevBuffer){
             var imageData = this.canvasImageData.data;
-            var pixel, i, j;
+            var pixel, j;
 
-            for (i=0; i<256*240; i++) {
+            for (var i=0, li = 256*240; i < li; i++) {
                 pixel = buffer[i];
 
                 if (pixel != prevBuffer[i]) {
-                    j = i*4;
+                    j = i << 2;
                     imageData[j] = pixel & 0xFF;
                     imageData[j+1] = (pixel >> 8) & 0xFF;
                     imageData[j+2] = (pixel >> 16) & 0xFF;

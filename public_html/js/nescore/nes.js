@@ -24,7 +24,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             showDisplay: true,
 
             emulateSound: true,
-            sampleRate: 44100, // Sound sample rate in hz
+            sampleRate: new AudioContext().sampleRate, // Sound sample rate in hz
 
             CPU_FREQ_NTSC: 1789772.5, //1789772.72727272d;
             CPU_FREQ_PAL: 1773447.4,
@@ -196,6 +196,14 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             this.opts.preferredFrameRate = rate;
             this.frameTime = 1000 / rate;
             this.papu.setSampleRate(this.opts.sampleRate, false);
+        },
+
+        getVolume: function(){
+            return this.papu.getVolume();
+        },
+
+        setVolume: function(volume){
+            this.papu.setVolume(volume);
         },
 
         toJSON: function() {

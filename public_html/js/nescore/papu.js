@@ -113,6 +113,12 @@ define([],function(){
             }
         }
 
+        this.gainNode = this.audioContext.createGainNode();
+
+        this.setVolume(0.5);
+
+        this.gainNode.connect(this.audioContext.destination);
+
         this.reset();
     };
 
@@ -651,13 +657,24 @@ define([],function(){
         writeAudio: function(samples){
             var source = this.audioContext.createBufferSource();
             source.loop = false;
-            source.buffer = this.audioContext.createBuffer(1, samples.length, samples.length * 4);
-            var aux = source.buffer.getChannelData(0);
-            for (var i = 0, li = samples.length; i < li; i++) {
-                aux[i] = samples[i] / 32768;
+            source.buffer = this.audioContext.createBuffer(2, samples.length / 2, this.sampleRate);
+            var out1 = source.buffer.getChannelData(0);
+            var out2 = source.buffer.getChannelData(1);
+            for (var i = 0, li = samples.length, j = 0; i < li; i += 2, j++) {
+                out1[j] = samples[i] / 32768;
+                out2[j] = samples[i+1] / 32768;
             }
-            source.connect(this.audioContext.destination);
+            source.connect(this.gainNode);
             source.noteOn(0);
+        },
+
+        getVolume: function(){
+            return this.volume;
+        },
+
+        setVolume: function(volume){
+            this.volume = volume;
+            this.gainNode.gain.value = volume * 2;
         },
 
         getLengthMax: function(value){
