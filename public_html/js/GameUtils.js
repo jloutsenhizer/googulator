@@ -2,7 +2,58 @@ define(function(){
     var GameUtils = {};
 
     GameUtils.getHeader = function(gameData){
+        if (this.isGameboyGame(gameData))
+            return getGBCHeader(gameData);
+        if (this.isNESGame(gameData))
+            return getNESHeader(gameData);
+        return null;
+    }
+
+    var NESIdentifierBytes = new Uint8Array(4);
+
+    for (var i = 0; i < 5; i++){
+        NESIdentifierBytes[i] = "NES\x1a".charCodeAt(i);
+    }
+
+    function getNESHeader(gameData){
         var header = {};
+
+        header.type = "nes";
+        header.valid = true;
+
+        for (var i = 0, li = NESIdentifierBytes.length; i < li && header.valid; i++){
+            header.valid = NESIdentifierBytes[i] == gameData[i];
+        }
+        if (!header.valid)
+            return header;
+
+        header.romCount = this.header[4];
+        header.vromCount = this.header[5]*2; // Get the number of 4kB banks, not 8kB
+        header.mirroring = ((this.header[6] & 1) !== 0 ? 1 : 0);
+        header.batteryRam = (this.header[6] & 2) !== 0;
+        header.trainer = (this.header[6] & 4) !== 0;
+        header.fourScreen = (this.header[6] & 8) !== 0;
+        header.mapperType = (this.header[6] >> 4) | (this.header[7] & 0xF0);
+
+        // Check whether byte 8-15 are zero's:
+        var foundError = false;
+        for (i=8; i<16; i++) {
+            if (this.header[i] !== 0) {
+                foundError = true;
+                break;
+            }
+        }
+        if (foundError) {
+            header.mapperType &= 0xF; // Ignore byte 7
+        }
+
+        return header;
+    }
+
+    function getGBCHeader(gameData){
+        var header = {};
+
+        header.type = "gameboy";
 
         var id = '';
         header.gbcEnabled = (gameData[0x143] & 0x80) == 0x80;
@@ -117,7 +168,7 @@ define(function(){
     }
 
     GameUtils.isGameboyGame = function(gameData){
-        return this.getHeader(gameData).headerChecksumMatch;
+        return getGBCHeader(gameData).headerChecksumMatch;
     }
 
     var patchIdentifierBytes = new Uint8Array(5);
@@ -132,6 +183,10 @@ define(function(){
                 return false;
         }
         return true;
+    }
+
+    GameUtils.isNESGame = function(gameData){
+        return getNESHeader(gameData).valid;
     }
 
     var patchEOF = new Uint8Array(3);
