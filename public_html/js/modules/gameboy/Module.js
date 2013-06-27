@@ -101,7 +101,7 @@ define(["gbcore/Gameboy"], function(Gameboy){
     function blankScreen(){
         var ctx = canvas[0].getContext("2d");
         ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0,0,160,144);
+        ctx.fillRect(0,0,canvas.attr("width"),canvas.attr("height"));
     }
 
     Module.onFreeze = function(){
