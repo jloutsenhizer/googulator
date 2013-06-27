@@ -167,16 +167,6 @@ if (typeof jQuery !== 'undefined') {
                     bind('keypress', function(evt) {
                         self.nes.keyboard.keyPress(evt);
                     });
-            
-                /*
-                 * Sound
-                 */
-
-                if (!WebAudio || !WebAudio.audioContext) {
-                    self.dynamicaudio = new DynamicAudio({
-                        swf: nes.opts.swfPath+'dynamicaudio.swf'
-                    });
-                }
             };
         
             UI.prototype = {    
@@ -271,7 +261,6 @@ if (typeof jQuery !== 'undefined') {
                     if (WebAudio && WebAudio.audioContext) {
                         return WebAudio.writeInt(samples);
                     }
-                    return this.dynamicaudio.writeInt(samples);
                 },
             
                 writeFrame: function(buffer, prevBuffer) {

@@ -633,7 +633,7 @@ JSNES.PAPU.prototype = {
         
         // Write full buffer
         if (this.bufferIndex === this.sampleBuffer.length) {
-            this.nes.ui.writeAudio(this.sampleBuffer);
+            this.writeAudio(this.sampleBuffer);
             this.sampleBuffer = new Array(this.bufferSize*2);
             this.bufferIndex = 0;
         }
@@ -644,6 +644,20 @@ JSNES.PAPU.prototype = {
         this.smpTriangle = 0;
         this.smpDmc = 0;
 
+    },
+
+    audioContext: new AudioContext(),
+
+    writeAudio: function(samples){
+        var source = this.audioContext.createBufferSource();
+        source.looping = false;
+        source.buffer = this.audioContext.createBuffer(1, samples.length, samples.length * 4);
+        var aux = source.buffer.getChannelData(0);
+        for (var i = 0, li = smaples.length; i < li; i++) {
+            aux[i] = samples[i] / 32768;
+        }
+        source.connect(this.audioContext.destination);
+        source.noteOn(0);
     },
 
     getLengthMax: function(value){
