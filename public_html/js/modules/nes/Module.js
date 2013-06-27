@@ -31,8 +31,8 @@ define(["nescore/nes"], function(NES){
                     $("#nesOuterContainer").removeClass('fullscreen');
                 }
             });
-            $("#fullscreenEnable").removeAttr("disabled");
-            $("#fullscreenEnable").click(function(){
+            container.find("#fullscreenEnable").removeAttr("disabled");
+            container.find("#fullscreenEnable").click(function(){
 
                 setFullScreenMode(true);
             });
@@ -82,7 +82,7 @@ define(["nescore/nes"], function(NES){
     }
 
     function setFullScreenMode(enabled){
-        $("#gbOuterContainer").fullScreen(true);
+        $("#nesOuterContainer").fullScreen(true);
         $(window).resize();
     }
 
