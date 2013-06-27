@@ -51,7 +51,6 @@ define(["nescore/nes"], function(NES){
         var prevHeight = 0;
 
         $(window).resize(function(){
-            return;
             var newHeight = canvas.height();
             if (prevHeight != newHeight){
                 prevHeight = newHeight;

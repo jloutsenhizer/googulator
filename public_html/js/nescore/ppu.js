@@ -105,8 +105,8 @@ define(["nescore/utils"],function(Utils){
         STATUS_VBLANK: 7,
 
         reset: function() {
-            this.canvasContext = this.nes.opts.canvas.getContext("2d");
-            this.canvasImageData = this.canvasContext.getImageData(0, 0, 256, 240);
+            this.canvasContext = $("<canvas width='256' height='240'></canvas>")[0].getContext("2d");
+            this.canvasImageData = this.canvasContext.createImageData(256, 240);
 
 
             var i;
@@ -589,11 +589,13 @@ define(["nescore/utils"],function(Utils){
                     imageData[j] = pixel & 0xFF;
                     imageData[j+1] = (pixel >> 8) & 0xFF;
                     imageData[j+2] = (pixel >> 16) & 0xFF;
+                    imageData[j+3] = 0xFF;
                     prevBuffer[i] = pixel;
                 }
             }
 
             this.canvasContext.putImageData(this.canvasImageData, 0, 0);
+            this.nes.opts.canvas.getContext("2d").drawImage(this.canvasContext.canvas,0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
         },
 
         updateControlReg1: function(value){
