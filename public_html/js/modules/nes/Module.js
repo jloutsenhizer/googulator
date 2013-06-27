@@ -93,8 +93,8 @@ define(["nescore/nes"], function(NES){
         nes.stop();
         blankScreen();
         overlay.remove();
-        $("#gbLCD").addClass('hidden');
-        $("#noGameLoadedDisplay").removeClass("hidden");
+        $("#nesLCD").addClass('hidden');
+        container.find("#noGameLoadedDisplay").removeClass("hidden");
         callback();
     }
 
@@ -170,11 +170,12 @@ define(["nescore/nes"], function(NES){
     });
 
     var checkFrames = function(){
-        $("#FPSCounter").text(Math.floor(Gameboy.getFPS()));
+        if (nes != null)
+            container.find("#FPSCounter").text(Math.floor(nes.getFPS()));
         setTimeout(checkFrames,1000);
     }
 
-    //checkFrames();
+    checkFrames();
 
     return Module;
 })

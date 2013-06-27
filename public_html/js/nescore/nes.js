@@ -75,10 +75,6 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                         self.frame();
                     }, this.frameTime);
                     this.resetFps();
-                    this.printFps();
-                    this.fpsInterval = setInterval(function() {
-                        self.printFps();
-                    }, this.opts.fpsInterval);
                 }
             }
         },
@@ -144,16 +140,15 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             this.lastFrameTime = +new Date();
         },
 
-        printFps: function() {
+        getFPS: function() {
             var now = +new Date();
-            var s = 'Running';
+            var fps = 0;
             if (this.lastFpsTime) {
-                s += ': '+(
-                    this.fpsFrameCount / ((now - this.lastFpsTime) / 1000)
-                    ).toFixed(2)+' FPS';
+                fps =  this.fpsFrameCount / ((now - this.lastFpsTime) / 1000);
             }
             this.fpsFrameCount = 0;
             this.lastFpsTime = now;
+            return fps;
         },
 
         stop: function() {
