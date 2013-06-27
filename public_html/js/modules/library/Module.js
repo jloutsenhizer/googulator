@@ -112,7 +112,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                                 if (result != null && result.docs.length == 1){
                                     game.setGameSaveFileId(result.docs[0].id,function(success){
                                         if (success){
-                                            switchToGameboy(game);
+                                            switchToEmulator(game);
                                         }
                                         else{
                                             if (overlay != null)
@@ -132,7 +132,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                             noEvent = false;
                             $("#chooseRAMDialog").modal("hide");
                             game.createGameSaveData(function(saveData){
-                                switchToGameboy(game);
+                                switchToEmulator(game);
                             })
                         });
                         $("#chooseRAMDialog").on("hidden",function(){
@@ -145,14 +145,25 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                     })
                 }
                 else{
-                    switchToGameboy(game);
+                    switchToEmulator(game);
                 }
             },progressUpdate);
         },progressUpdate);
     }
 
-    function switchToGameboy(game){
-        App.setActiveModule("gameboy",{game: game});
+    var emulatorModules = {
+        gameboy:"gameboy",
+        nes:null
+    }
+
+    function switchToEmulator(game){
+        var module = emulatorModules[game.header.type];
+        if (module == null){
+            console.log("unsupported game");
+        }
+        else{
+            App.setActiveModule(module,{game: game});
+        }
         if (overlay != null)
             overlay.remove();
         overlay = null;
@@ -188,7 +199,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
             }
             overlay = App.createMessageOverlay(container,$("<div>Loading " + curFile.name + " To Your Library...</div><div class='pbar'></div>"));
             GoogleAPIs.getFile(curFile.id,function(data){
-                if (GameUtils.isGameboyGame(data)){
+                if (GameUtils.isGame(data)){
                     var header = GameUtils.getHeader(data);
                     GameLibrary.addGame(header.id,curFile.id,function(lib,success){
                         library = lib;

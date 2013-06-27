@@ -27,18 +27,18 @@ define(function(){
         if (!header.valid)
             return header;
 
-        header.romCount = this.header[4];
-        header.vromCount = this.header[5]*2; // Get the number of 4kB banks, not 8kB
-        header.mirroring = ((this.header[6] & 1) !== 0 ? 1 : 0);
-        header.batteryRam = (this.header[6] & 2) !== 0;
-        header.trainer = (this.header[6] & 4) !== 0;
-        header.fourScreen = (this.header[6] & 8) !== 0;
-        header.mapperType = (this.header[6] >> 4) | (this.header[7] & 0xF0);
+        header.romCount = gameData[4];
+        header.vromCount = gameData[5]*2; // Get the number of 4kB banks, not 8kB
+        header.mirroring = ((gameData[6] & 1) !== 0 ? 1 : 0);
+        header.saveableRAM = (gameData[6] & 2) !== 0;
+        header.trainer = (gameData[6] & 4) !== 0;
+        header.fourScreen = (gameData[6] & 8) !== 0;
+        header.mapperType = (gameData[6] >> 4) | (gameData[7] & 0xF0);
 
         // Check whether byte 8-15 are zero's:
         var foundError = false;
         for (i=8; i<16; i++) {
-            if (this.header[i] !== 0) {
+            if (gameData[i] !== 0) {
                 foundError = true;
                 break;
             }
@@ -78,28 +78,28 @@ define(function(){
         var cartType = gameData[0x147];
         switch (cartType){
             default:
-                header.mbcType = this.MBC_UNKNOWN;
+                header.mbcType = GameUtils.MBC_UNKNOWN;
                 break;
             case 0x00:
             case 0x08:
             case 0x09: //ROM only
-                header.mbcType = this.MBC_N;
+                header.mbcType = GameUtils.MBC_N;
                 break;
             case 0x01:
             case 0x02:
             case 0x03://MBC1
-                header.mbcType = this.MBC_1;
+                header.mbcType = GameUtils.MBC_1;
                 break;
             case 0x05:
             case 0x06://MBC2
-                header.mbcType = this.MBC_2;
+                header.mbcType = GameUtils.MBC_2;
                 break;
             case 0x0F:
             case 0x10:
             case 0x11:
             case 0x12:
             case 0x13://MBC3
-                header.mbcType = this.MBC_3;
+                header.mbcType = GameUtils.MBC_3;
                 break;
             case 0x19:
             case 0x1A:
@@ -108,10 +108,10 @@ define(function(){
             case 0x1D:
             case 0x1E:
             case 0x1F://MBC5
-                header.mbcType = this.MBC_5;
+                header.mbcType = GameUtils.MBC_5;
                 break;
             case 0xFC://MBCamera
-                header.mbcType = this.MBCAMERA;
+                header.mbcType = GameUtils.MBCAMERA;
                 break;
         }
 
@@ -172,6 +172,10 @@ define(function(){
 
         header.headerChecksumMatch = header.headerChecksum == checksum;
         return header;
+    }
+
+    GameUtils.isGame = function(gameData){
+        return this.isGameboyGame(gameData) || this.isNESGame(gameData);
     }
 
     GameUtils.isGameboyGame = function(gameData){
