@@ -82,7 +82,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
         frame: function() {
             this.ppu.startFrame();
             var cycles = 0;
-            var emulateSound = this.opts.emulateSound;
+            var emulateSound = this.opts.emulateSound && this.papu.getVolume() > 0;
             var cpu = this.cpu;
             var ppu = this.ppu;
             var papu = this.papu;
