@@ -47,6 +47,13 @@ define(function(){
             header.mapperType &= 0xF; // Ignore byte 7
         }
 
+        var checksum = 0;
+        for (var i = 0, li = gameData.length; i < li; i++){
+            checksum = (checksum + gameData[i]) & 0xFFFFFFFF;
+        }
+
+        header.id = "NES_" + checksum.toString(16).toUpperCase();
+
         return header;
     }
 
