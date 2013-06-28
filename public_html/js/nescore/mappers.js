@@ -32,11 +32,6 @@ define(["nescore/utils"],function(Utils){
             this.mousePressed = false;
             this.mouseX = null;
             this.mouseY = null;
-            if (this.nes.rom.batteryRam){
-                var saveData = this.nes.rom.getSaveData();
-                for (var i = 0, li = saveData.length; i < li; i++)
-                    this.write(0x6000 + i,saveData[i]);
-            }
         },
 
         write: function(address, value) {
@@ -412,12 +407,10 @@ define(["nescore/utils"],function(Utils){
         },
 
         loadBatteryRam: function() {
-            if (this.nes.rom.batteryRam) {
-                var ram = this.nes.rom.batteryRam;
-                if (ram !== null && ram.length == 0x2000) {
-                    // Load Battery RAM into memory:
-                    Utils.copyArrayElements(ram, 0, this.nes.cpu.mem, 0x6000, 0x2000);
-                }
+            if (this.nes.rom.batteryRam){
+                var saveData = this.nes.rom.getSaveData();
+                for (var i = 0, li = saveData.length; i < li; i++)
+                    this.write(0x6000 + i,saveData[i]);
             }
         },
 

@@ -180,6 +180,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             var valid = this.rom.valid;
 
             if (valid) {
+                this.reset();
                 this.mmap = this.rom.createMapper();
                 if (!this.mmap) {
                     return;
@@ -187,7 +188,6 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                 this.mmap.loadROM();
                 this.ppu.setMirroring(this.rom.getMirroringType());
                 this.romData = game.data;
-                this.reset();
             }
             else{
                 this.rom = null;
