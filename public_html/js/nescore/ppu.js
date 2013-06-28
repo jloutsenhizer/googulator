@@ -61,7 +61,6 @@ define(["nescore/utils"],function(Utils){
         this.curNt = null;
         this.attrib = null;
         this.buffer = null;
-        this.prevBuffer = null;
         this.bgbuffer = null;
         this.pixrendered = null;
 
@@ -107,6 +106,9 @@ define(["nescore/utils"],function(Utils){
         reset: function() {
             this.canvasContext = $("<canvas width='256' height='240'></canvas>")[0].getContext("2d");
             this.canvasImageData = this.canvasContext.createImageData(256, 240);
+            this.buf = new ArrayBuffer(this.canvasImageData.data.length);
+            this.buf8 = new Uint8ClampedArray(this.buf);
+            this.buf32 = new Uint32Array(this.buf);
 
 
             var i;
@@ -177,10 +179,9 @@ define(["nescore/utils"],function(Utils){
 
             // Variables used when rendering:
             this.attrib = new Array(32);
-            this.buffer = new Array(256*240);
-            this.prevBuffer = new Array(256*240);
-            this.bgbuffer = new Array(256*240);
-            this.pixrendered = new Array(256*240);
+            this.buffer = new Uint32Array(256*240);
+            this.bgbuffer = new Uint32Array(256*240);
+            this.pixrendered = new Uint32Array(256*240);
 
             this.validTileData = null;
 
@@ -192,13 +193,13 @@ define(["nescore/utils"],function(Utils){
             this.curX = 0;
 
             // Sprite data:
-            this.sprX = new Array(64); // X coordinate
-            this.sprY = new Array(64); // Y coordinate
-            this.sprTile = new Array(64); // Tile Index (into pattern table)
-            this.sprCol = new Array(64); // Upper two bits of color
-            this.vertFlip = new Array(64); // Vertical Flip
-            this.horiFlip = new Array(64); // Horizontal Flip
-            this.bgPriority = new Array(64); // Background priority
+            this.sprX = new Uint8Array(64); // X coordinate
+            this.sprY = new Uint8Array(64); // Y coordinate
+            this.sprTile = new Uint8Array(64); // Tile Index (into pattern table)
+            this.sprCol = new Uint8Array(64); // Upper two bits of color
+            this.vertFlip = new Uint8Array(64); // Vertical Flip
+            this.horiFlip = new Uint8Array(64); // Horizontal Flip
+            this.bgPriority = new Uint8Array(64); // Background priority
             this.spr0HitX = 0; // Sprite #0 hit X coordinate
             this.spr0HitY = 0; // Sprite #0 hit Y coordinate
             this.hitSpr0 = false;
@@ -541,61 +542,23 @@ define(["nescore/utils"],function(Utils){
                 }
             }
 
-            // This is a bit lazy..
-            // if either the sprites or the background should be clipped,
-            // both are clipped after rendering is finished.
-            if (this.clipToTvSize || this.f_bgClipping === 0 || this.f_spClipping === 0) {
-                // Clip left 8-pixels column:
-                for (y=0;y<240;y++) {
-                    for (x=0;x<8;x++) {
-                        buffer[(y<<8)+x] = 0;
-                    }
-                }
-            }
-
-            if (this.clipToTvSize) {
-                // Clip right 8-pixels column too:
-                for (y=0; y<240; y++) {
-                    for (x=0; x<8; x++) {
-                        buffer[(y<<8)+255-x] = 0;
-                    }
-                }
-            }
-
-            // Clip top and bottom 8 pixels:
-            if (this.clipToTvSize) {
-                for (y=0; y<8; y++) {
-                    for (x=0; x<256; x++) {
-                        buffer[(y<<8)+x] = 0;
-                        buffer[((239-y)<<8)+x] = 0;
-                    }
-                }
-            }
-
             if (this.nes.opts.showDisplay) {
-                this.writeFrame(buffer, this.prevBuffer);
+                this.writeFrame(buffer, this.clipToTvSize);
             }
         },
 
-        writeFrame: function(buffer,prevBuffer){
-            var imageData = this.canvasImageData.data;
-            var pixel, j;
-
-            for (var i=0, li = 256*240; i < li; i++) {
-                pixel = buffer[i];
-
-                if (pixel != prevBuffer[i]) {
-                    j = i << 2;
-                    imageData[j] = pixel & 0xFF;
-                    imageData[j+1] = (pixel >> 8) & 0xFF;
-                    imageData[j+2] = (pixel >> 16) & 0xFF;
-                    imageData[j+3] = 0xFF;
-                    prevBuffer[i] = pixel;
+        writeFrame: function(buffer,clipToTvSize){
+            var i = 0;
+            var clip = clipToTvSize ? 8 : 0;
+            for(var y=clip; y<(240-clip); ++y) {
+                for(var i = clip + y * 256, li = 256 - clip + y * 256; i < li; i ++) {
+                    this.buf32[i] = 0xFF000000 | buffer[i]; // Full alpha
                 }
             }
 
+            this.canvasImageData.data.set(this.buf8);
             this.canvasContext.putImageData(this.canvasImageData, 0, 0);
-            this.nes.opts.canvas.getContext("2d").drawImage(this.canvasContext.canvas,0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
+            this.nes.opts.canvas.getContext("2d").drawImage(this.canvasContext.canvas,clip,clip,256 - (clip << 1), 240 - (clip << 1),0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
         },
 
         updateControlReg1: function(value){
