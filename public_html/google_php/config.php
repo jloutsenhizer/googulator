@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-include "../configuration.php";
-
 global $apiConfig;
 $apiConfig = array(
     // True if objects should be returned by the service classes.
