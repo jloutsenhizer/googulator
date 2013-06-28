@@ -52,7 +52,11 @@ define(function(){
             checksum = (checksum + gameData[i]) & 0xFFFFFFFF;
         }
 
-        header.id = "NES_" + checksum.toString(16).toUpperCase();
+        checksum = checksum.toString(16).toUpperCase();
+        while (checksum.length < 8)
+            checksum = "0" + checksum;
+
+        header.id = "NES_" + checksum;
 
         return header;
     }
