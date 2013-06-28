@@ -56,22 +56,6 @@ define(["nescore/utils"],function(Utils){
             }
         },
 
-        writelow: function(address, value) {
-            if (address < 0x2000) {
-                // Mirroring of RAM:
-                this.nes.cpu.mem[address & 0x7FF] = value;
-            }
-            else if (address > 0x4017) {
-                this.nes.cpu.mem[address] = value;
-            }
-            else if (address > 0x2007 && address < 0x4000) {
-                this.regWrite(0x2000 + (address & 0x7), value);
-            }
-            else {
-                this.regWrite(address, value);
-            }
-        },
-
         load: function(address) {
             // Wrap around:
             address &= 0xFFFF;
@@ -1124,6 +1108,28 @@ define(["nescore/utils"],function(Utils){
         this.irqEnable = s.irqEnable;
         this.prgAddressChanged = s.prgAddressChanged;
     };
+
+    //Mapper 7 - AOROM
+    //found in games such as Battletoads
+    Mappers[7] = function(nes){
+        this.nes = nes;
+    }
+
+    Mappers[7].prototype = new Mappers[0]();
+
+    Mappers[7].prototype.write = function(address,value){
+        if (address < 0x8000) {
+            Mappers[0].prototype.write.apply(this, arguments);
+        }
+        else{
+            this.load32kRomBank(value & 7,0x8000);
+
+            this.nes.ppu.setMirroring((value & 16) == 0 ? this.nes.rom.SINGLESCREEN_MIRRORING : this.nes.rom.SINGLESCREEN_MIRRORING2);
+
+        }
+
+    }
+
 
     return Mappers;
 
