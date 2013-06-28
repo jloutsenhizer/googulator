@@ -918,7 +918,7 @@ define(["nescore/utils"],function(Utils){
             case 0xA001:
                 // SaveRAM Toggle
                 // TODO
-                this.nes.rom.setSaveState((value&1)!=0);
+                //this.nes.rom.setSaveState((value&1)!=0);
                 break;
 
             case 0xC000:
