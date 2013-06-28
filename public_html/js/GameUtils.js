@@ -46,6 +46,7 @@ define(function(){
             }
         }
         if (foundError) {
+            console.log("error found");
             header.mapperType &= 0xF; // Ignore byte 7
         }
 

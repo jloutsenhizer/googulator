@@ -108,6 +108,7 @@ define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mapp
             this.trainer = this.header.trainer;
             this.fourScreen = this.header.fourScreen;
             this.mapperType = this.header.mapperType;
+            console.log(this.mapperType);
             if (this.batteryRam){
                 this.saveRAM = new Uint8Array(this.header.RAMSize);
                 for (var i = 0; i < this.header.RAMSize; i++){
