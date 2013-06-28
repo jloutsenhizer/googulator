@@ -75,6 +75,9 @@
                                     echo '</a></li>';
                                 }
                             ?>
+                            <li>
+                                <a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a>
+                            </li>
                         </ul>
 
                         <div id="googleUserInfo" style="position:absolute; right:10px; top:0px">
