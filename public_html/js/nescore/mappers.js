@@ -32,6 +32,11 @@ define(["nescore/utils"],function(Utils){
             this.mousePressed = false;
             this.mouseX = null;
             this.mouseY = null;
+            if (this.nes.rom.batteryRam){
+                var saveData = this.nes.rom.getSaveData();
+                for (var i = 0, li = saveData.length; i < li; i++)
+                    this.write(0x6000 + i,saveData[i]);
+            }
         },
 
         write: function(address, value) {
@@ -44,9 +49,8 @@ define(["nescore/utils"],function(Utils){
                 this.nes.cpu.mem[address] = value;
                 if (address >= 0x6000 && address < 0x8000) {
                     // Write to SaveRAM. Store in file:
-                    // TODO: not yet
-                    //if(this.nes.rom!=null)
-                    //    this.nes.rom.writeBatteryRam(address,value);
+                    if(this.nes.rom!=null && this.nes.rom.batteryRam)
+                        this.nes.rom.writeBatteryRam(address - 0x6000,value);
                 }
             }
             else if (address > 0x2007 && address < 0x4000) {
@@ -918,7 +922,7 @@ define(["nescore/utils"],function(Utils){
             case 0xA001:
                 // SaveRAM Toggle
                 // TODO
-                //nes.getRom().setSaveState((value&1)!=0);
+                this.nes.rom.setSaveState((value&1)!=0);
                 break;
 
             case 0xC000:

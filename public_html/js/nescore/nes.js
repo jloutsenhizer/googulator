@@ -55,13 +55,14 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
 
         // Resets the system
         reset: function() {
+            this.cpu.reset();
+            this.ppu.reset();
+            this.papu.reset();
+
             if (this.mmap !== null) {
                 this.mmap.reset();
             }
 
-            this.cpu.reset();
-            this.ppu.reset();
-            this.papu.reset();
         },
 
         start: function() {
@@ -171,10 +172,14 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             };
 
             // Load ROM file:
+            this.game = game;
             this.rom = new ROM(this);
             this.rom.load(game);
 
-            if (this.rom.valid) {
+
+            var valid = this.rom.valid;
+
+            if (valid) {
                 this.reset();
                 this.mmap = this.rom.createMapper();
                 if (!this.mmap) {
@@ -184,7 +189,26 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                 this.ppu.setMirroring(this.rom.getMirroringType());
                 this.romData = game.data;
             }
-            return this.rom.valid;
+            else{
+                this.rom = null;
+                this.game =  null;
+            }
+            return valid;
+        },
+
+        unloadROM: function(callback,saveprogresscallback){
+            if (this.game == null){
+                callback();
+                return;
+            }
+            if (this.isRunning)
+                this.stop();
+            var that = this;
+            this.game.updateSaveData(this.rom.getSaveData(),function(){
+                that.game = null;
+                that.rom = null;
+                callback();
+            },saveprogresscallback);
         },
 
         resetFps: function() {

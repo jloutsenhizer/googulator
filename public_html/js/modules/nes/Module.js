@@ -69,6 +69,7 @@ define(["nescore/nes"], function(NES){
         if (params.game != null){
             turnNESOff(function(){
                 nes.loadROM(params.game);
+                nes.start();
                 $("#nesOff").removeAttr("disabled");
                 $("#nesLCD").removeClass('hidden');
                 container.find("#noGameLoadedDisplay").addClass("hidden");
@@ -86,14 +87,17 @@ define(["nescore/nes"], function(NES){
     }
 
     function turnNESOff(callback){
+        if (callback == null) callback = function(){};
         $("#nesOff").attr('disabled',"disabled");
         overlay = App.createMessageOverlay(container,"Turning NES Off...");
         nes.stop();
-        blankScreen();
-        overlay.remove();
-        $("#nesLCD").addClass('hidden');
-        container.find("#noGameLoadedDisplay").removeClass("hidden");
-        callback();
+        nes.unloadROM(function(){
+            blankScreen();
+            overlay.remove();
+            $("#nesLCD").addClass('hidden');
+            container.find("#noGameLoadedDisplay").removeClass("hidden");
+            callback();
+        });
     }
 
     function blankScreen(){

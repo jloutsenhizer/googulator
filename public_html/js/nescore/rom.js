@@ -88,6 +88,7 @@ define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mapp
         fourScreen: null,
         mapperType: null,
         valid: false,
+        saveRAM: null,
 
         load: function(game) {
             var i, j, v;
@@ -107,9 +108,12 @@ define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mapp
             this.trainer = this.header.trainer;
             this.fourScreen = this.header.fourScreen;
             this.mapperType = this.header.mapperType;
-            /* TODO
-             if (this.batteryRam)
-             this.loadBatteryRam();*/
+            if (this.batteryRam){
+                this.saveRAM = new Uint8Array(this.header.RAMSize);
+                for (var i = 0; i < this.header.RAMSize; i++){
+                    this.saveRAM[i] = game.saveData[i];
+                }
+            }
             // Load PRG-ROM banks:
             this.rom = new Array(this.romCount);
             var offset = 16;
@@ -200,7 +204,14 @@ define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mapp
             else {
                 return null;
             }
+        },
+        writeBatteryRam: function(address,value){
+            this.saveRAM[address] = value;
+        },
+        getSaveData: function(){
+            return this.saveRAM;
         }
+
     };
 
     return ROM;

@@ -35,6 +35,8 @@ define(function(){
         header.fourScreen = (gameData[6] & 8) !== 0;
         header.mapperType = (gameData[6] >> 4) | (gameData[7] & 0xF0);
 
+        header.RAMSize = header.saveableRAM ? 0x2000 : 0;
+
         // Check whether byte 8-15 are zero's:
         var foundError = false;
         for (i=8; i<16; i++) {
