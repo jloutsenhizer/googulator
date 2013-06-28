@@ -429,6 +429,7 @@ define(["nescore/utils"],function(Utils){
                 return;
             }
             this.nes.ppu.triggerRendering();
+            bank4kStart <<= 1;
 
             this.loadVromBank((bank4kStart) % this.nes.rom.vromCount, address);
             this.loadVromBank((bank4kStart + 1) % this.nes.rom.vromCount,
@@ -834,6 +835,24 @@ define(["nescore/utils"],function(Utils){
         // Do Reset-Interrupt:
         this.nes.cpu.requestIrq(this.nes.cpu.IRQ_RESET);
     };
+
+    Mappers[3] = function(nes){
+        this.nes = nes;
+    }
+
+    Mappers[3].prototype = new Mappers[0]();
+
+    Mappers[3].prototype.write = function(address,value){
+        if (address < 0x8000) {
+            Mappers[0].prototype.write.apply(this, arguments);
+        }
+        else{
+            this.load8kVromBank((value & 3),0);
+        }
+
+    }
+
+
 
 
     Mappers[4] = function(nes) {
