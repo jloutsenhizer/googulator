@@ -36,7 +36,7 @@ define([],function(){
                 state[obj.JSON_PROPERTIES[i]] = obj[obj.JSON_PROPERTIES[i]];
             }
             return state;
-        },
+        }
     };
     return Utils;
 });
