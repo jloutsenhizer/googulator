@@ -68,7 +68,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
         start: function() {
             var self = this;
 
-            if (this.rom !== null && this.rom.valid) {
+            if (this.rom != null && this.rom.valid) {
                 if (!this.isRunning) {
                     this.isRunning = true;
 
