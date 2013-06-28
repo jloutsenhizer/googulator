@@ -19,17 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 define([],function(){
     var Utils = {
         copyArrayElements: function(src, srcPos, dest, destPos, length) {
-            for (var i = 0; i < length; ++i) {
-                dest[destPos + i] = src[srcPos + i];
+            for (var i = 0; i < length; ++i, destPos++, srcPos++) {
+                dest[destPos] = src[srcPos];
             }
-        },
-
-        copyArray: function(src) {
-            var dest = new Array(src.length);
-            for (var i = 0; i < src.length; i++) {
-                dest[i] = src[i];
-            }
-            return dest;
         },
 
         fromJSON: function(obj, state) {
@@ -45,10 +37,6 @@ define([],function(){
             }
             return state;
         },
-
-        isIE: function() {
-            return (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent));
-        }
     };
     return Utils;
 });

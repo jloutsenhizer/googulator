@@ -21,7 +21,7 @@ define([],function(){
     var Joypad = function() {
         this.state = new Array(2);
         for (var i = 0, li = this.state.length; i < li; i++){
-            this.state[i] = new Array(8);
+            this.state[i] = new Uint8Array(8);
             for (var j = 0, lj = this.state[i].length; j < lj; j++){
                 this.state[i][j] = this.BUTTON_NOT_PRESSED;
             }
