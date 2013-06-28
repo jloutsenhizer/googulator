@@ -17,7 +17,7 @@ define(["nescore/nes"], function(NES){
             turnNESOff();
         });
         $(window).bind("beforeunload",function(){
-            if (nes.isRunning){
+            if (nes.hasGame()){
                 return "Warning you haven't shut off the NES. You may lose save data if it is not shut off!!!!";
             }
         });
