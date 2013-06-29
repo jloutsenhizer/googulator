@@ -251,8 +251,21 @@ define(["nescore/utils"],function(Utils){
                 case 7:
                     ret = this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.joy1StrobeState];
                     break;
-                default:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                    ret = this.nes.joypad.state[this.nes.joypad.PLAYER_3][this.joy1StrobeState - 8];
+                    break;
+                case 19:
                     ret = 1;
+                    break;
+                default:
+                    ret = 0;
             }
 
             this.joy1StrobeState++;
@@ -319,8 +332,21 @@ define(["nescore/utils"],function(Utils){
                 case 7:
                     ret = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.joy2StrobeState];
                     break;
-                default:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                    ret = this.nes.joypad.state[this.nes.joypad.PLAYER_4][this.joy2StrobeState - 8];
+                    break;
+                case 19:
                     ret = 1;
+                    break;
+                default:
+                    ret = 0;
             }
 
             this.joy2StrobeState++;
