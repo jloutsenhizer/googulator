@@ -342,7 +342,7 @@ define(["nescore/utils"],function(Utils){
                 case 15:
                     ret = this.nes.joypad.state[this.nes.joypad.PLAYER_4][this.joy2StrobeState - 8];
                     break;
-                case 19:
+                case 18:
                     ret = 1;
                     break;
                 default:
