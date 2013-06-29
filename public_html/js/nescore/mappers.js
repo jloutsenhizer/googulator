@@ -624,7 +624,8 @@ define(["nescore/utils"],function(Utils){
                     this.mirroring = tmp;
                     if ((this.mirroring & 2) === 0) {
                         // SingleScreen mirroring overrides the other setting:
-                        this.nes.ppu.setMirroring(this.mirroring == 0 ? this.nes.rom.SINGLESCREEN_MIRRORING : this.nes.rom.SINGLESCREEN_MIRRORING2);
+                        this.nes.ppu.setMirroring(
+                            this.nes.rom.SINGLESCREEN_MIRRORING);
                     }
                     // Not overridden by SingleScreen mirroring.
                     else if ((this.mirroring & 1) !== 0) {
@@ -650,6 +651,7 @@ define(["nescore/utils"],function(Utils){
 
             case 1:
                 // ROM selection:
+                this.romSelectionReg0 = (value >> 4) & 1;
 
                 // Check whether the cart has VROM:
                 if (this.nes.rom.vromCount > 0) {
@@ -658,12 +660,30 @@ define(["nescore/utils"],function(Utils){
                     if (this.vromSwitchingSize === 0) {
 
                         // Swap 8kB VROM:
-                        this.load8kVromBank((value & 0xF), 0x0000);
+                        if (this.romSelectionReg0 === 0) {
+                            this.load8kVromBank((value & 0xF), 0x0000);
+                        }
+                        else {
+                            this.load8kVromBank(
+                                Math.floor(this.nes.rom.vromCount / 2) +
+                                    (value & 0xF),
+                                0x0000
+                            );
+                        }
 
                     }
                     else {
                         // Swap 4kB VROM:
-                        this.loadVromBank((value & 0xF), 0x0000);
+                        if (this.romSelectionReg0 === 0) {
+                            this.loadVromBank((value & 0xF), 0x0000);
+                        }
+                        else {
+                            this.loadVromBank(
+                                Math.floor(this.nes.rom.vromCount / 2) +
+                                    (value & 0xF),
+                                0x0000
+                            );
+                        }
                     }
                 }
 
@@ -671,13 +691,24 @@ define(["nescore/utils"],function(Utils){
 
             case 2:
                 // ROM selection:
+                this.romSelectionReg1 = (value >> 4) & 1;
 
                 // Check whether the cart has VROM:
                 if (this.nes.rom.vromCount > 0) {
 
                     // Select VROM bank at 0x1000:
                     if (this.vromSwitchingSize === 1) {
-                        this.loadVromBank((value & 0xF), 0x1000);
+                        // Swap 4kB of VROM:
+                        if (this.romSelectionReg1 === 0) {
+                            this.loadVromBank((value & 0xF), 0x1000);
+                        }
+                        else {
+                            this.loadVromBank(
+                                Math.floor(this.nes.rom.vromCount / 2) +
+                                    (value & 0xF),
+                                0x1000
+                            );
+                        }
                     }
                 }
                 break;
@@ -1151,6 +1182,24 @@ define(["nescore/utils"],function(Utils){
 
         }
 
+    }
+
+    //Mapper 66 - GNROM
+    //found in games such as Super Mario Bros. + Duck Hunt
+    Mappers[66] = function(nes){
+        this.nes = nes;
+    }
+
+    Mappers[66].prototype = new Mappers[0]();
+
+    Mappers[66].prototype.write = function(address,value){
+        if (address < 0x8000){
+            Mappers[0].prototype.write.apply(this,arguments);
+        }
+        else{
+            this.load8kVromBank(value & 3,0);
+            this.load32kRomBank((value >> 4) & 3,0x8000);
+        }
     }
 
 
