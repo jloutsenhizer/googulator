@@ -21,7 +21,7 @@ define([],function(){
     var Joypad = function() {
         this.state = new Array(2);
         for (var i = 0, li = this.state.length; i < li; i++){
-            this.state[i] = new Uint8Array(8);
+            this.state[i] = new Uint16Array(11);
             for (var j = 0, lj = this.state[i].length; j < lj; j++){
                 this.state[i][j] = this.BUTTON_NOT_PRESSED;
             }
@@ -40,8 +40,11 @@ define([],function(){
         BUTTON_DOWN: 5,
         BUTTON_LEFT: 6,
         BUTTON_RIGHT: 7,
-        BUTTON_PRESSED: 0x41,
-        BUTTON_NOT_PRESSED: 0x40,
+        BUTTON_ZAPPER: 8,
+        BUTTON_PRESSED: 0x01,
+        BUTTON_NOT_PRESSED: 0x00,
+        ZAPPER_X: 9,
+        ZAPPER_Y: 10,
         PLAYER_1: 0,
         PLAYER_2: 1
     };

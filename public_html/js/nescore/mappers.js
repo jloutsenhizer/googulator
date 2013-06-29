@@ -28,10 +28,6 @@ define(["nescore/utils"],function(Utils){
             this.joy1StrobeState = 0;
             this.joy2StrobeState = 0;
             this.joypadLastWrite = 0;
-
-            this.mousePressed = false;
-            this.mouseX = null;
-            this.mouseY = null;
         },
 
         write: function(address, value) {
@@ -150,32 +146,17 @@ define(["nescore/utils"],function(Utils){
                         case 2:
                             // 0x4017:
                             // Joystick 2 + Strobe
-                            if (this.mousePressed) {
+                           // if (this.mousePressed) {
 
                                 // Check for white pixel nearby:
-                                var sx = Math.max(0, this.mouseX - 4);
-                                var ex = Math.min(256, this.mouseX + 4);
-                                var sy = Math.max(0, this.mouseY - 4);
-                                var ey = Math.min(240, this.mouseY + 4);
-                                var w = 0;
 
-                                for (var y=sy; y<ey; y++) {
-                                    for (var x=sx; x<ex; x++) {
 
-                                        if (this.nes.ppu.buffer[(y<<8)+x] == 0xFFFFFF) {
-                                            w |= 0x1<<3;
-                                            console.debug("Clicked on white!");
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                w |= (this.mousePressed?(0x1<<4):0);
-                                return (this.joy2Read()|w) & 0xFFFF;
-                            }
-                            else {
+                             //  /// w |= (this.mousePressed?(0x1<<4):0);
+                                //return (this.joy2Read()|w) & 0xFFFF;
+                            ///}
+                           // else {
                                 return this.joy2Read();
-                            }
+                           // }
 
                     }
                     break;
@@ -270,30 +251,56 @@ define(["nescore/utils"],function(Utils){
                 case 7:
                     ret = this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.joy1StrobeState];
                     break;
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 12:
-                case 13:
-                case 14:
-                case 15:
-                case 16:
-                case 17:
-                case 18:
-                    ret = 0;
-                    break;
-                case 19:
-                    ret = 1;
-                    break;
                 default:
-                    ret = 0;
+                    ret = 1;
             }
 
             this.joy1StrobeState++;
             if (this.joy1StrobeState == 24) {
                 this.joy1StrobeState = 0;
             }
+
+            if (this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.nes.joypad.BUTTON_ZAPPER] == this.nes.joypad.BUTTON_PRESSED)
+                ret |= 16;
+
+
+            var found = false;
+
+            if (this.nes.ppu.monochrome){
+                var zapperX = this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.nes.joypad.ZAPPER_X];
+                var zapperY = this.nes.joypad.state[this.nes.joypad.PLAYER_1][this.nes.joypad.ZAPPER_Y];
+                var clip = 0;
+                if (this.nes.ppu.clipToTvSize){
+
+                    clip = 8;
+
+                    zapperX = Math.floor(clip + zapperX / 256 *  (256 - (clip * 2)));
+                    zapperY = Math.floor(clip + zapperY / 240 * (240 - (clip * 2)));
+                }
+
+                if (zapperX <= 256 - clip && zapperY <= 240 - clip){
+                    var sx = Math.max(clip, zapperX - 4);
+                    var ex = Math.min(256 - clip, zapperX + 4);
+                    var sy = Math.max(clip, zapperY - 4);
+                    var ey = Math.min(240 - clip, zapperY + 4);
+
+                    for (var y=sy; y<ey; y++) {
+                        for (var x=sx; x<ex; x++) {
+
+                            var value = 0xFFFFFF & this.nes.ppu.buf32[(y<<8)+x];
+
+
+                            if (value == 0xFFFFFF) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+                ret |= 8;
 
             return ret;
         },
@@ -312,30 +319,58 @@ define(["nescore/utils"],function(Utils){
                 case 7:
                     ret = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.joy2StrobeState];
                     break;
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 12:
-                case 13:
-                case 14:
-                case 15:
-                case 16:
-                case 17:
-                case 18:
-                    ret = 0;
-                    break;
-                case 19:
-                    ret = 1;
-                    break;
                 default:
-                    ret = 0;
+                    ret = 1;
             }
 
             this.joy2StrobeState++;
             if (this.joy2StrobeState == 24) {
                 this.joy2StrobeState = 0;
             }
+
+            if (this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.nes.joypad.BUTTON_ZAPPER] == this.nes.joypad.BUTTON_PRESSED)
+                ret |= 16;
+
+
+            var found = false;
+
+            if (this.nes.ppu.monochrome){
+                var zapperX = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.nes.joypad.ZAPPER_X];
+                var zapperY = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.nes.joypad.ZAPPER_Y];
+                var clip = 0;
+                if (this.nes.ppu.clipToTvSize){
+
+                    clip = 8;
+
+                    zapperX = Math.floor(clip + zapperX / 256 *  (256 - (clip * 2)));
+                    zapperY = Math.floor(clip + zapperY / 240 * (240 - (clip * 2)));
+                }
+
+                if (zapperX <= 256 - clip && zapperY <= 240 - clip){
+                    var sx = Math.max(clip, zapperX - 4);
+                    var ex = Math.min(256 - clip, zapperX + 4);
+                    var sy = Math.max(clip, zapperY - 4);
+                    var ey = Math.min(240 - clip, zapperY + 4);
+
+                    for (var y=sy; y<ey; y++) {
+                        for (var x=sx; x<ex; x++) {
+
+                            var value = 0xFFFFFF & this.nes.ppu.buf32[(y<<8)+x];
+
+
+                            if (value == 0xFFFFFF) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!found)
+                ret |= 8;
+
+
 
             return ret;
         },
@@ -589,8 +624,7 @@ define(["nescore/utils"],function(Utils){
                     this.mirroring = tmp;
                     if ((this.mirroring & 2) === 0) {
                         // SingleScreen mirroring overrides the other setting:
-                        this.nes.ppu.setMirroring(
-                            this.nes.rom.SINGLESCREEN_MIRRORING);
+                        this.nes.ppu.setMirroring(this.mirroring == 0 ? this.nes.rom.SINGLESCREEN_MIRRORING : this.nes.rom.SINGLESCREEN_MIRRORING2);
                     }
                     // Not overridden by SingleScreen mirroring.
                     else if ((this.mirroring & 1) !== 0) {
@@ -616,7 +650,6 @@ define(["nescore/utils"],function(Utils){
 
             case 1:
                 // ROM selection:
-                this.romSelectionReg0 = (value >> 4) & 1;
 
                 // Check whether the cart has VROM:
                 if (this.nes.rom.vromCount > 0) {
@@ -625,30 +658,12 @@ define(["nescore/utils"],function(Utils){
                     if (this.vromSwitchingSize === 0) {
 
                         // Swap 8kB VROM:
-                        if (this.romSelectionReg0 === 0) {
-                            this.load8kVromBank((value & 0xF), 0x0000);
-                        }
-                        else {
-                            this.load8kVromBank(
-                                Math.floor(this.nes.rom.vromCount / 2) +
-                                    (value & 0xF),
-                                0x0000
-                            );
-                        }
+                        this.load8kVromBank((value & 0xF), 0x0000);
 
                     }
                     else {
                         // Swap 4kB VROM:
-                        if (this.romSelectionReg0 === 0) {
-                            this.loadVromBank((value & 0xF), 0x0000);
-                        }
-                        else {
-                            this.loadVromBank(
-                                Math.floor(this.nes.rom.vromCount / 2) +
-                                    (value & 0xF),
-                                0x0000
-                            );
-                        }
+                        this.loadVromBank((value & 0xF), 0x0000);
                     }
                 }
 
@@ -656,24 +671,13 @@ define(["nescore/utils"],function(Utils){
 
             case 2:
                 // ROM selection:
-                this.romSelectionReg1 = (value >> 4) & 1;
 
                 // Check whether the cart has VROM:
                 if (this.nes.rom.vromCount > 0) {
 
                     // Select VROM bank at 0x1000:
                     if (this.vromSwitchingSize === 1) {
-                        // Swap 4kB of VROM:
-                        if (this.romSelectionReg1 === 0) {
-                            this.loadVromBank((value & 0xF), 0x1000);
-                        }
-                        else {
-                            this.loadVromBank(
-                                Math.floor(this.nes.rom.vromCount / 2) +
-                                    (value & 0xF),
-                                0x1000
-                            );
-                        }
+                        this.loadVromBank((value & 0xF), 0x1000);
                     }
                 }
                 break;

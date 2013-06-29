@@ -235,6 +235,8 @@ define(["nescore/utils"],function(Utils){
 
             this.updateControlReg1(0);
             this.updateControlReg2(0);
+
+            this.monochrome = false;
         },
 
         // Sets Nametable mirroring.
@@ -548,16 +550,38 @@ define(["nescore/utils"],function(Utils){
         },
 
         writeFrame: function(buffer,clipToTvSize){
+            this.monochrome = true;
             var i = 0;
             var clip = clipToTvSize ? 8 : 0;
             for(var y=clip; y<(240-clip); ++y) {
                 for(var i = clip + y * 256, li = 256 - clip + y * 256; i < li; i ++) {
                     this.buf32[i] = 0xFF000000 | buffer[i]; // Full alpha
+                    if (this.buf32[i] != 0xFF000000 && this.buf32[i] != 0xFFFFFFFF)
+                        this.monochrome = false;
                 }
             }
 
             this.canvasImageData.data.set(this.buf8);
             this.canvasContext.putImageData(this.canvasImageData, 0, 0);
+            /*this.canvasContext.fillStyle = "#00FF00"; //output the position of the zapper for debugging
+
+            var zapperX = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.nes.joypad.ZAPPER_X];
+            var zapperY = this.nes.joypad.state[this.nes.joypad.PLAYER_2][this.nes.joypad.ZAPPER_Y];
+            var clip = 0;
+            if (this.nes.ppu.clipToTvSize){
+
+                clip = 8;
+
+                zapperX = Math.floor(clip + zapperX / 256 *  (256 - (clip * 2)));
+                zapperY = Math.floor(clip + zapperY / 240 * (240 - (clip * 2)));
+            }
+            var sx = Math.max(clip, zapperX - 4);
+            var ex = Math.min(256 - clip, zapperX + 4);
+            var sy = Math.max(clip, zapperY - 4);
+            var ey = Math.min(240 - clip, zapperY + 4);
+
+            this.canvasContext.fillRect(sx,sy,ex - sx, ey - sy);*/
+
             this.nes.opts.canvas.getContext("2d").drawImage(this.canvasContext.canvas,clip,clip,256 - (clip << 1), 240 - (clip << 1),0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
         },
 

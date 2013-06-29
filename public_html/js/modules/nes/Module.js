@@ -7,6 +7,9 @@ define(["nescore/nes"], function(NES){
     var overlay = null;
     var fullScreenSupported = false;
 
+    var canvasWidth = 1;
+    var canvasHeight = 1;
+
     var nes;
 
     Module.init = function(c){
@@ -54,14 +57,29 @@ define(["nescore/nes"], function(NES){
             var newHeight = canvas.height();
             if (prevHeight != newHeight){
                 prevHeight = newHeight;
-                canvas.attr("width",canvas.height()/240*256);
-                canvas.attr("height",canvas.height());
+                canvasWidth = canvas.height()/240*256;
+                canvasHeight = canvas.height();
+                canvas.attr("width",canvasWidth);
+                canvas.attr("height",canvasHeight);
             }
         });
         $.doTimeout( 100, function(){
             $(window).resize();
             return true;
         });
+
+        canvas.mousemove(function(event){
+            var x = Math.floor(event.offsetX / canvasWidth * 256);
+            var y = Math.floor(event.offsetY / canvasHeight * 240);
+            nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.ZAPPER_X,x);
+            nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.ZAPPER_Y,y);
+        });
+        canvas.mouseleave(function(event){
+            nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.ZAPPER_X,1000);
+            nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.ZAPPER_Y,1000);
+        });
+
+        canvas.mouseleave();
     }
 
     Module.onActivate = function(params){
@@ -163,6 +181,15 @@ define(["nescore/nes"], function(NES){
         var events = App.settings.controller.transformKeyInput(event);
         for (var i = 0, li = events.length; i < li; i++)
             keyhandler(events[i]);
+    });
+
+    $(document).mousedown(function(event){
+        nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.BUTTON_ZAPPER,nes.joypad.BUTTON_PRESSED);
+    });
+
+    $(document).mouseup(function(event){
+        nes.joypad.setButtonState(nes.joypad.PLAYER_2,nes.joypad.BUTTON_ZAPPER,nes.joypad.BUTTON_NOT_PRESSED);
+
     });
 
     Gamepad.addListener(function(event){
