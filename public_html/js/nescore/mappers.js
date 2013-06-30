@@ -1228,6 +1228,21 @@ define(["nescore/utils"],function(Utils){
         }
     }
 
+    Mappers[79] = function(nes){
+        this.nes = nes;
+    }
+
+    Mappers[79].prototype = new Mappers[0]();
+
+    Mappers[79].prototype.write = function(address,value){
+        if ((address & 0x4000) != 0 && (address & 0x100) != 0){
+            this.load8kVromBank((value & 3) | ((value >> 3) & 8),0);
+            this.load32kRomBank((value >> 3) & 7,0x8000);
+            this.nes.ppu.setMirroring((value & 0x80) == 0 ? this.nes.rom.HORIZONTAL_MIRRORING : this.nes.rom.VERTICAL_MIRRORING);
+        }
+        Mappers[0].prototype.write.apply(this,arguments);
+    }
+
 
     return Mappers;
 
