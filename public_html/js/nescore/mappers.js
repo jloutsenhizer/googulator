@@ -1241,7 +1241,48 @@ define(["nescore/utils"],function(Utils){
             this.nes.ppu.setMirroring((value & 0x80) == 0 ? this.nes.rom.HORIZONTAL_MIRRORING : this.nes.rom.VERTICAL_MIRRORING);
         }
         Mappers[0].prototype.write.apply(this,arguments);
+    };
+
+
+    /*Mappers[228] = function(nes){   //Doesn't work :x
+        this.nes = nes;
     }
+
+    Mappers[228].prototype = new Mappers[0]();
+
+    Mappers[228].prototype.write = function(address,value){
+        if (address < 0x8000){
+            Mappers[0].prototype.write.apply(this,arguments);
+        }
+        else{
+            this.load8kVromBank((value & 3) | ((address & 15) << 2));
+
+            var romBank = (address >> 6) & 31;
+
+            var bankSize = (address >> 5);
+
+            if (bankSize == 1){
+                this.loadRomBank(romBank,0x8000);
+                this.loadRomBank(romBank,0xC000);
+            }
+            else{
+                var evenBank, oddBank;
+                if ((romBank & 1) == 0){
+                    evenBank = romBank;
+                    oddBank = romBank + 1;
+                }
+                else{
+                    evenBank = romBank + 1;
+                    oddBank = romBank;
+                }
+                this.loadRomBank(evenBank,0x8000);
+                this.loadRomBank(oddBank,0xC000);
+
+            }
+
+            this.nes.ppu.setMirroring((address & 0x2000) != 0 ? this.nes.rom.HORIZONTAL_MIRRORING : this.nes.rom.VERTICAL_MIRRORING);
+        }
+    }    */
 
 
     return Mappers;

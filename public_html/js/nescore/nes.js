@@ -87,7 +87,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             var cpu = this.cpu;
             var ppu = this.ppu;
             var papu = this.papu;
-            FRAMELOOP: for (;;) {
+            FRAMELOOP: for (;this.isRunning;) {
                 if (cpu.cyclesToHalt === 0) {
                     // Execute a CPU instruction
                     cycles = cpu.emulate();

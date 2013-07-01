@@ -240,11 +240,11 @@ define([],function(){
                 // the current X register. The value is the contents of that
                 // address.
                 addr = this.load(opaddr+2);
-                if((addr&0xFF00)!=((addr+this.REG_X)&0xFF00)){
-                    cycleAdd = 1;
-                }
-                addr+=this.REG_X;
-                addr&=0xFF;
+                //if((addr&0xFF00)!=((addr+this.REG_X)&0xFF00)){
+                //    cycleAdd = 1;
+                //}
+                addr += this.REG_X;
+                addr &= 0xFF;
                 addr = this.load16bit(addr);
                 break;
             }case 11:{
@@ -744,6 +744,7 @@ define([],function(){
 
                 // No OPeration.
                 // Ignore.
+                cycleCount += cycleAdd;
                 break;
 
             }case 34:{
@@ -1066,6 +1067,13 @@ define([],function(){
                 this.F_ZERO = this.REG_Y;
                 break;
 
+            }case 56:{
+                // *******
+                // * SAX *
+                // *******
+
+                this.write(addr,this.REG_ACC & this.REG_X);
+                break;
             }default:{
 
                 // *******
@@ -1073,7 +1081,7 @@ define([],function(){
                 // *******
 
                 this.nes.stop();
-                this.nes.crashMessage = "Game crashed, invalid opcode at address $"+opaddr.toString(16);
+                console.log("Game crashed, invalid opcode at address $"+opaddr.toString(16));
                 break;
 
             }
@@ -1094,13 +1102,7 @@ define([],function(){
         },
 
         load16bit: function(addr){
-            if (addr < 0x1FFF) {
-                return this.mem[addr&0x7FF]
-                    | (this.mem[(addr+1)&0x7FF]<<8);
-            }
-            else {
-                return this.nes.mmap.load(addr) | (this.nes.mmap.load(addr+1) << 8);
-            }
+            return this.load(addr) | (this.load((addr + 1) & 0xFFFF) << 8);
         },
 
         write: function(addr, val){
@@ -1394,6 +1396,7 @@ define([],function(){
         // NOP:
         this.setOp(this.INS_NOP,0xEA,this.ADDR_IMP,1,2);
 
+
         // ORA:
         this.setOp(this.INS_ORA,0x09,this.ADDR_IMM,2,2);
         this.setOp(this.INS_ORA,0x05,this.ADDR_ZP,2,3);
@@ -1491,6 +1494,48 @@ define([],function(){
 
         // TYA:
         this.setOp(this.INS_TYA,0x98,this.ADDR_IMP,1,2);
+
+        //unofficial opcodes
+        //NOP
+        this.setOp(this.INS_NOP,0x1A,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0x3A,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0x5A,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0x7A,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0xDA,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0xEA,this.ADDR_IMP,1,2);
+        this.setOp(this.INS_NOP,0xFA,this.ADDR_IMP,1,2);
+
+        this.setOp(this.INS_NOP,0x80,this.ADDR_IMM,2,2);
+        this.setOp(this.INS_NOP,0x82,this.ADDR_IMM,2,2);
+        this.setOp(this.INS_NOP,0x89,this.ADDR_IMM,2,2);
+        this.setOp(this.INS_NOP,0xC2,this.ADDR_IMM,2,2);
+        this.setOp(this.INS_NOP,0xE2,this.ADDR_IMM,2,2);
+
+        this.setOp(this.INS_NOP,0x04,this.ADDR_ZP,2,3);
+        this.setOp(this.INS_NOP,0x44,this.ADDR_ZP,2,3);
+        this.setOp(this.INS_NOP,0x64,this.ADDR_ZP,2,3);
+
+        this.setOp(this.INS_NOP,0x14,this.ADDR_ZPX,2,4);
+        this.setOp(this.INS_NOP,0x34,this.ADDR_ZPX,2,4);
+        this.setOp(this.INS_NOP,0x54,this.ADDR_ZPX,2,4);
+        this.setOp(this.INS_NOP,0x74,this.ADDR_ZPX,2,4);
+        this.setOp(this.INS_NOP,0xD4,this.ADDR_ZPX,2,4);
+        this.setOp(this.INS_NOP,0xF4,this.ADDR_ZPX,2,4);
+
+        this.setOp(this.INS_NOP,0x0C,this.ADDR_ABS,3,4);
+
+        this.setOp(this.INS_NOP,0x1C,this.ADDR_ABSX,3,4);
+        this.setOp(this.INS_NOP,0x3C,this.ADDR_ABSX,3,4);
+        this.setOp(this.INS_NOP,0x5C,this.ADDR_ABSX,3,4);
+        this.setOp(this.INS_NOP,0x7C,this.ADDR_ABSX,3,4);
+        this.setOp(this.INS_NOP,0xDC,this.ADDR_ABSX,3,4);
+        this.setOp(this.INS_NOP,0xFC,this.ADDR_ABSX,3,4);
+
+        this.setOp(this.INS_SAX,0x87,this.ADDR_ZP,2,3);
+        this.setOp(this.INS_SAX,0x97,this.ADDR_ZPY,2,4);
+        this.setOp(this.INS_SAX,0x8F,this.ADDR_IMM,3,4);
+        this.setOp(this.INS_SAX,0x83,this.ADDR_PREIDXIND,2,6);
+
 
         this.cycTable = new Array(
             /*0x00*/ 7,6,2,8,3,3,5,5,3,2,2,2,4,4,6,6,
@@ -1660,7 +1705,10 @@ define([],function(){
         INS_TXS: 54,
         INS_TYA: 55,
 
-        INS_DUMMY: 56, // dummy instruction used for 'halting' the processor some cycles
+        INS_SAX: 56,
+        INS_LAX: 57,
+
+        INS_DUMMY: 255, // dummy instruction used for 'halting' the processor some cycles
 
         // -------------------------------- //
 
