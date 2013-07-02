@@ -230,22 +230,6 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             this.papu.setVolume(volume);
         },
 
-        toJSON: function() {
-            return {
-                'romData': this.romData,
-                'cpu': this.cpu.toJSON(),
-                'mmap': this.mmap.toJSON(),
-                'ppu': this.ppu.toJSON()
-            };
-        },
-
-        fromJSON: function(s) {
-            this.loadRom(s.romData);
-            this.cpu.fromJSON(s.cpu);
-            this.mmap.fromJSON(s.mmap);
-            this.ppu.fromJSON(s.ppu);
-        },
-
         hasGame: function(){
             return this.game != null;
         }

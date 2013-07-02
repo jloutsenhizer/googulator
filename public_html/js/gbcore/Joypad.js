@@ -19,7 +19,6 @@ define(["CopyUtils"], function(CopyUtils){
 
     Joypad.getSaveState = function(){
         return {
-            keyDown: CopyUtils.makeUntypedArrayCopy(keyDown),
             curPlayer: curPlayer,
             mode: mode,
             maxPlayers: maxPlayers
@@ -27,7 +26,6 @@ define(["CopyUtils"], function(CopyUtils){
     }
 
     Joypad.setSaveState = function(saveState){
-        CopyUtils.copy(saveState.keyDown,keyDown);
         curPlayer = saveState.curPlayer;
         mode = saveState.mode;
         maxPlayers = saveState.maxPlayers;

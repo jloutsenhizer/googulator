@@ -179,7 +179,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     }
 
     Gameboy.setSaveState = function(saveState){
-        if (saveState.gameid != game.id){
+        if (saveState == null || saveState.gameid != game.id){
             console.error("Cannot load state, it's for the wrong game!");
             return;
         }

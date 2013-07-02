@@ -1489,75 +1489,8 @@ define(["nescore/utils"],function(Utils){
             this.setStatusFlag(this.STATUS_VBLANK,true);
             //nes.getCpu().doNonMaskableInterrupt();
             this.nes.cpu.requestIrq(this.nes.cpu.IRQ_NMI);
-        },
-
-        JSON_PROPERTIES: [
-            // Memory
-            'vramMem', 'spriteMem',
-            // Counters
-            'cntFV', 'cntV', 'cntH', 'cntVT', 'cntHT',
-            // Registers
-            'regFV', 'regV', 'regH', 'regVT', 'regHT', 'regFH', 'regS',
-            // VRAM addr
-            'vramAddress', 'vramTmpAddress',
-            // Control/Status registers
-            'f_nmiOnVblank', 'f_spriteSize', 'f_bgPatternTable', 'f_spPatternTable',
-            'f_addrInc', 'f_nTblAddress', 'f_color', 'f_spVisibility',
-            'f_bgVisibility', 'f_spClipping', 'f_bgClipping', 'f_dispType',
-            // VRAM I/O
-            'vramBufferedReadValue', 'firstWrite',
-            // Mirroring
-            'currentMirroring', 'vramMirrorTable', 'ntable1',
-            // SPR-RAM I/O
-            'sramAddress',
-            // Sprites. Most sprite data is rebuilt from spriteMem
-            'hitSpr0',
-            // Palettes
-            'sprPalette', 'imgPalette',
-            // Rendering progression
-            'curX', 'scanline', 'lastRenderedScanline', 'curNt', 'scantile',
-            // Used during rendering
-            'attrib', 'buffer', 'bgbuffer', 'pixrendered',
-            // Misc
-            'requestEndFrame', 'nmiOk', 'dummyCycleToggle', 'nmiCounter',
-            'validTileData', 'scanlineAlreadyRendered'
-        ],
-
-        toJSON: function() {
-            var i;
-            var state = Utils.toJSON(this);
-
-            state.nameTable = [];
-            for (i = 0; i < this.nameTable.length; i++) {
-                state.nameTable[i] = this.nameTable[i].toJSON();
-            }
-
-            state.ptTile = [];
-            for (i = 0; i < this.ptTile.length; i++) {
-                state.ptTile[i] = this.ptTile[i].toJSON();
-            }
-
-            return state;
-        },
-
-        fromJSON: function(state) {
-            var i;
-
-            Utils.fromJSON(this, state);
-
-            for (i = 0; i < this.nameTable.length; i++) {
-                this.nameTable[i].fromJSON(state.nameTable[i]);
-            }
-
-            for (i = 0; i < this.ptTile.length; i++) {
-                this.ptTile[i].fromJSON(state.ptTile[i]);
-            }
-
-            // Sprite data:
-            for (i = 0; i < this.spriteMem.length; i++) {
-                this.spriteRamWriteUpdate(i, this.spriteMem[i]);
-            }
         }
+
     };
 
     PPU.NameTable = function(width, height, name) {

@@ -117,6 +117,8 @@ define(["gbcore/Gameboy"], function(Gameboy){
         Gameboy.setButtonState(0,Gameboy.BUTTON_SELECT,Gameboy.BUTTON_NOT_PRESSED);
     }
 
+    var quickSaveState = null;
+
     var keyhandler = function(event){
         if (!active)
             return;
@@ -145,22 +147,17 @@ define(["gbcore/Gameboy"], function(Gameboy){
             case App.constants.BUTTON_SELECT:
                 Gameboy.setButtonState(event.player,Gameboy.BUTTON_SELECT,event.pressed ? Gameboy.BUTTON_PRESSED : Gameboy.BUTTON_NOT_PRESSED);
                 break;
+            case App.constants.QUICK_LOAD_STATE:
+                Gameboy.setSaveState(quickSaveState);
+                break;
+            case App.constants.QUICK_SAVE_STATE:
+                quickSaveState = Gameboy.getSaveState();
+                break;
         }
     };
 
-    var quickSaveState = null;
-
     $(document).keyup(function(event){
         event.up = true;
-        switch (event.keyCode){
-            case 53:
-                quickSaveState = Gameboy.getSaveState();
-                break;
-            case 54:
-                if (quickSaveState != null)
-                    Gameboy.setSaveState(quickSaveState);
-                break;
-        }
         var events = App.settings.controller.transformKeyInput(event);
         for (var i = 0, li = events.length; i < li; i++)
             keyhandler(events[i]);

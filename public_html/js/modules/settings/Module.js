@@ -13,6 +13,8 @@ define(function(){
     App.constants.BUTTON_DOWN = 5;
     App.constants.BUTTON_LEFT = 6;
     App.constants.BUTTON_RIGHT = 7;
+    App.constants.QUICK_SAVE_STATE = 8;
+    App.constants.QUICK_LOAD_STATE = 9;
 
     var container;
     var active = false;
@@ -116,6 +118,14 @@ define(function(){
                     case controller.down:
                         button = App.constants.BUTTON_DOWN;
                         break;
+                    case controller.quickSaveState:
+                        if (event.up)
+                            button = App.constants.QUICK_SAVE_STATE;
+                        break;
+                    case controller.quickLoadState:
+                        if (event.up)
+                            button = App.constants.QUICK_LOAD_STATE;
+                        break;
                 }
                 if (button != App.constants.BUTTON_INVALID){
                     events.push(generateEvent(i,button,!event.up));
@@ -146,9 +156,14 @@ define(function(){
                         case controller.up:
                             button = App.constants.BUTTON_UP;
                             break;
-                        case controller.down:
-                            button = App.constants.BUTTON_DOWN;
+                        case controller.quickSaveState:
+                            if (event.up)
+                                button = App.constants.QUICK_SAVE_STATE;
                             break;
+                        case controller.quickLoadState:
+                            if (event.up)
+                                button = App.constants.QUICK_LOAD_STATE;
+                            break;;
                     }
                 }
                 if (button != App.constants.BUTTON_INVALID){
@@ -157,16 +172,6 @@ define(function(){
             }
         }
         return events;
-        if (App.settings.controller.type == App.constants.TYPE_ICADE){
-
-        }
-        else if (App.settings.controller.type == App.constants.TYPE_KEYBOARD){
-
-        }
-        else{
-            event.ignore = true;
-        }
-        return event;
     }
 
     function transformGamepadInput(event){
@@ -202,6 +207,14 @@ define(function(){
                             break;
                         case controller.down:
                             button = App.constants.BUTTON_DOWN;
+                            break;
+                        case controller.quickSaveState:
+                            if (!event.pressed)
+                                button = App.constants.QUICK_SAVE_STATE;
+                            break;
+                        case controller.quickLoadState:
+                            if (event.pressed)
+                                button = App.constants.QUICK_LOAD_STATE;
                             break;
                     }
                     if (button != App.constants.BUTTON_INVALID){
@@ -335,7 +348,9 @@ define(function(){
                     left: 37,
                     right: 39,
                     up: 38,
-                    down: 40
+                    down: 40,
+                    quickSaveState: 53,
+                    quickLoadState: 54
                 },
                 1:{ //iCade
                     a: 6,
@@ -345,7 +360,9 @@ define(function(){
                     left: 3,
                     right: 4,
                     up: 1,
-                    down: 2
+                    down: 2,
+                    quickSaveState: 7,
+                    quickLoadState: 9
                 },
                 2:{//Gamepad
                     a: 0,
@@ -355,7 +372,9 @@ define(function(){
                     left: 14,
                     right: 15,
                     up: 12,
-                    down: 13
+                    down: 13,
+                    quickSaveState: 4,
+                    quickLoadState: 5
                 }
             },
             transformKeyInput: transformKeyInput,
