@@ -1,4 +1,4 @@
-define(function(){
+define(["CopyUtils"],function(CopyUtils){
     var GPUEmulator = {};
     var vram = new Uint8Array(0x4000);
     var oam = new Uint8Array(0xA0);
@@ -75,6 +75,102 @@ define(function(){
     var MASK_NONE = 0, MASK_FREEZE = 1, MASK_BLACK = 2, MASK_BG = 3;
 
     var maskingMode = MASK_NONE;
+
+    GPUEmulator.getSaveState = function(){
+        return {
+            vram: CopyUtils.makeUntypedArrayCopy(vram),
+            oam: CopyUtils.makeUntypedArrayCopy(oam),
+            modeClock: modeClock,
+            mode: mode,
+            curLine: curLine,
+            lcdEnabled: lcdEnabled,
+            SCY: SCY,
+            SCX: SCX,
+            WX: WX,
+            WY: WY,
+            frameSkip: frameSkip,
+            curSkip: curSkip,
+            colors: CopyUtils.makeUntypedArrayCopy(colors),
+            bgPal: CopyUtils.makeUntypedArrayCopy(bgPal),
+            obj0Pal: CopyUtils.makeUntypedArrayCopy(obj0Pal),
+            obj1Pal: CopyUtils.makeUntypedArrayCopy(obj1Pal),
+            objHeight: objHeight,
+            bgEnabled: bgEnabled,
+            windowEnabled: windowEnabled,
+            objEnabled: objEnabled,
+            bgMap: bgMap,
+            windowMap: windowMap,
+            bgDataLocation: bgDataLocation,
+            coincidenceIntEnabled: coincidenceIntEnabled,
+            oamIntEnabled: oamIntEnabled,
+            hblankIntEnabled: hblankIntEnabled,
+            vblankIntEnabled: vblankIntEnabled,
+            LYC: LYC,
+            gbcBGPal: CopyUtils.makeUntypedArrayCopy(gbcBGPal),
+            curBGColorIndex: curBGColorIndex,
+            autoIncBGIndex: autoIncBGIndex,
+            gbcOBJPal: CopyUtils.makeUntypedArrayCopy(gbcOBJPal),
+            curOBJColorIndex: curOBJColorIndex,
+            autoIncOBJIndex: autoIncOBJIndex,
+            precompiledBGPal:  CopyUtils.makeUntypedArrayCopy(precompiledBGPal),
+            precompiledOBJPal: CopyUtils.makeUntypedArrayCopy(precompiledOBJPal),
+            gbcEnabled: gbcEnabled,
+            vramBank: vramBank,
+            hdmaSource: hdmaSource,
+            hdmaDest: hdmaDest,
+            hdmaTransferRemaining: hdmaTransferRemaining,
+            hdmaRunning: hdmaRunning,
+            SGBPal: CopyUtils.makeUntypedArrayCopy(SGBPal),
+            SGBAttrMap: CopyUtils.makeUntypedArrayCopy(SGBAttrMap)
+        };
+    }
+
+    GPUEmulator.setSaveState = function(saveState){
+        CopyUtils.copy(saveState.vram,vram);
+        CopyUtils.copy(saveState.oam,oam);
+        modeClock = saveState.modeClock;
+        mode = saveState.mode;
+        curLine = saveState.curLine;
+        lcdEnabled = saveState.lcdEnabled;
+        SCY = saveState.SCY;
+        SCX = saveState.SCX;
+        WX = saveState.WX;
+        WY = saveState.WY;
+        frameSkip = saveState.frameSkip;
+        curSkip = saveState.curSkip;
+        CopyUtils.copy(saveState.colors,colors);
+        CopyUtils.copy(saveState.bgPal,bgPal);
+        CopyUtils.copy(saveState.obj0Pal,obj0Pal);
+        CopyUtils.copy(saveState.obj1Pal,obj1Pal);
+        objHeight = saveState.objHeight;
+        bgEnabled = saveState.bgEnabled;
+        windowEnabled = saveState.windowEnabled;
+        objEnabled = saveState.objEnabled;
+        bgMap = saveState.bgMap;
+        windowMap = saveState.windowMap;
+        bgDataLocation = saveState.bgDataLocation;
+        coincidenceIntEnabled = saveState.coincidenceIntEnabled;
+        oamIntEnabled = saveState.oamIntEnabled;
+        hblankIntEnabled = saveState.hblankIntEnabled;
+        vblankIntEnabled = saveState.vblankIntEnabled;
+        LYC = saveState.LYC;
+        CopyUtils.copy(saveState.gbcBGPal,gbcBGPal);
+        curBGColorIndex = saveState.curBGColorIndex;
+        autoIncBGIndex = saveState.autoIncBGIndex;
+        CopyUtils.copy(saveState.gbcOBJPal,gbcOBJPal);
+        curOBJColorIndex = saveState.curOBJColorIndex;
+        autoIncOBJIndex = saveState.autoIncOBJIndex;
+        CopyUtils.copy(saveState.precompiledBGPal,precompiledBGPal);
+        CopyUtils.copy(saveState.precompiledOBJPal,precompiledOBJPal);
+        gbcEnabled = saveState.gbcEnabled;
+        vramBank = saveState.vramBank;
+        hdmaSource = saveState.hdmaSource;
+        hdmaDest = saveState.hdmaDest;
+        hdmaTransferRemaining = saveState.hdmaTransferRemaining;
+        hdmaRunning = saveState.hdmaRunning;
+        CopyUtils.copy(saveState.SGBPal,SGBPal);
+        CopyUtils.copy(saveState.SGBAttrMap,SGBAttrMap);
+    }
 
     var internalDisplay = $("<canvas width='" + SCREEN_WIDTH + "'height='" + SCREEN_HEIGHT + "'></canvas>")[0].getContext("2d");
 

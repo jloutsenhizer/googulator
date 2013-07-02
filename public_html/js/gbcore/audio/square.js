@@ -31,6 +31,50 @@ define(function () {
         this.waveform = 0x01;
     };
 
+    SquareChannel.prototype.getSaveState = function(){
+        return {
+            enabled: this.enabled,
+            envelopeRegister: this.envelopeRegister,
+            envelopeCounter: this.envelopeCounter,
+            envelopeDirection: this.envelopeDirection,
+            envelopePeriod: this.envelopePeriod,
+            sweepRegister: this.sweepRegister,
+            sweepCounter: this.sweepCounter,
+            sweepTick: this.sweepTick,
+            sweepPeriod: this.sweepPeriod,
+            lengthEnable: this.lengthEnable,
+            lengthCounter: this.lengthCounter,
+            frequency: this.frequency,
+            sample: this.sample,
+            frequencyCounter: this.frequencyCounter,
+            initalVolume: this.initalVolume,
+            duty: this.duty,
+            length: this.length,
+            waveform: this.waveform
+        };
+    }
+
+    SquareChannel.prototype.setSaveState = function(saveState){
+        this.enabled = saveState.enabled;
+        this.envelopeRegister = saveState.envelopeRegister;
+        this.envelopeCounter = saveState.envelopeCounter;
+        this.envelopeDirection = saveState.envelopeDirection;
+        this.envelopePeriod = saveState.envelopePeriod;
+        this.sweepRegister = saveState.sweepRegister;
+        this.sweepCounter = saveState.sweepCounter;
+        this.sweepTick = saveState.sweepTick;
+        this.sweepPeriod = saveState.sweepPeriod;
+        this.lengthEnable = saveState.lengthEnable;
+        this.lengthCounter = saveState.lengthCounter;
+        this.frequency = saveState.frequency;
+        this.sample = saveState.sample;
+        this.frequency = saveState.frequencyCounter;
+        this.initalVolume = saveState.initalVolume;
+        this.duty = saveState.duty;
+        this.length = saveState.length;
+        this.waveform = saveState.waveform;
+    }
+
     SquareChannel.prototype.clock = function (ticks) {
         if (!this.enabled) { return ; }
 

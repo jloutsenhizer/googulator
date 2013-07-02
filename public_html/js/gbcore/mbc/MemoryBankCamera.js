@@ -1,4 +1,4 @@
-define(function(){
+define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
     var MemoryBankCamera = {};
 
     MemoryBankCamera.loadROM = function(romData){
@@ -145,6 +145,58 @@ define(function(){
         controller.getSaveData = function(){
             return this.RAMData;
         }
+
+        controller.getSaveState = function(){
+            return {
+                type: GameUtils.MBC_CAMERA,
+                romData: CopyUtils.makeUntypedArrayCopy(this.romData),
+                ramData: CopyUtils.makeUntypedArrayCopy(this.ramData)
+            };
+        }
+
+        controller.setSaveState = function(saveState){
+            if (saveState != GameUtils.MBC_N){
+                console.error("Attempted to load wrong bank type");
+                return;
+            }
+            this.romData = new UInt8Array(saveState.romData.length);
+            CopyUtils.copy(saveState.romData,this.romData);
+            CopyUtils.copy(saveState.ramData,this.ramData);
+        }
+
+        controller.getSaveState = function(){
+            return {
+                type: GameUtils.MBCAMERA,
+                romData: CopyUtils.makeUntypedArrayCopy(this.ROMData),
+                ramData: CopyUtils.makeUntypedArrayCopy(this.RAMData),
+                romBanks: this.ROMBanks,
+                currentSecondaryBank: this.currentSecondaryBank,
+                currentRAMBank: this.currentRAMBank,
+                RAMEEnabled: this.RAMEnabled,
+                registerMode: this.registerMode,
+                registers: CopyUtils.makeUntypedArrayCopy(this.registers),
+                brightness: this.brightness
+            };
+        }
+
+        controller.setSaveState = function(saveState){
+            if (saveState.type != GameUtils.MBCAMERA){
+                console.error("Attempted to load wrong bank type");
+                return;
+            }
+            this.ROMData = new Uint8Array(saveState.romData.length);
+            CopyUtils.copy(saveState.romData,this.ROMData);
+            CopyUtils.copy(saveState.ramData,this.RAMData);
+            CopyUtils.copy(saveState.registers,this.registers);
+            this.ROMBanks = saveState.romBanks;
+            this.currentSecondaryBank = saveState.currentSecondaryBank;
+            this.currentRAMBank = saveState.currentRAMBank;
+            this.RAMEnabled = saveState.RAMEEnabled;
+            this.registerMode = saveState.registerMode;
+            this.brightness = saveState.brightness;
+            return this;
+        }
+
         return controller;
     }
 

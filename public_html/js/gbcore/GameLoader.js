@@ -24,6 +24,26 @@ define(["GameUtils", "gbcore/mbc/NoMemoryBankController", "gbcore/mbc/MemoryBank
         }
     }
 
+    GameLoader.createFromSaveState = function(saveState){
+        switch(saveState.type){
+            case GameUtils.MBC_N:
+                return NoMBC.loadROM([]).setSaveState(saveState);
+            case GameUtils.MBC_1:
+                return MBC1.loadROM([]).setSaveState(saveState);
+            case GameUtils.MBC_2:
+                return MBC2.loadROM([]).setSaveState(saveState);
+            case GameUtils.MBC_3:
+                return MBC3.loadROM([]).setSaveState(saveState);
+            case GameUtils.MBC_5:
+                return MBC5.loadROM([]).setSaveState(saveState);
+            case GameUtils.MBCAMERA:
+                return MBCAMERA.loadROM(gameData);
+            default:
+                console.error("Failed to load save state, rom type invalid!");
+                return null;
+        }
+    }
+
 
     return GameLoader;
 

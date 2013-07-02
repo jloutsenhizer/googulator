@@ -148,8 +148,19 @@ define(["gbcore/Gameboy"], function(Gameboy){
         }
     };
 
+    var quickSaveState = null;
+
     $(document).keyup(function(event){
         event.up = true;
+        switch (event.keyCode){
+            case 53:
+                quickSaveState = Gameboy.getSaveState();
+                break;
+            case 54:
+                if (quickSaveState != null)
+                    Gameboy.setSaveState(quickSaveState);
+                break;
+        }
         var events = App.settings.controller.transformKeyInput(event);
         for (var i = 0, li = events.length; i < li; i++)
             keyhandler(events[i]);

@@ -63,6 +63,8 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     var paused = false;
     var waitForTerminate = false;
 
+    var inPauseMode = false;
+
     var frameTimes = [];
 
     Gameboy.run = function(){
@@ -100,10 +102,13 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
                 callback();
                 return;
             }
-            if (!paused && !waitForTerminate)
+            if (!paused && !waitForTerminate){
+                inPauseMode = false;
                 gb.run();
+            }
             else{
-                setTimeout(repeatFunction,1);
+                inPauseMode = true;
+                setTimeout(repeatFunction,20);
             }
         };
 
@@ -158,6 +163,49 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
     Gameboy.setButtonState = function(player,button,state){
         Joypad.setButtonState(player,button,state);
+    }
+
+    Gameboy.getSaveState = function(){
+        return {
+            gameid: game.id,
+            gpu: GPUEmulator.getSaveState(),
+            apu: APUEmulator.getSaveState(),
+            cpu: CPUEmulator.getSaveState(),
+            mcontroller: MemoryController.getSaveState(),
+            joypad: Joypad.getSaveState(),
+            SGB: SGB.getSaveState(),
+            loadedGame: loadedGame.getSaveState()
+        }
+    }
+
+    Gameboy.setSaveState = function(saveState){
+        if (saveState.gameid != game.id){
+            console.error("Cannot load state, it's for the wrong game!");
+            return;
+        }
+        if (this.isRunning())
+            this.pause();
+        var gb = this;
+        var doLoad = function(){
+            if (gb.isRunning() && !inPauseMode){
+                setTimeout(doLoad,20);
+                return;
+            }
+
+            GPUEmulator.setSaveState(saveState.gpu);
+            APUEmulator.setSaveState(saveState.apu);
+            CPUEmulator.setSaveState(saveState.cpu);
+            Joypad.setSaveState(saveState.joypad);
+            SGB.setSaveState(saveState.SGB);
+            loadedGame = GameLoader.createFromSaveState(saveState.loadedGame);
+            MemoryController.setSaveState(saveState.mcontroller,loadedGame);
+
+            gb.resume();
+            if (!gb.isRunning())
+                gb.run();
+        }
+
+        doLoad();
     }
 
     return Gameboy;

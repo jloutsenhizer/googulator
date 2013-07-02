@@ -15,6 +15,53 @@ define(function(){
 
     var listeners = [];
 
+    MemoryController.getSaveState = function(){
+        var r = new Array(ram.length);
+        var hr = new Array(hram.length);
+        var br = new Array(bootROM.length);
+        var ir = new Array(ioram.length);
+        for (var i = 0, li = r.length; i < li; i++){
+            r[i] = ram[i];
+        }
+        for (var i = 0, li = hr.length; i < li; i++){
+            hr[i] = hram[i];
+        }
+        for (var i = 0, li = br.length; i < li; i++){
+            br[i] = bootROM[i];
+        }
+        for (var i = 0, li = ir.length; i < li; i++){
+            ir[i] = ioram[i];
+        }
+        return {
+            ram: r,
+            hram: hr,
+            bootROM: br,
+            ioram: ir,
+            ramBank: ramBank,
+            biosEnabled: biosEnabled,
+            gbcEnabled: gbcEnabled
+        };
+    }
+
+    MemoryController.setSaveState = function(saveState,game){
+        for (var i = 0, li = ram.length; i < li; i++){
+            ram[i] = saveState.ram[i];
+        }
+        for (var i = 0, li = hram.length; i < li; i++){
+            hram[i] = saveState.hram[i];
+        }
+        for (var i = 0, li = bootROM.length; i < li; i++){
+            bootROM[i] = saveState.bootROM[i];
+        }
+        for (var i = 0, li = ioram.length; i < li; i++){
+            ioram[i] = saveState.ioram[i];
+        }
+        ramBank = saveState.ramBank;
+        biosEnabled = saveState.biosEnabled;
+        gbcEnabled = saveState.gbcEnabled;
+        loadedGame = game;
+    }
+
     MemoryController.setGBCEnabled = function(enabled){
         gbcEnabled = enabled;
     }

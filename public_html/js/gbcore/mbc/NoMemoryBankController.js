@@ -1,4 +1,4 @@
-define(function(){
+define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
     var NoMemoryBankController = {};
 
     NoMemoryBankController.loadROM = function(romData){
@@ -68,6 +68,25 @@ define(function(){
 
         controller.getSaveData = function(){
             return this.RAMData;
+        }
+
+        controller.getSaveState = function(){
+            return {
+                type: GameUtils.MBC_N,
+                romData: CopyUtils.makeUntypedArrayCopy(this.romData),
+                ramData: CopyUtils.makeUntypedArrayCopy(this.ramData)
+            };
+        }
+
+        controller.setSaveState = function(saveState){
+            if (saveState.type != GameUtils.MBC_N){
+                console.error("Attempted to load wrong bank type");
+                return;
+            }
+            this.romData = new Uint8Array(saveState.romData.length);
+            CopyUtils.copy(saveState.romData,this.romData);
+            CopyUtils.copy(saveState.ramData,this.ramData);
+            return this;
         }
 
         return controller;

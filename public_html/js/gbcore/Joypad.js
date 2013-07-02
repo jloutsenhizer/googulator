@@ -1,4 +1,4 @@
-define(function(){
+define(["CopyUtils"], function(CopyUtils){
 
     var Joypad = {};
 
@@ -16,6 +16,22 @@ define(function(){
 
     var cpu;
     var memoryController;
+
+    Joypad.getSaveState = function(){
+        return {
+            keyDown: CopyUtils.makeUntypedArrayCopy(keyDown),
+            curPlayer: curPlayer,
+            mode: mode,
+            maxPlayers: maxPlayers
+        }
+    }
+
+    Joypad.setSaveState = function(saveState){
+        CopyUtils.copy(saveState.keyDown,keyDown);
+        curPlayer = saveState.curPlayer;
+        mode = saveState.mode;
+        maxPlayers = saveState.maxPlayers;
+    }
 
     Joypad.setCPU = function(c){
         cpu = c;

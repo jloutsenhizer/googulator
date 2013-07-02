@@ -317,6 +317,14 @@ define(["gbcore/audio/audio"], function(Audio){
         audio.mute();
     }
 
+    APUEmulator.getSaveState = function(){
+        return audio.getSaveState();
+    }
+
+    APUEmulator.setSaveState = function(saveState){
+        audio.setSaveState(saveState);
+    }
+
 
 
     return APUEmulator;

@@ -17,6 +17,33 @@ define(function () {
         this.polyform = 0;
     };
 
+    NoiseChannel.prototype.getSaveState = function(){
+        return {
+            length: this.length,
+            enabled: this.enabled,
+            envelopeRegister: this.envelopeRegister,
+            envelopeCounter: this.envelopeCounter,
+            envelopeDirection: this.envelopeDirection,
+            envelopePeriod: this.envelopePeriod,
+            initialVolume: this.initialVolume,
+            overflow: this.overflow,
+            polyform: this.polyform
+        }
+    };
+
+    NoiseChannel.prototype.setSaveState = function(saveState){
+        this.length = saveState.length;
+        this.enabled = saveState.enabled;
+        this.envelopeRegister = saveState.envelopeRegister;
+        this.envelopeCounter = saveState.envelopeCounter;
+        this.envelopeTick = saveState.envelopeTick;
+        this.envelopeDirection = saveState.envelopeDirection;
+        this.envelopePeriod = saveState.envelopePeriod;
+        this.initalVolume = saveState.initalVolume;
+        this.overflow = saveState.overflow;
+        this.polyform = saveState.polyform;
+    }
+
     NoiseChannel.prototype.clock = function (ticks) {
         if (!this.enabled) { return ; }
 

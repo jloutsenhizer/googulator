@@ -1,8 +1,9 @@
 define([
     "gbcore/audio/square",
     "gbcore/audio/waveform",
-    "gbcore/audio/noise"
-], function (SquareChannel, WaveformChannel, NoiseChannel) {
+    "gbcore/audio/noise",
+    "CopyUtils"
+], function (SquareChannel, WaveformChannel, NoiseChannel, CopyUtils) {
     var BUFFER_LENGTH = 2048,               // ~91ms buffer
        LONG_BUFFER   = BUFFER_LENGTH * 2,  // Render to a much larger buffer
     CLOCK_RATE    = 8388608;
@@ -14,7 +15,6 @@ define([
         this.waveform = new WaveformChannel();
         this.noise = new NoiseChannel();
         this.connected = false;
-        this.chunksToOuput = [];
 
         this.node = this.context.createJavaScriptNode(BUFFER_LENGTH);
         this.gainNode = this.context.createGainNode();
@@ -33,6 +33,30 @@ define([
         // Playback buffering
         this.activeSample = 0;      // Next sample written
         this.sampleTime = 0;        // Bresenham sample counter
+    }
+
+    Sound.prototype.getSaveState = function(){
+        return {
+            square1: this.square1.getSaveState(),
+            square2: this.square2.getSaveState(),
+            waveform: this.waveform.getSaveState(),
+            noise: this.noise.getSaveState(),
+            leftBuffer: CopyUtils.makeUntypedArrayCopy(this.leftBuffer),
+            rightBuffer: CopyUtils.makeUntypedArrayCopy(this.rightBuffer),
+            activeSample: this.activeSample,
+            sampleTime: this.sampleTime
+        };
+    }
+
+    Sound.prototype.setSaveState = function(saveState){
+        this.square1.setSaveState(saveState.square1);
+        this.square2.setSaveState(saveState.square2);
+        this.waveform.setSaveState(saveState.waveform);
+        this.noise.setSaveState(saveState.noise);
+        CopyUtils.copy(saveState.leftBuffer,this.leftBuffer);
+        CopyUtils.copy(saveState.rightBuffer,this.rightBuffer);
+        this.activeSample = saveState.activeSample;
+        this.sampleTime = saveState.sampleTime;
     }
 
     Sound.prototype.setMemoryController = function(memoryController){

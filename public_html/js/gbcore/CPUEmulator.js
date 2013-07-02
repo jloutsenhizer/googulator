@@ -23,9 +23,42 @@ define (function(){
     var gbcEnabled;
     INT_VBLANK = 0, INT_LCDSTAT = 1, INT_TIMER = 2, INT_SERIAL = 3, INT_JPAD = 4;
 
-    var paused = 0;
-    var terminate = 0;
-    var running = 0;
+    CPUEmulator.getSaveState = function(){
+        return {
+            AF: AF,
+            BC: BC,
+            DE: DE,
+            HL: HL,
+            SP: SP,
+            PC: PC,
+            suspended: suspended,
+            IME: IME,
+            divCounter: divCounter,
+            timerCounter: timerCounter,
+            timerEnabled: timerEnabled,
+            timerSpeed: timerSpeed,
+            doubleSpeedMode: doubleSpeedMode,
+            enteringDoubleSpeedMode: enteringDoubleSpeedMode,
+            gbcEnabled: gbcEnabled
+        }
+    }
+
+    CPUEmulator.setSaveState = function(saveState){
+        AF = saveState.AF;
+        BC = saveState.BC;
+        DE = saveState.DE;
+        HL = saveState.HL;
+        SP = saveState.SP;
+        PC = saveState.PC;
+        suspended = saveState.suspended;
+        IME = saveState.IME;
+        divCounter = saveState.divCounter;
+        timerCounter = saveState.timerCounter;
+        timerSpeed = saveState.timerSpeed;
+        doubleSpeedMode = saveState.doubleSpeedMode;
+        enteringDoubleSpeedMode = saveState.enteringDoubleSpeedMode;
+        gbcEnabled = saveState.gbcEnabled;
+    }
 
     var timerSpeeds = [1024, 16, 64, 256];
 

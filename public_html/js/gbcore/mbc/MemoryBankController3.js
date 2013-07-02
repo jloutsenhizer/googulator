@@ -1,4 +1,4 @@
-define(function(){
+define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
     var MemoryBankController3 = {};
 
     MemoryBankController3.loadROM = function(romData){
@@ -168,6 +168,37 @@ define(function(){
             }
 
             return newRAM;
+        }
+
+        controller.getSaveState = function(){
+            return {
+                type: GameUtils.MBC_3,
+                romData: CopyUtils.makeUntypedArrayCopy(this.ROMData),
+                ramData: CopyUtils.makeUntypedArrayCopy(this.RAMData),
+                romBanks: this.ROMBanks,
+                currentSecondaryBank: this.currentSecondaryBank,
+                currentRAMBank: this.currentRAMBank,
+                RAMEEnabled: this.RAMEnabled,
+                RTC: CopyUtils.makeUntypedArrayCopy(this.RTC),
+                lastRTCUpdate: this.lastRTCUpdate
+            };
+        }
+
+        controller.setSaveState = function(saveState){
+            if (saveState.type != GameUtils.MBC_3){
+                console.error("Attempted to load wrong bank type");
+                return;
+            }
+            this.ROMData = new Uint8Array(saveState.romData.length);
+            CopyUtils.copy(saveState.romData,this.ROMData);
+            CopyUtils.copy(saveState.ramData,this.RAMData);
+            CopyUtils.copy(saveState.RTC,this.RTC);
+            this.ROMBanks = saveState.romBanks;
+            this.currentSecondaryBank = saveState.currentSecondaryBank;
+            this.currentRAMBank = saveState.currentRAMBank;
+            this.RAMEnabled = saveState.RAMEEnabled;
+            this.lastRTCUpdate = saveState.lastRTCUpdate;
+            return this;
         }
 
         return controller;

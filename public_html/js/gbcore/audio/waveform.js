@@ -1,4 +1,4 @@
-define(function () {
+define(["CopyUtils"], function (CopyUtils) {
     function WaveformChannel() {
         this.waveform = new Uint8Array(0x10);
     }
@@ -19,6 +19,37 @@ define(function () {
 
         this.volume = 0;
     };
+
+    WaveformChannel.prototype.getSaveState = function(){
+        return {
+            waveform: CopyUtils.makeUntypedArrayCopy(this.waveform),
+            enabled: this.enabled,
+            channelEnable: this.channelEnable,
+            frequency: this.frequency,
+            overflow: this.overflow,
+            lengthEnable: this.lengthEnable,
+            lengthCounter: this.lengthCounter,
+            length: this.length,
+            frequencyCounter: this.frequencyCounter,
+            sample: this.sample,
+            volume: this.volume
+        };
+    }
+
+    WaveformChannel.prototype.setSaveState = function(saveState){
+        CopyUtils.copy(saveState.waveform,this.waveform);
+        this.enabled = saveState.enabled;
+        this.channelEnable = saveState.channelEnable;
+        this.frequency = saveState.frequency;
+        this.overflow = saveState.overflow;
+        this.lengthEnable = saveState.lengthEnable;
+        this.lengthCounter = saveState.lengthCounter;
+        this.length = saveState.length;
+        this.frequencyCounter = saveState.frequencyCounter;
+        this.sample = saveState.sample;
+        this.volume = saveState.volume;
+
+    }
 
     WaveformChannel.prototype.clock = function (ticks) {
         if (!this.enabled || !this.channelEnable) { return ; }

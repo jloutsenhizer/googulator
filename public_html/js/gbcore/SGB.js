@@ -59,6 +59,38 @@ define(function(){
     var paletteData = new Uint8Array(0x1000);
     var attributeData = new Uint8Array(0xFD2);
 
+    SGB.getSaveState = function(){
+        var pal = new Array(paletteData.length);
+        var attr = new Array(attributeData.length);
+        var cmd = new Array(commandData.length);
+        for (var i = 0, li = pal.length; i < li; i++)
+            pal[i] = paletteData[i];
+        for (var i = 0, li = attr.length; i < li; i++)
+            attr[i] = attributeData[i];
+        for (var i = 0, li = cmd.length; i < li; i++)
+            cmd[i] = commandData[i];
+        return {
+            pal: pal,
+            attr: attr,
+            cmd: cmd,
+            enabled: sgbEnabled,
+            bitsToGo: bitsToGo,
+            bitsRead: bitsRead
+        };
+    }
+
+    SGB.setSaveState = function(saveState){
+        for (var i = 0, li = saveState.pal.length; i < li; i++)
+            paletteData[i] = saveState.pal[i];
+        for (var i = 0, li = saveState.attr.length; i < li; i++)
+            attributeData[i] = saveState.attr[i];
+        for (var i = 0, li = saveState.cmd.length; i < li; i++)
+            commandData[i] = saveState.cmd[i];
+        sgbEnabled = saveState.sgbEnabled;
+        bitsToGo = saveState.bitsToGo;
+        bitsRead = saveState.bitsRead;
+    }
+
     function doVRAMTransfer(destination){
         var destinationSize = destination.length;
         var destinationPos = 0;
