@@ -57,7 +57,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
 
     function refreshGameLibrary(){
         overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
-        $("#library").empty();
+        $("#libraryList").empty();
         GameLibrary.refreshLibrary(function (data){
             library = data;
             onLibraryLoaded();
@@ -65,8 +65,8 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     }
 
     function onLibraryLoaded(){
-        $("#library").empty();
-        App.loadMustacheTemplate("modules/library/template.html","gameCard",function(template){
+        $("#libraryList").empty();
+        App.loadMustacheTemplate("modules/library/template.html","libraryItem",function(template){
             library.sort(function(a,b){
                 if (a.title.toUpperCase() < b.title.toUpperCase())
                     return -1;
@@ -75,19 +75,51 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                 return 0;
             });
             for (var i = 0; i < library.length; i++){
-                var html = template.render(library[i]);
+                var html = template.render($.extend({selected:isSelectedGame(library[i]), iconClass: GameUtils.getGameIconClass(library[i].id)},library[i]));
                 var item = $(html);
-                $("#library").append(item);
+                $("#libraryList").append(item);
                 item.click({game:library[i]}, function(event){
-                    loadGame(event.data.game);
-                    return false;
+                    var item = $(event.delegateTarget);
+                    if (item.hasClass("selected"))
+                        return;
+                    $("#libraryList .selected").removeClass("selected");
+                    item.addClass("selected");
+                    selectGame(event.data.game);
+                    event.preventDefault();
                 });
+                item.dblclick({game:library[i]}, function(event){
+                    loadGame(event.data.game);
+                    event.preventDefault();
+                })
             }
             if (overlay != null)
                 overlay.remove();
             overlay = null;
         });
 
+    }
+
+    var selectedGame = null;
+
+    function isSelectedGame(game){
+        if (game.equals(selectedGame)){
+            selectGame(game);
+            return true;
+        }
+        return false;
+    }
+
+    function selectGame(game){
+        selectedGame = game;
+        $("#GameDisplayArea").empty();
+        App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){
+            var display = $(template.render(game));
+            $("#GameDisplayArea").append(display);
+            display.find("#play").click(function(event){
+                event.preventDefault();
+                loadGame(game);
+            });
+        });
     }
 
     function progressUpdate(percent){
@@ -249,15 +281,15 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
             callback();
     }
 
-    function addFromDrive(){
+    function addFromDrive(event){
         GoogleAPIs.showFilePicker(function(result){
             if (result != null && result.docs.length > 0)
                 addFiles(result.docs);
         });
-        return false;
+        event.preventDefault();
     }
 
-    function addFromFree(){
+    function addFromFree(event){
         FreeGamePicker.show(function(gameChosen){
             if (gameChosen != null){
                 overlay = App.createMessageOverlay(container,"Downloading " + gameChosen.title + " To Your Drive...");
@@ -275,7 +307,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                 })
             }
         });
-        return false;
+        event.preventDefault();
     }
 
 

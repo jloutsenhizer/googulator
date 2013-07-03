@@ -1,20 +1,27 @@
-<template id="gameCard">
-    <a class="libraryGameLink" href="#">
-        <div class="libraryGameCard">
-            <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
-            {{title}}
-        </div>
-    </a>
+<template id="gameDisplay">
+        <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
+        <h1>{{title}}</h1>
+        <div class="btn-group"><button id="play" class="btn">Play Game</button></div>
 </template>
 <template id="mainDisplay">
-    <div id='library'></div>
-    <div class="alert alert-success libraryBottom" style="
-    margin-left: 1em;
-    margin-right: 1em;
-">
-        <strong>Want More Games?</strong>
-        <a id="addFromDrive" href="#">Add some of your own</a> or <a id="addFromFree" href="#">Add some from our free library</a>
+    <div id="libraryListContainer">
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown"href="#">
+                Add Games
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a id="addFromDrive" href="#">From Google Drive</a></li>
+                <li><a id="addFromFree" href="#">From Free Library</a></li>
+            </ul>
+        </div>
+        <ul id="libraryList">
+        </ul>
     </div>
+    <div id="GameDisplayArea"></div>
+</template>
+<template id="libraryItem">
+    <li {{#selected}}class="selected"{{/selected}} gameindex="{{index}}"><i class="gameicon-{{iconClass}}"></i> {{title}}</li>
 </template>
 <template id="saveNotFound">
     <div class="modal fade" id="chooseRAMDialog">

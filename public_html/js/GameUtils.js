@@ -242,6 +242,21 @@ define(function(){
         return gameData;
     }
 
+    GameUtils.getGameIconClass = function(gameId){
+        switch (gameId.split("_")[0]){
+            case "NES":
+                return "nes";
+            case "GB":
+            case "SGB":
+                return "gb";
+            case "GBC":
+            case "SGBC":
+                return "gbc";
+            default:
+                return "unknown";
+        }
+    }
+
     GameUtils.MBC_UNKNOWN = -1;
     GameUtils.MBC_N = 0;
     GameUtils.MBC_1 = 1;

@@ -171,3 +171,103 @@ html, body, .mainContainer{
 #nesLCD{
     height:100%;
 }
+
+#libraryListContainer{
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:300px;
+    border-right: 1px solid black;
+}
+#GameDisplayArea{
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:300px;
+    border-left: 1px solid black;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-align: center;
+}
+
+#GameDisplayArea img{
+    max-width: 100%;
+    max-height: 50%;
+}
+
+#libraryListContainer .btn-group{
+    width: 100%;
+}
+
+#libraryListContainer .btn-group .btn{
+    width:100%;
+    padding-left:0;
+    padding-right:0;
+    border-left:none;
+    border-right:none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    height:20px;
+}
+
+#libraryListContainer .btn-group .dropdown-menu{
+    width: 100%;
+    text-align:center;
+}
+
+#libraryList{
+    background:white;
+    position:absolute;
+    top: 30px;
+    left:0;
+    right:0;
+    bottom:0;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    margin:0;
+    user-select:none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+#libraryList li{
+    width: 100%;
+    padding-left: 5px;
+}
+
+#libraryList li:hover{
+    cursor: pointer;
+}
+
+#libraryList li.selected, #libraryList li:hover{
+    background-color: #0081c2;
+    background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+    background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+    color: white;
+}
+
+#libraryList li i{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-size: 100% 100%;
+}
+
+#libraryList li i.gameicon-nes{
+    background-image: url("../img/icons/systems/nes.png");
+}
+#libraryList li i.gameicon-gb{
+    background-image: url("../img/icons/systems/gb.png");
+}
+#libraryList li i.gameicon-gbc{
+    background-image: url("../img/icons/systems/gbc.png");
+}

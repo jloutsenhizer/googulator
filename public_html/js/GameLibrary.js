@@ -126,6 +126,10 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                             progresscallback(loaded/total*100);
                         });
                     }
+
+                    library[i].equals = function(game){
+                        return game != null && game.id == this.id && game.saveFileId == this.saveFileId && this.fileId == game.fileId && this.patchFileId == game.patchFileId;
+                    }
                 }
 
                 that.getLibrary(callback);
