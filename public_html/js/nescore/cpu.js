@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-define([],function(){
+define(["CopyUtils"],function(CopyUtils){
     var CPU = function(nes) {
         this.nes = nes;
 
@@ -49,6 +49,60 @@ define([],function(){
     };
 
     CPU.prototype = {
+        getSaveState: function(){
+            return {
+                mem: CopyUtils.makeUntypedArrayCopy(this.mem),
+                REG_ACC: this.REG_ACC,
+                REG_X: this.REG_X,
+                REG_Y: this.REG_Y,
+                REG_SP: this.REG_SP,
+                REG_PC: this.REG_PC,
+                REG_PC_NEW: this.REG_PC_NEW,
+                REG_STATUS: this.REG_STATUS,
+                F_CARRY: this.F_CARRY,
+                F_DECIMAL: this.F_DECIMAL,
+                F_INTERRUPT: this.F_INTERRUPT,
+                F_INTERRUPT_NEW: this.F_INTERRUPT_NEW,
+                F_OVERFLOW: this.F_OVERFLOW,
+                F_SIGN: this.F_SIGN,
+                F_ZERO: this.F_ZERO,
+                F_NOTUSED: this.F_NOTUSED,
+                F_NOTUSED_NEW: this.F_NOTUSED_NEW,
+                F_BRK: this.F_BRK,
+                F_BRK_NEW: this.F_BRK_NEW,
+                cyclesToHalt: this.cyclesToHalt,
+                crash: this.crash,
+                irqRequested: this.irqRequested,
+                irqType: this.irqType
+            }
+        },
+
+        setSaveState: function(saveState){
+            CopyUtils.copy(saveState.mem,this.mem);
+            this.REG_ACC = saveState.REG_ACC;
+            this.REG_X = saveState.REG_X;
+            this.REG_Y = saveState.REG_Y;
+            this.REG_SP = saveState.REG_SP;
+            this.REG_PC = saveState.REG_PC;
+            this.REG_PC_NEW = saveState.REG_PC_NEW;
+            this.REG_STATUS = saveState.REG_STATUS;
+            this.F_CARRY = saveState.F_CARRY;
+            this.F_DECIMAL = saveState.F_DECIMAL;
+            this.F_INTERRUPT = saveState.F_INTERRUPT;
+            this.F_INTERRUPT_NEW = saveState.F_INTERRUPT_NEW;
+            this.F_OVERFLOW = saveState.F_OVERFLOW;
+            this.F_SIGN = saveState.F_SIGN;
+            this.F_ZERO = saveState.F_ZERO;
+            this.F_NOTUSED = saveState.F_NOTUSED;
+            this.F_NOTUSED_NEW = saveState.F_NOTUSED_NEW;
+            this.F_BRK = saveState.F_BRK;
+            this.F_BRK_NEW = saveState.F_BRK_NEW;
+            this.cyclesToHalt = saveState.cyclesToHalt;
+            this.crash = saveState.crash;
+            this.irqRequested = saveState.irqRequested;
+            this.irqType = saveState.irqType;
+        },
+
         // IRQ Types
         IRQ_NORMAL: 0,
         IRQ_NMI: 1,

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-define(["nescore/utils"],function(Utils){
+define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
     var PPU = function(nes) {
         this.nes = nes;
 
@@ -64,7 +64,6 @@ define(["nescore/utils"],function(Utils){
         this.bgbuffer = null;
         this.pixrendered = null;
 
-        this.validTileData = null;
         this.scantile = null;
         this.scanline = null;
         this.lastRenderedScanline = null;
@@ -83,7 +82,6 @@ define(["nescore/utils"],function(Utils){
         this.imgPalette = null;
         this.ptTile = null;
         this.ntable1 = null;
-        this.currentMirroring = null;
         this.nameTable = null;
         this.vramMirrorTable = null;
         this.palTable = null;
@@ -97,6 +95,158 @@ define(["nescore/utils"],function(Utils){
     };
 
     PPU.prototype = {
+
+        getSaveState: function(){
+            var p = new Array(this.ptTile.length);
+            for (var i = 0, li = p.length; i < li; i++){
+                p[i] = this.ptTile[i].getSaveState();
+            }
+
+            var nt = new Array(this.nameTable.length);
+            for (var i = 0, li = nt.length; i < li; i++){
+                nt[i] = this.nameTable[i].getSaveState();
+            }
+
+            return {
+                vramMem: CopyUtils.makeUntypedArrayCopy(this.vramMem),
+                spriteMem: CopyUtils.makeUntypedArrayCopy(this.spriteMem),
+                vramAddress: this.vramAddress,
+                vramTmpAddress: this.vramTmpAddress,
+                firstWrite: this.firstWrite,
+                sramAddress: this.sramAddress,
+                currentMirroring: this.currentMirroring,
+                requestEndFrame: this.requestEndFrame,
+                nmiOk: this.nmiOk,
+                dummyCycleToggle: this.dummyCycleToggle,
+                validTileData: this.validTileData,
+                nmiCounter: this.nmiCounter,
+                scanlineAlreadyRendered: this.scanlineAlreadyRendered,
+                f_nmiOnVblank: this.f_nmiOnVblank,
+                f_spriteSize: this.f_spriteSize,
+                f_bgPatternTable: this.f_bgPatternTable,
+                f_spPatternTable: this.f_spPatternTable,
+                f_addrInc: this.f_addrInc,
+                f_nTblAddress: this.f_nTblAddress,
+                f_color: this.f_color,
+                f_spVisibility: this.f_spVisibility,
+                f_bgVisibility: this.f_bgVisibility,
+                f_spClipping: this.f_spClipping,
+                f_bgClipping: this.f_bgClipping,
+                f_dispType: this.f_dispType,
+                cntFV: this.cntFV,
+                cntV: this.cntV,
+                cntH: this.cntH,
+                cntVT: this.cntVT,
+                cntHT: this.cntHT,
+                regFV: this.regFV,
+                regV: this.regV,
+                regH: this.regH,
+                regVT: this.regVT,
+                regHT: this.regHT,
+                regFH: this.regFH,
+                regS: this.regS,
+                attrib: CopyUtils.makeUntypedArrayCopy(this.attrib),
+                buffer: CopyUtils.makeUntypedArrayCopy(this.buffer),
+                bgbuffer: CopyUtils.makeUntypedArrayCopy(this.bgbuffer),
+                pixrendered: CopyUtils.makeUntypedArrayCopy(this.pixrendered),
+                validTileData: this.validTileData,
+                scantile: this.scantile,
+                scanline: this.scanline,
+                lastRenderedScanline: this.lastRenderedScanline,
+                curX: this.curX,
+                sprX: CopyUtils.makeUntypedArrayCopy(this.sprX),
+                sprY: CopyUtils.makeUntypedArrayCopy(this.sprY),
+                sprTile: CopyUtils.makeUntypedArrayCopy(this.sprTile),
+                sprCol: CopyUtils.makeUntypedArrayCopy(this.sprCol),
+                vertFlip: CopyUtils.makeUntypedArrayCopy(this.vertFlip),
+                horiFlip: CopyUtils.makeUntypedArrayCopy(this.horiFlip),
+                bgPriority: CopyUtils.makeUntypedArrayCopy(this.bgPriority),
+                spr0HitX: this.spr0HitX,
+                spr0HitY: this.spr0HitY,
+                hitSPr0: this.hitSpr0,
+                sprPalette: CopyUtils.makeUntypedArrayCopy(this.sprPalette),
+                imgPalette: CopyUtils.makeUntypedArrayCopy(this.imgPalette),
+                ntable1: CopyUtils.makeUntypedArrayCopy(this.ntable1),
+                vramMirrorTable: CopyUtils.makeUntypedArrayCopy(this.vramMirrorTable),
+
+                ptTile: p,
+                nameTable: nt,
+                palTable: this.palTable.getSaveState()
+            }
+
+        },
+
+        setSaveState: function(saveState){
+            CopyUtils.copy(saveState.vramMem,this.vramMem);
+            CopyUtils.copy(saveState.spriteMem,this.spriteMem);
+            CopyUtils.copy(saveState.attrib,this.attrib);
+            CopyUtils.copy(saveState.buffer,this.buffer);
+            CopyUtils.copy(saveState.bgbuffer,this.bgbuffer);
+            CopyUtils.copy(saveState.pixrendered,this.pixrendered);
+            CopyUtils.copy(saveState.sprX,this.sprX);
+            CopyUtils.copy(saveState.sprY,this.sprY);
+            CopyUtils.copy(saveState.sprTile,this.sprTile);
+            CopyUtils.copy(saveState.sprCol,this.sprCol);
+            CopyUtils.copy(saveState.vertFlip,this.vertFlip);
+            CopyUtils.copy(saveState.horiFlip,this.horiFlip);
+            CopyUtils.copy(saveState.bgPriority,this.bgPriority);
+            CopyUtils.copy(saveState.sprPalette,this.sprPalette);
+            CopyUtils.copy(saveState.imgPalette,this.imgPalette);
+            CopyUtils.copy(saveState.ntable1,this.ntable1);
+            CopyUtils.copy(saveState.vramMirrorTable,this.vramMirrorTable);
+
+            for (var i = 0, li = this.ptTile.length; i < li; i++){
+                this.ptTile[i].setSaveState(saveState.ptTile[i]);
+            }
+            for (var i = 0, li = this.nameTable.length; i < li; i++){
+                this.nameTable[i].setSaveState(saveState.nameTable[i]);
+            }
+
+            this.palTable.setSaveState(saveState.palTable);
+
+            this.vramAddress = saveState.vramAddress;
+            this.vramTmpAddress = saveState.vramTmpAddress;
+            this.firstWrite = saveState.firstWrite;
+            this.sramAddress = saveState.sramAddress;
+            this.currentMirroring = saveState.currentMirroring;
+            this.requestEndFrame = saveState.requestEndFrame;
+            this.nmiOk = saveState.nmiOk;
+            this.dummyCycleToggle = saveState.dummyCycleToggle;
+            this.validTileData = saveState.validTileData;
+            this.nmiCounter = saveState.nmiCounter;
+            this.scanlineAlreadyRendered = saveState.scanlineAlreadyRendered;
+            this.f_nmiOnVblank = saveState.f_nmiOnVblank;
+            this.f_spriteSize = saveState.f_spriteSize;
+            this.f_bgPatternTable = saveState.f_bgPatternTable;
+            this.f_spPatternTable = saveState.f_spPatternTable;
+            this.f_addrInc = saveState.f_addrInc;
+            this.f_nTblAddress = saveState.f_nTblAddress;
+            this.f_color = saveState.f_color;
+            this.f_spVisibility = saveState.f_spVisibility;
+            this.f_bgVisibility = saveState.f_bgVisibility;
+            this.f_dispType = saveState.f_dispType;
+            this.cntFV = saveState.cntFV;
+            this.cntV = saveState.cntV;
+            this.cntH = saveState.cntH;
+            this.cntVT = saveState.cntVT;
+            this.cntHT = saveState.cntHT;
+            this.regFV = saveState.regFV;
+            this.regV = saveState.regV;
+            this.regH = saveState.regH;
+            this.regVT = saveState.regVT;
+            this.regHT = saveState.regHT;
+            this.regFH = saveState.regFH;
+            this.regS = saveState.regS;
+            this.validTileData = saveState.validTileData;
+            this.scantile = saveState.scantile;
+            this.scanline = saveState.scanline;
+            this.lastRenderedScanline = saveState.lastRenderedScanline;
+            this.curX = saveState.curX;
+            this.spr0HitX = saveState.spr0HitX;
+            this.spr0HitY = saveState.spr0HitY;
+            this.hitSPr0 = saveState.hitSpr0;
+        },
+
         // Status flags:
         STATUS_VRAMWRITE: 4,
         STATUS_SLSPRITECOUNT: 5,
@@ -1503,6 +1653,24 @@ define(["nescore/utils"],function(Utils){
     };
 
     PPU.NameTable.prototype = {
+        getSaveState: function(){
+            return {
+                width: this.width,
+                height: this.height,
+                name: this.name,
+                tile: CopyUtils.makeUntypedArrayCopy(this.tile),
+                attrib: CopyUtils.makeUntypedArrayCopy(this.attrib)
+            }
+        },
+
+        setSaveState: function(saveState){
+            this.width = saveState.width;
+            this.height = saveState.height;
+            this.name = saveState.name;
+            CopyUtils.copy(saveState.tile, this.tile);
+            CopyUtils.copy(saveState.attrib, this.attrib);
+        },
+
         getTileIndex: function(x, y){
             return this.tile[y*this.width+x];
         },
@@ -1554,6 +1722,21 @@ define(["nescore/utils"],function(Utils){
     };
 
     PPU.PaletteTable.prototype = {
+        getSaveState: function(){
+            return {
+                curTable: CopyUtils.makeUntypedArrayCopy(this.curTable),
+                emphTable: CopyUtils.makeUntypedArrayCopy(this.emphTable),
+                currentEmph: this.currentEmph
+            }
+
+        },
+
+        setSaveState: function(saveState){
+            CopyUtils.copy(saveState.curTable,this.curTable);
+            CopyUtils.copy(saveState.emphTable,this.emphTable);
+            this.currentEmph = saveState.currentEmph;
+        },
+
         reset: function() {
             this.setEmphasis(0);
         },
@@ -1727,6 +1910,42 @@ define(["nescore/utils"],function(Utils){
     };
 
     PPU.Tile.prototype = {
+        getSaveState: function(){
+            return {
+                pix: CopyUtils.makeUntypedArrayCopy(this.pix),
+                fbIndex: this.fbIndex,
+                tIndex: this.tIndex,
+                x: this.x,
+                y: this.y,
+                w: this.w,
+                h: this.h,
+                incX: this.incX,
+                incY: this.incY,
+                palIndex: this.palIndex,
+                tpri: this.tpri,
+                c: this.c,
+                initialized: this.initialized,
+                opaque: CopyUtils.makeUntypedArrayCopy(this.opaque)
+            }
+        },
+
+        setSaveState: function(saveState){
+            CopyUtils.copy(saveState.pix,this.pix);
+            CopyUtils.copy(saveState.opaque,this.opaque);
+            this.fbIndex = saveState.fbIndex;
+            this.tIndex = saveState.tIndex;
+            this.x = saveState.x;
+            this.y = saveState.y;
+            this.w = saveState.w;
+            this.h = saveState.h;
+            this.incX = saveState.incX;
+            this.incY = saveState.incY;
+            this.palIndex = saveState.palIndex;
+            this.tpri = saveState.tpri;
+            this.c = saveState.c;
+            this.initialized = saveState.initialized;
+        },
+
         setBuffer: function(scanline){
             for (this.y=0;this.y<8;this.y++) {
                 this.setScanline(this.y,scanline[this.y],scanline[this.y+8]);

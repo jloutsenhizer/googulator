@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-define([],function(){
+define(["CopyUtils"],function(CopyUtils){
     var PAPU = function(nes) {
         this.nes = nes;
 
@@ -123,6 +123,136 @@ define([],function(){
     };
 
     PAPU.prototype = {
+        getSaveState: function(){
+            return{
+                square1: this.square1.getSaveState(),
+                square2: this.square2.getSaveState(),
+                triangle: this.triangle.getSaveState(),
+                noise: this.noise.getSaveState(),
+                dmc: this.dmc.getSaveState(),
+                frameIrqCounter: this.frameIrqCounter,
+                frameIrqCounterMax: this.frameIrqCounterMax,
+                initCounter: this.initCounter,
+                channelEnableValue: this.channelEnableValue,
+                bufferSize: this.bufferSize,
+                bufferIndex: this.bufferIndex,
+                lengthLookup: this.lengthLookup,
+                dmcFreqLookup: this.dmcFreqLookup,
+                noiseWavelengthLookup: this.noiseWavelengthLookup,
+                square_table: CopyUtils.makeUntypedArrayCopy(this.square_table),
+                tnd_table: CopyUtils.makeUntypedArrayCopy(this.tnd_table),
+                sampleBuffer: CopyUtils.makeUntypedArrayCopy(this.sampleBuffer),
+                frameIrqEnabled: this.frameIrqEnabled,
+                frameIrqActive: this.frameIrqActive,
+                frameClockNow: this.frameClockNow,
+                startedPlaying: this.startedPlaying,
+                recordOutput: this.recordOutput,
+                initingHardware: this.initingHardware,
+                masterFrameCounter: this.masterFrameCounter,
+                derivedFrameCounter: this.derivedFrameCounter,
+                countSequence: this.countSequence,
+                sampleTimer: this.sampleTimer,
+                frameTime: this.frameTime,
+                sampleTimerMax: this.sampleTimerMax,
+                sampleCount: this.sampleCount,
+                triValue: this.triValue,
+                smpSquare1: this.smpSquare1,
+                smpSquare2: this.smpSquare2,
+                smpTriangle: this.smpTriangle,
+                smpDmc: this.smpDmc,
+                accCount: this.accCount,
+                prevSampleL: this.prevSampleL,
+                prevSampleR: this.prevSampleR,
+                smpAccumL: this.smpAccumL,
+                smpAccumR: this.smpAccumR,
+                dacRange: this.dacRange,
+                dcValue: this.dcValue,
+                masterVolume: this.masterVolume,
+                stereoPosLSquare1: this.stereoPosLSquare1,
+                stereoPosLSquare2: this.stereoPosLSquare2,
+                stereoPosLTriangle: this.stereoPosLTriangle,
+                stereoPosLNoise: this.stereoPosLNoise,
+                stereoPosLDMC: this.stereoPosLDMC,
+                stereoPosRSquare1: this.stereoPosRSquare1,
+                stereoPosRSquare2: this.stereoPosRSquare2,
+                stereoPosRTriangle: this.stereoPosRTriangle,
+                stereoPosRNoise: this.stereoPosRNoise,
+                stereoPosRDMC: this.stereoPosRDMC,
+
+                extraCycles: this.extraCycles,
+
+                maxSample: this.maxSample,
+                minSample: this.minSample,
+
+                panning: CopyUtils.makeUntypedArrayCopy(this.panning)
+            };
+        },
+
+        setSaveState: function(saveState){
+            this.square1.setSaveState(saveState.square1);
+            this.square2.setSaveState(saveState.square2);
+            this.triangle.setSaveState(saveState.triangle);
+            this.noise.setSaveState(saveState.noise);
+            this.dmc.setSaveState(saveState.dmc);
+
+            CopyUtils.copy(saveState.panning,this.panning);
+            CopyUtils.copy(saveState.square_table,this.square_table);
+            CopyUtils.copy(saveState.tnd_table, this.tnd_table);
+            CopyUtils.copy(saveState.sampleBuffer, this.sampleBuffer);
+
+
+            this.frameIrqCounter = saveState.frameIrqCounter;
+            this.frameIrqCounterMax = saveState.frameIrqCounterMax;
+            this.initCounter = saveState.initCounter;
+            this.channelEnableValue = saveState.channelEnableValue;
+            this.bufferSize = saveState.bufferSize;
+            this.bufferIndex = saveState.bufferIndex;
+            this.lengthLookup = saveState.lengthLookup;
+            this.dmcFreqLookup = saveState.dmcFreqLookup;
+            this.noiseWavelengthLookup = saveState.noiseWavelengthLookup;
+            this.frameIrqEnabled = saveState.frameIrqEnabled;
+            this.frameIrqActive = saveState.frameIrqActive;
+            this.frameClockNow = saveState.frameClockNow;
+            this.startedPlaying = saveState.startedPlaying;
+            this.recordOutput = saveState.recordOutput;
+            this.initingHardware = saveState.initingHardware;
+            this.masterFrameCounter = saveState.masterFrameCounter;
+            this.derivedFrameCounter = saveState.derivedFrameCounter;
+            this.countSequence = saveState.countSequence;
+            this.sampleTimer = saveState.sampleTimer;
+            this.frameTime = saveState.frameTime;
+            this.sampleTimerMax = saveState.sampleTimerMax;
+            this.sampleCount = saveState.sampleCount;
+            this.triValue = saveState.triValue;
+            this.smpSquare1 = saveState.smpSquare1;
+            this.smpSquare2 = saveState.smpSquare2;
+            this.smpTriangle = saveState.smpTriangle;
+            this.smpDmc = saveState.smpDmc;
+            this.accCount = saveState.accCount;
+            this.prevSampleL = saveState.prevSampleL;
+            this.prevSampleR = saveState.prevSampleR;
+            this.smpAccumL = saveState.smpAccumL;
+            this.smpAccumR = saveState.smpAccumR;
+            this.dacRange = saveState.dacRange;
+            this.dcValue = saveState.dcValue;
+            this.masterVolume = saveState.masterVolume;
+            this.stereoPosLSquare1 = saveState.stereoPosLSquare1;
+            this.stereoPosLSquare2 = saveState.stereoPosLSquare2;
+            this.stereoPosLTriangle = saveState.stereoPosLTriangle;
+            this.stereoPosLNoise = saveState.stereoPosLNoise;
+            this.stereoPosLDMC = saveState.stereoPosLDMC;
+            this.stereoPosRSquare1 = saveState.stereoPosRSquare1;
+            this.stereoPosRSquare2 = saveState.stereoPosRSquare2;
+            this.stereoPosRTriangle = saveState.stereoPosRTriangle;
+            this.stereoPosRNoise = saveState.stereoPosRNoise;
+            this.stereoPosRDMC = saveState.stereoPosRDMC;
+
+            this.extraCycles = saveState.extraCycles;
+
+            this.maxSample = saveState.maxSample;
+            this.minSample = saveState.minSample;
+        },
+
         reset: function() {
             this.sampleRate = this.nes.opts.sampleRate;
             this.sampleTimerMax = Math.floor(
@@ -866,6 +996,52 @@ define([],function(){
     };
 
     PAPU.ChannelDM.prototype = {
+        getSaveState: function(){
+            return {
+                isEnabled: this.isEnabled,
+                hasSample: this.hasSample,
+                irqGenerated: this.irqGenerated,
+
+                playMode: this.playMode,
+                dmaFrequency: this.dmaFrequency,
+                dmaCounter: this.dmaCounter,
+                deltaCounter: this.deltaCounter,
+                playStartAddress: this.playStartAddress,
+                playAddress: this.playAddress,
+                playLength: this.playLength,
+                playLengthCounter: this.playLengthCounter,
+                shiftCounter: this.shiftCounter,
+                reg4012: this.reg4012,
+                reg4013: this.reg4013,
+                sample: this.sample,
+                dacLsb: this.dacLsb,
+                data: this.data
+            }
+        },
+
+        setSaveState: function(saveState){
+
+            this.isEnabled = saveState.isEnabled;
+            this.hasSample = saveState.hasSample;
+            this.irqGenerated = saveState.irqGenerated;
+
+            this.playMode = saveState.playMode;
+            this.dmaFrequency = saveState.dmaFrequency;
+            this.dmaCounter = saveState.dmaCounter;
+            this.deltaCounter = saveState.deltaCounter;
+            this.playStartAddress = saveState.playStartAddress;
+            this.playAddress = saveState.playAddress;
+            this.playLength = saveState.playLength;
+            this.playLengthCounter = saveState.playLengthCounter;
+            this.shiftCounter = saveState.shiftCounter;
+            this.reg4012 = saveState.reg4012;
+            this.reg4013 = saveState.reg4013;
+            this.sample = saveState.sample;
+            this.dacLsb = saveState.dacLsb;
+            this.data = saveState.data;
+
+        },
+
         clockDmc: function() {
 
             // Only alter DAC value if the sample buffer has data:
@@ -1079,6 +1255,57 @@ define([],function(){
     };
 
     PAPU.ChannelNoise.prototype = {
+        getSaveState: function(){
+            return {
+                isEnabled: this.isEnabled,
+                envDecayDisable: this.envDecayDisable,
+                envDecayLoopEnable: this.envDecayLoopEnable,
+                lengthCounterEnable: this.lengthCounterEnable,
+                envReset: this.envReset,
+                shiftNow: this.shiftNow,
+
+                lengthCounter: this.lengthCounter,
+                progTimerCount: this.progTimerCount,
+                progTimerMax: this.progTimerMax,
+                envDecayRate: this.envDecayRate,
+                envDecayCounter: this.envDecayCounter,
+                envVolume: this.envVolume,
+                masterVolume: this.masterVolume,
+                shiftReg: this.shiftReg,
+                randomBit: this.randomBit,
+                randomMode: this.randomMode,
+                sampleValue: this.sampleValue,
+                accValue: this.accValue,
+                accCount: this.accCount,
+                tmp: this.tmp
+            }
+
+        },
+
+        setSaveState: function(saveState){
+            this.isEnabled = saveState.isEnabled;
+            this.envDecayDisable = saveState.envDecayDisable;
+            this.envDecayLoopEnable = saveState.envDecayLoopEnable;
+            this.lengthCounterEnable = saveState.lengthCounterEnable;
+            this.envReset = saveState.envReset;
+            this.shiftNow = saveState.shiftNow;
+
+            this.lengthCounter = saveState.lengthCounter;
+            this.progTimerCount = saveState.progTimerCount;
+            this.progTimerMax = saveState.progTimerMax;
+            this.envDecayRate = saveState.envDecayRate;
+            this.envDecayCounter = saveState.envDecayCounter;
+            this.envVolume = saveState.envVolume;
+            this.masterVolume = saveState.masterVolume;
+            this.shiftReg = saveState.shiftReg;
+            this.randomBit = saveState.randomBit;
+            this.randomMode = saveState.randomMode;
+            this.sampleValue = saveState.sampleValue;
+            this.accValue = saveState.accValue;
+            this.accCount = saveState.accCount;
+            this.tmp = saveState.tmp;
+        },
+
         reset: function() {
             this.progTimerCount = 0;
             this.progTimerMax = 0;
@@ -1219,6 +1446,69 @@ define([],function(){
     };
 
     PAPU.ChannelSquare.prototype = {
+
+        getSaveState: function(){
+            return {
+                sqr1: this.sqr1,
+                isEnabled: this.isEnabled,
+                lengthCounterEnable: this.lengthCounterEnable,
+                sweepActive: this.sweepActive,
+                envDecayDisable: this.envDecayDisable,
+                envDecayLoopEnable: this.envDecayLoopEnable,
+                envReset: this.envReset,
+                sweepCarry: this.sweepCarry,
+                updateSweepPeriod: this.updateSweepPeriod,
+
+                progTimerCount: this.progTimerCount,
+                progTimerMax: this.progTimerMax,
+                lengthCounter: this.lengthCounter,
+                squareCounter: this.squareCounter,
+                sweepCounter: this.sweepCounter,
+                sweepCounterMax: this.sweepCounterMax,
+                sweepMode: this.sweepMode,
+                sweepShiftAmount: this.sweepShiftAmount,
+                envDecayRate: this.envDecayRate,
+                envDecayCounter: this.envDecayCounter,
+                envVolume: this.envVolume,
+                masterVolume: this.masterVolume,
+                dutyMode: this.dutyMode,
+                sweepResult: this.sweepResult,
+                sampleValue: this.sampleValue,
+                vol: this.vol
+            }
+
+        },
+
+        setSaveState: function(saveState){
+            this.sqr1 = saveState.sqr1;
+            this.isEnabled = saveState.isEnabled;
+            this.lengthCounterEnable = saveState.lengthCounterEnable;
+            this.sweepActive = saveState.sweepActive;
+            this.envDecayDisable = saveState.envDecayDisable;
+            this.envDecayLoopEnable = saveState.envDecayLoopEnable;
+            this.envReset = saveState.envReset;
+            this.sweepCarry = saveState.sweepCarry;
+            this.updateSweepPeriod = saveState.updateSweepPeriod;
+
+            this.progTimerCount = saveState.progTimerCount;
+            this.progTimerMax = saveState.progTimerMax;
+            this.lengthCounter = saveState.lengthCounter;
+            this.squareCounter = saveState.squareCounter;
+            this.sweepCounter = saveState.sweepCounter;
+            this.sweepCounterMax = saveState.sweepCounterMax;
+            this.sweepMode = saveState.sweepMode;
+            this.sweepShiftAmount = saveState.sweepShiftAmount;
+            this.envDecayRate = saveState.envDecayRate;
+            this.envDecayCounter = saveState.envDecayCounter;
+            this.envVolume = saveState.envVolume;
+            this.masterVolume = saveState.masterVolume;
+            this.dutyMode = saveState.dutyMode;
+            this.sweepResult = saveState.sweepResult;
+            this.sampleValue = saveState.sampleValue;
+            this.vol = saveState.vol;
+
+        },
+
         reset: function() {
             this.progTimerCount = 0;
             this.progTimerMax = 0;
@@ -1387,6 +1677,43 @@ define([],function(){
     };
 
     PAPU.ChannelTriangle.prototype = {
+        getSaveState: function(){
+            return {
+                isEnabled: this.isEnabled,
+                sampleCondition: this.sampleCondition,
+                lengthCounterEnable: this.lengthCounterEnable,
+                lcHalt: this.lcHalt,
+                lcControl: this.lcControl,
+
+                progTimerCount: this.progTimerCount,
+                progTimerMax: this.progTimerMax,
+                triangleCounter: this.triangleCounter,
+                lengthCounter: this.lengthCounter,
+                linearCounter: this.linearCounter,
+                lcLoadValue: this.lcLoadValue,
+                sampleValue: this.sampleValue,
+                tmp: this.tmp
+            }
+        },
+
+        setSaveState: function(saveState){
+            this.isEnabled = saveState.isEnabled;
+            this.sampleCondition = saveState.sampleCondition;
+            this.lengthCounterEnable = saveState.lengthCounterEnable;
+            this.lcHalt = saveState.lcHalt;
+            this.lcControl = saveState.lcControl;
+
+            this.progTimerCount = saveState.progTimerCount;
+            this.progTimerMax = saveState.progTimerMax;
+            this.triangleCounter = saveState.triangleCounter;
+            this.lengthCounter = saveState.lengthCounter;
+            this.linearCounter = saveState.linearCounter;
+            this.lcLoadValue = saveState.lcLoadValue;
+            this.sampleValue = saveState.sampleValue;
+            this.tmp = saveState.tmp;
+
+        },
+
         reset: function(){
             this.progTimerCount = 0;
             this.progTimerMax = 0;

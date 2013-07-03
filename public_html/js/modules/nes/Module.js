@@ -138,6 +138,8 @@ define(["nescore/nes"], function(NES){
         Gameboy.setButtonState(0,Gameboy.BUTTON_SELECT,Gameboy.BUTTON_NOT_PRESSED);  */
     }
 
+    var quickSaveState = null;
+
     var keyhandler = function(event){
         if (!active)
             return;
@@ -165,6 +167,12 @@ define(["nescore/nes"], function(NES){
                 break;
             case App.constants.BUTTON_SELECT:
                 nes.joypad.setButtonState(event.player,nes.joypad.BUTTON_SELECT,event.pressed ? nes.joypad.BUTTON_PRESSED : nes.joypad.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.QUICK_SAVE_STATE:
+                quickSaveState = nes.getSaveState();
+                break;
+            case App.constants.QUICK_LOAD_STATE:
+                nes.setSaveState(quickSaveState);
                 break;
         }
     };

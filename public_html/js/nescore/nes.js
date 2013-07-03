@@ -232,6 +232,33 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
 
         hasGame: function(){
             return this.game != null;
+        },
+
+        getSaveState: function(){
+            return {
+                gameid: this.game.id,
+                cpu: this.cpu.getSaveState(),
+                ppu: this.ppu.getSaveState(),
+                joypad: this.joypad.getSaveState(),
+                papu: this.papu.getSaveState(),
+                mmap: this.mmap.getSaveState()
+            };
+        },
+
+        setSaveState: function(saveState){
+            if (saveState == null || saveState.gameid != this.game.id){
+                console.error("tried to load save state for wrong game");
+                return;
+            }
+            this.stop();
+
+            this.cpu.setSaveState(saveState.cpu);
+            this.ppu.setSaveState(saveState.ppu);
+            this.joypad.setSaveState(saveState.joypad);
+            this.papu.setSaveState(saveState.papu);
+            this.mmap = this.rom.createMapperFromSaveState(saveState.mmap);
+
+            this.start();
         }
     };
 

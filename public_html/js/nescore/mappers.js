@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["nescore/utils"],function(Utils){
+define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
     var Mappers = [];
 
     Mappers[0] = function(nes) {
@@ -28,6 +28,20 @@ define(["nescore/utils"],function(Utils){
             this.joy1StrobeState = 0;
             this.joy2StrobeState = 0;
             this.joypadLastWrite = 0;
+        },
+
+        getSaveState: function(){
+            return {
+                joy1StrobeState: this.joy1StrobeState,
+                joy2StrobeState: this.joy2StrobeState,
+                joypadLastWrite: this.joypadLastWrite
+            }
+        },
+
+        setSaveState: function(saveState){
+            this.joy1StrobeState = saveState.joy1StrobeState;
+            this.joy2StrobeState = saveState.joy2StrobeState;
+            this.joypadLastWrite = saveState.joypadLastWrite;
         },
 
         write: function(address, value) {
@@ -584,6 +598,35 @@ define(["nescore/utils"],function(Utils){
         this.romBankSelect = 0;
     };
 
+    Mappers[1].prototype.getSaveState = function(){
+        var state = Mappers[0].prototype.getSaveState.apply(this);
+        state.regBuffer = this.regBuffer;
+        state.regBufferCounter = this.regBufferCounter;
+        state.mirroring = this.mirroring;
+        state.oneScreenMirroring = this.oneScreenMirroring;
+        state.prgSwitchingArea = this.prgSwitchingArea;
+        state.prgSwitchingSize = this.prgSwitchingSize;
+        state.vromSwitchingSize = this.vromSwitchingSize;
+        state.romSelectionReg0 = this.romSelectionReg0;
+        state.romSelectionReg1 = this.romSelectionReg1;
+        state.romBankSelect = this.romBankSelect;
+        return state;
+    }
+
+    Mappers[1].prototype.setSaveState = function(saveState){
+        Mappers[0].prototype.setSaveState.appy(this,arguments);
+        this.regBuffer = saveState.regBuffer;
+        this.regBufferCounter = saveState.regBufferCounter;
+        this.mirroring = saveState.mirroring;
+        this.oneScreenMirroring = saveState.oneScreenMirroring;
+        this.prgSwitchingArea = saveState.prgSwitchingArea;
+        this.prgSwitchingSize = saveState.prgSwitchingSize;
+        this.vromSwitchingSize = saveState.vromSwitchingSize;
+        this.romSelectionReg0 = saveState.romSelectionReg0;
+        this.romSelectionReg1 = saveState.romSelectionReg1;
+        this.romBankSelect = saveState.romBankSelect;
+    }
+
     Mappers[1].prototype.write = function(address, value) {
         // Writes to addresses other than MMC registers are handled by NoMapper.
         if (address < 0x8000) {
@@ -896,6 +939,34 @@ define(["nescore/utils"],function(Utils){
     };
 
     Mappers[4].prototype = new Mappers[0]();
+
+    Mappers[4].prototype.getSaveState = function(){
+        var state = Mappers[0].prototype.getSaveState.apply(this);
+
+        state.command = this.command;
+        state.prgAddressSelect = this.prgAddressSelect;
+        state.chrAddressSelect = this.chrAddressSelect;
+        state.pageNumber = this.pageNumber;
+        state.irqCounter = this.irqCounter;
+        state.irqLatchValue = this.irqLatchValue;
+        state.irqEnable = this.irqEnable;
+        state.prgAddressChanged = this.prgAddressChanged;
+
+        return state;
+    }
+
+    Mappers[4].prototype.setSaveState = function(saveState){
+        Mappers[0].prototype.setSaveState.apply(this,arguments);
+
+        this.command = saveState.command;
+        this.prgAddressSelect = saveState.prgAddressSelect;
+        this.chrAddressSelect = saveState.chrAddressSelect;
+        this.pageNumber = saveState.pageNumber;
+        this.irqCounter = saveState.irqCounter;
+        this.irqLatchValue = saveState.irqLatchValue;
+        this.irqEnable = saveState.irqEnable;
+        this.prgAddressChanged = saveState.prgAddressChanged;
+    }
 
     Mappers[4].prototype.write = function(address, value) {
         // Writes to addresses other than MMC registers are handled by NoMapper.

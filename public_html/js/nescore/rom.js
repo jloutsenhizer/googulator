@@ -206,6 +206,13 @@ define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mapp
                 return null;
             }
         },
+
+        createMapperFromSaveState: function(saveState) {
+            var mapper =  this.createMapper();
+            mapper.setSaveState(saveState);
+            return mapper;
+        },
+
         writeBatteryRam: function(address,value){
             this.saveRAM[address] = value;
         },
