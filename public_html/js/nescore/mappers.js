@@ -614,7 +614,7 @@ define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
     }
 
     Mappers[1].prototype.setSaveState = function(saveState){
-        Mappers[0].prototype.setSaveState.appy(this,arguments);
+        Mappers[0].prototype.setSaveState.apply(this,arguments);
         this.regBuffer = saveState.regBuffer;
         this.regBufferCounter = saveState.regBufferCounter;
         this.mirroring = saveState.mirroring;
