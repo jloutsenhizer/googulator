@@ -150,7 +150,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                                         overlay.remove();
                                     overlay = null;
                                 }
-                            },{multiSelect:false,query:game.getDefaultSaveStateFilename()});
+                            },{multiSelect:false,query:game.getDefaultSaveStateFileName()});
                         });
                         $("#createSave").click(function(){
                             noEvent = false;
