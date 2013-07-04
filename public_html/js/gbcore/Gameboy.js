@@ -52,6 +52,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         APUEmulator.reset();
         Joypad.reset();
         CPUEmulator.simulateBIOS();
+        this.setSaveState(game.saveState);
         frameTimes = [];
         return true;
     }
@@ -135,9 +136,12 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
             callback();
         }
         else{
+            var gb = this;
             waitForTerminate = true;
             game.updateSaveData(loadedGame.getSaveData(),function(){
-                onterminate = callback;
+                game.updateSaveStateData(gb.getSaveState(),function(){
+                    onterminate = callback;
+                },saveprogresscallback);
             },saveprogresscallback);
 
         }

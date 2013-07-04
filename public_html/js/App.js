@@ -32,7 +32,7 @@ define(["GoogleAPIs","FreeGamePicker","GameLibrary","GameUtils","gbcore/Gameboy"
             App.setActiveModule($("ul.nav li.primary a").attr("modulename"),{});
 
             if (!navigator.cookieEnabled){
-                App.showModalMesasge("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
+                App.showModalMessage("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
             }
 
             GoogleAPIs.checkAuthentication(function(authenticated){
@@ -193,10 +193,32 @@ define(["GoogleAPIs","FreeGamePicker","GameLibrary","GameUtils","gbcore/Gameboy"
         return dialog;
     };
 
-    App.showModalMesasge = function(title,text,closeCallback){
+    App.showModalMessage = function(title,text,closeCallback){
         if (closeCallback == null) closeCallback = function(){};
         App.loadMustacheTemplate("dialogTemplates.html","GenericMessageModal",function(template){
-            App.makeModal(template.render({title:title,message:text}));
+            App.makeModal(template.render({title:title,message:text})).on("hidden",function(){
+                closeCallback();
+            });
+        });
+    }
+
+    App.showModalConfirmation = function(title,text,closeCallback){
+        if (closeCallback == null) closeCallback = function(){};
+        App.loadMustacheTemplate("dialogTemplates.html","GenericConfirmationModal",function(template){
+            var dialog = App.makeModal(template.render({title:title,message:text}));
+            dialog.find(".yesBtn").click(function(){
+                closeCallback(true);
+                closeCallback = function(){};
+                dialog.modal("hide");
+            });
+            dialog.find(".noBtn").click(function(){
+                closeCallback(false);
+                closeCallback = function(){};
+                dialog.modal("hide");
+            });
+            dialog.on("hidden",function(){
+                closeCallback(false);
+            });
         });
     }
 
@@ -256,6 +278,23 @@ define(["GoogleAPIs","FreeGamePicker","GameLibrary","GameUtils","gbcore/Gameboy"
                 break;
         }
         return base64;
+    }
+
+    App.stringToArrayBuffer = function(str){
+        var buf = new Uint8Array(str.length);
+        for (var i=0, strLen=str.length; i<strLen; i++) {
+            buf[i] = str.charCodeAt(i);
+        }
+        return buf;
+    }
+
+    App.stringFromArrayBuffer = function(buf){
+        var data = new Uint8Array(buf);
+        var result = "";
+        for (var i = 0, li = data.length; i < li; i++){
+            result += String.fromCharCode(data[i]);
+        }
+        return result;
     }
 
     App.createMessageOverlay = function(parent,content){

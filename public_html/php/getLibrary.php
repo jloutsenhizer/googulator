@@ -36,10 +36,12 @@ while ($row = mysql_fetch_assoc($query)){
     $element = array();
     $element["fileId"] = $row["fileid"];
     $element["saveFileId"] = $row["savefileid"];
+    $element["saveStateFileId"] = $row["savestatefileid"];
     $element["patchFileId"] = $row["patchid"];
     $element["image"] = "img/ROMPictures/" . $row["gameid"] . ".jpg";
     $element["id"] = stripslashes($row["gameid"]);
     $element["title"] = getGameTitle($row["gameid"],$con);
+    $element["uid"] = $row["uid"];
     array_push($games,$element);
 }
 

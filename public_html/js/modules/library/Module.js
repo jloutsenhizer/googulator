@@ -75,7 +75,8 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                 return 0;
             });
             for (var i = 0; i < library.length; i++){
-                var html = template.render($.extend({selected:isSelectedGame(library[i]), iconClass: GameUtils.getGameIconClass(library[i].id)},library[i]));
+                var html = template.render($.extend({selected:isSelectedGame(library[i]),
+                    iconClass: GameUtils.getGameIconClass(library[i].id)},library[i]));
                 var item = $(html);
                 $("#libraryList").append(item);
                 item.click({game:library[i]}, function(event){
@@ -113,11 +114,72 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         selectedGame = game;
         $("#GameDisplayArea").empty();
         App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){
-            var display = $(template.render(game));
+            var display = $(template.render($.extend({
+                saveStateEnabled: game.saveStateFileId !== ""
+            },game)));
             $("#GameDisplayArea").append(display);
             display.find("#play").click(function(event){
                 event.preventDefault();
                 loadGame(game);
+            });
+            display.find("#useSaveState").click(function(event){
+                //App.showModalConfirmation
+                if (event.delegateTarget.checked){
+                    App.loadMustacheTemplate("modules/library/template.html","saveNotFound",function(template){
+                        App.makeModal(template.render(game));
+                        var noEvent= true;
+                        $("#loadSave").click(function(){
+                            noEvent = false;
+                            $("#chooseRAMDialog").modal("hide");
+                            overlay = App.createMessageOverlay(container,$("<div>Creating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                            GoogleAPIs.showFilePicker(function(result){
+                                if (result != null && result.docs.length == 1){
+                                    game.setGameSaveStateFileId(result.docs[0].id,function(success){
+                                        if (!success){
+                                            event.delegateTarget.checked = false;
+                                        }
+                                        else{
+                                            if (overlay != null)
+                                                overlay.remove();
+                                            overlay = null;
+                                        }
+                                    },progressUpdate);
+                                }
+                                else{
+                                    if (overlay != null)
+                                        overlay.remove();
+                                    overlay = null;
+                                }
+                            },{multiSelect:false,query:game.getDefaultSaveStateFilename()});
+                        });
+                        $("#createSave").click(function(){
+                            noEvent = false;
+                            $("#chooseRAMDialog").modal("hide");
+                            game.createGameSaveStateData(function(saveState){
+                                if (overlay != null)
+                                    overlay.remove();
+                                overlay = null;
+                            })
+                        });
+                    });
+                }
+                else{
+                    App.showModalConfirmation("Dissociate SaveState","Are you sure you want to dissociate the saveState file with this game?",function(result){
+                        if (result){
+                            if (overlay != null)
+                                overlay.remove();
+                            overlay = App.createMessageOverlay(container,$("<div>Dissociating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                            game.setGameSaveStateFileId(null,function(success){
+                                if (overlay != null)
+                                    overlay.remove();
+                                overlay = null;
+                            },progressUpdate);
+                        }
+                        else{
+                            event.delegateTarget.checked = true;
+                        }
+                    });
+                }
             });
         });
     }
@@ -189,16 +251,21 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     }
 
     function switchToEmulator(game){
-        var module = emulatorModules[game.header.type];
-        if (module == null){
-            console.log("unsupported game");
-        }
-        else{
-            App.setActiveModule(module,{game: game});
-        }
         if (overlay != null)
             overlay.remove();
-        overlay = null;
+        overlay = App.createMessageOverlay(container,$("<div>Loading SaveState for " + game.title + "...</div><div class='pbar'></div>"));
+        game.getGameSaveStateData(function(){
+            var module = emulatorModules[game.header.type];
+            if (module == null){
+                console.log("unsupported game");
+            }
+            else{
+                App.setActiveModule(module,{game: game});
+            }
+            if (overlay != null)
+                overlay.remove();
+            overlay = null;
+        },progressUpdate);
     }
 
     function addFiles(files,callback){

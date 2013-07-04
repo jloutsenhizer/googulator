@@ -22,16 +22,12 @@ if (!$con)
     die("-2");
 
 if ($AUTO_ESCAPE){
-    $game_id = $_GET["gameid"];
-    $file_id = $_GET["fileid"];
-    $save_id = $_GET["saveid"];
-    $patch_id = $_GET["patchid"];
+    $uid = $_GET["uid"];
+    $save_id = $_GET["savestateid"];
 }
 else{
-    $game_id = mysql_real_escape_string($_GET["gameid"],$con);
-    $file_id = mysql_real_escape_string($_GET["fileid"],$con);
-    $save_id = mysql_real_escape_string($_GET["saveid"],$con);
-    $patch_id = mysql_real_escape_string($_GET["patchid"],$con);
+    $uid = mysql_real_escape_string($_GET["uid"],$con);
+    $save_id = mysql_real_escape_string($_GET["savestateid"],$con);
 }
 
 
@@ -41,7 +37,7 @@ if (!mysql_select_db($MYSQL_DATABASE, $con)){
     die("-3");
 }
 
-mysql_query("update gameLibrary set savefileid='$save_id' where googleid='$google_id' and gameid='$game_id' and fileid='$file_id' and patchid='$patch_id' limit 1;",$con);
+mysql_query("update gameLibrary set savestatefileid='$save_id' where googleid='$google_id' and uid=$uid limit 1;",$con);
 
 if (mysql_affected_rows($con) != 1){
     mysql_close($con);

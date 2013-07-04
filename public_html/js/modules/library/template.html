@@ -1,6 +1,12 @@
 <template id="gameDisplay">
         <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
         <h1>{{title}}</h1>
+        <div class="btn-group">
+            <label class="checkbox">
+                <input id="useSaveState" type="checkbox" {{#saveStateEnabled}}checked{{/saveStateEnabled}}> Use SaveState Saving
+            </label>
+        </div>
+    <br>
         <div class="btn-group"><button id="play" class="btn">Play Game</button></div>
 </template>
 <template id="mainDisplay">

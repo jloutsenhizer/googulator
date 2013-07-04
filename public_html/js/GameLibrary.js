@@ -15,7 +15,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
     GameLibrary.refreshLibrary = function(callback){
         var that = this;
-        $.ajax("ROM/getLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
+        $.ajax("php/getLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
             success: function(data){
                 library = data;
 
@@ -73,8 +73,65 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         }
                     }
 
+                    library[i].getGameSaveStateData = function(callback,progresscallback){
+                        if (progresscallback == null) progresscallback = function(){};
+                        var game = this;
+                        if (typeof game.saveState !== "undefined"){
+                            callback(game.saveState);
+                        }
+                        else{
+                            if (this.saveStateFileId != ""){
+                                GoogleAPIs.getFile(this.saveStateFileId,function (saveState){
+                                    game.saveState = JSON.parse(App.stringFromArrayBuffer(saveState));
+                                    callback(game.saveState);
+                                },function(loaded,total){
+                                    progresscallback(loaded/total * 100);
+                                });
+                            }
+                            else{
+                                callback(null);
+                            }
+                        }
+                    }
+
+                    library[i].createGameSaveStateData = function(callback){
+                        var game = this;
+                        game.saveState = null;
+                        GoogleAPIs.uploadBinaryFile(game.getDefaultSaveStateFileName(),App.stringToArrayBuffer(JSON.stringify(game.saveState)),function(result){
+                            game.saveStateFileId = result.id;
+                            $.ajax("php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
+                                success: function(data){
+                                    callback(game.saveState);
+                                },
+                                error: function(){
+                                    callback(game.saveState);
+                                }
+                            })
+                        });
+                    }
+
+                    library[i].setGameSaveStateFileId = function(fileid,callback,progresscallback){
+                        if (fileid == null) fileid = "";
+                        delete this.saveState;
+                        this.saveStateFileId = fileid;
+                        var game = this;
+                        $.ajax("php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
+                            success: function(data){
+                                game.getGameSaveStateData(callback,progresscallback)
+                            },
+                            error: function(){
+                                callback(null);
+                            }
+                        });
+
+                    }
+
                     library[i].getDefaultSaveFileName = function(){
                         return this.id + ".sav";
+                    }
+
+                    library[i].getDefaultSaveStateFileName = function(){
+                        return this.id + ".state";
                     }
 
                     library[i].createGameSaveData = function(callback){
@@ -85,8 +142,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         game.saveData = new Uint8Array(ramSize);
                         GoogleAPIs.uploadBinaryFile(game.getDefaultSaveFileName(),game.saveData,function(result){
                             game.saveFileId = result.id;
-                            $.ajax("ROM/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(game.id) + "&fileid=" + encodeURIComponent(game.fileId) +
-                                "&saveid=" + game.saveFileId + "&patchid=" + game.patchFileId,{
+                            $.ajax("php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
                                 success: function(data){
                                     callback(game.saveData);
                                 },
@@ -100,8 +156,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     library[i].setGameSaveFileId = function(fileId,callback,progresscallback){
                         var game = this;
                         game.saveFileId = fileId;
-                        $.ajax("ROM/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(game.id) + "&fileid=" + encodeURIComponent(game.fileId) +
-                            "&saveid=" + game.saveFileId + "&patchid=" + game.patchFileId,{
+                        $.ajax("php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
                             success: function(data){
                                 game.getGameSaveData(callback,progresscallback);
                             },
@@ -121,6 +176,19 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         }
                         GoogleAPIs.updateBinaryFile(game.saveFileId,data,function(result){
                             game.saveData = new Uint8Array(data);
+                            callback();
+                        },function(loaded,total){
+                            progresscallback(loaded/total*100);
+                        });
+                    }
+
+                    library[i].updateSaveStateData = function(saveState,callback,progresscallback){
+                        if (this.saveStateFileId === "")
+                            callback();
+                        if (progresscallback == null) progresscallback = function(){};
+                        var game = this;
+                        GoogleAPIs.updateBinaryFile(game.saveStateFileId,App.stringToArrayBuffer(JSON.stringify(saveState)),function(result){
+                            game.saveState = saveState
                             callback();
                         },function(loaded,total){
                             progresscallback(loaded/total*100);
@@ -151,7 +219,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
     GameLibrary.addGame = function(gameid,fileid,callback){
         var that = this;
-        $.ajax("ROM/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(gameid) + "&fileid=" + encodeURIComponent(fileid),{
+        $.ajax("php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(gameid) + "&fileid=" + encodeURIComponent(fileid),{
             success: function(data){
                 that.refreshLibrary(function(lib){
                     callback(lib,data == 1);
@@ -171,7 +239,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
             GoogleAPIs.getFile(patchfileid,function(patchData){
                 var gameData = GameUtils.applyPatch(patchData,baseGameData);
                 var header = GameUtils.getHeader(gameData);
-                $.ajax("ROM/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(header.id) + "&fileid=" + encodeURIComponent(basegame.fileId)
+                $.ajax("php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(header.id) + "&fileid=" + encodeURIComponent(basegame.fileId)
                     + "&patchid=" + encodeURIComponent(patchfileid),{
                     success: function(data){
                         that.refreshLibrary(function(lib){

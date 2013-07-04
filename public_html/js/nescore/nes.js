@@ -188,6 +188,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                 this.mmap.loadROM();
                 this.ppu.setMirroring(this.rom.getMirroringType());
                 this.romData = game.data;
+                this.setSaveState(game.saveState);
             }
             else{
                 this.rom = null;
@@ -205,9 +206,11 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                 this.stop();
             var that = this;
             this.game.updateSaveData(this.rom.getSaveData(),function(){
-                that.game = null;
-                that.rom = null;
-                callback();
+                that.game.updateSaveStateData(that.getSaveState(),function(){
+                    that.game = null;
+                    that.rom = null;
+                    callback();
+                },saveprogresscallback);
             },saveprogresscallback);
         },
 

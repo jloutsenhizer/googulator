@@ -26,3 +26,17 @@
         </div>
     </div>
 </template>
+<template id="GenericConfirmationModal">
+    <div class="modal fade" id="GenericMessageModal">
+        <div class="modal-header">
+            <h3>{{title}}<a href="javascript:$('#freeRomDialog').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            {{message}}
+        </div>
+        <div class="modal-footer">
+            <button class="btn yesBtn">Yes</button>
+            <button class="btn noBtn">No</button>
+        </div>
+    </div>
+</template>
