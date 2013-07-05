@@ -4,6 +4,26 @@
     $tabs = array("home","library","gameboy","nes","settings");
     $tabNames = array("Home","Library","Gameboy","NES","Settings");
     $defaultTab = 0;
+
+    if (!$IS_LOCAL){
+        $hostName = $_SERVER["HTTP_HOST"];
+        if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0){
+            $https = "";
+            if (isset($_SERVER['HTTPS'] )  && strcmp($_SERVER['HTTPS'],"off") != 0)
+                $https = "s";
+            echo "<html>";
+            echo "<head>";
+            echo "<meta http-equiv='refresh' content='0;URL=http";
+            echo $https;
+            echo "://";
+            echo $PREFERRED_HOSTNAME;
+            echo "/'>";
+            echo "</head>";
+            echo "<body></body>";
+            echo "</html>";
+            die;
+        }
+    }
 ?>
 <html manifest="appcache.php">
     <head>
