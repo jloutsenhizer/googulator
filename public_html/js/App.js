@@ -1,4 +1,4 @@
-define(["GoogleAPIs","FreeGamePicker","GameLibrary","GameUtils","gbcore/Gameboy"],function(GoogleAPIs, FreeROMPicker, GameLibrary, GameUtils, Gameboy){
+define(["GoogleAPIs"],function(GoogleAPIs){
     var App = {};
 
     var compiledTemplates = {};

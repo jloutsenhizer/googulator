@@ -37,3 +37,4 @@ tasks.xml
 .idea/workspace.xml
 chrome_webstore
 public_html/configuration.php
+public_html_optimized
