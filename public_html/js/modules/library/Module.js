@@ -56,8 +56,9 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
 
 
     function refreshGameLibrary(){
+        if (overlay != null)
+            overlay.remove();
         overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
-        $("#libraryList").empty();
         GameLibrary.refreshLibrary(function (data){
             library = data;
             onLibraryLoaded();
@@ -66,6 +67,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
 
     function onLibraryLoaded(){
         $("#libraryList").empty();
+        $("#GameDisplayArea").empty();
         App.loadMustacheTemplate("modules/library/template.html","libraryItem",function(template){
             library.sort(function(a,b){
                 if (a.title.toUpperCase() < b.title.toUpperCase())
@@ -122,6 +124,19 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                 event.preventDefault();
                 loadGame(game);
             });
+            display.find("#remove").click(function(event){
+                event.preventDefault();
+                App.showModalConfirmation("Are you sure?","Are you sure you want to remove " + game.title + " from your library?",function(confirm){
+                    if (confirm){
+                        if (overlay != null)
+                            overlay.remove();
+                        overlay = App.createMessageOverlay(container,"Removing " + game.title + " from your library...");
+                        game.removeFromLibrary(function(){
+                            refreshGameLibrary();
+                        });
+                    }
+                });
+            })
             display.find("#useSaveState").click(function(event){
                 //App.showModalConfirmation
                 if (event.delegateTarget.checked){

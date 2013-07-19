@@ -195,6 +195,17 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         });
                     }
 
+                    library[i].removeFromLibrary = function(callback){
+                        $.ajax("php/removeGameFromLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(this.uid),{
+                            success: function(data){
+                                callback();
+                            },
+                            error: function(){
+                                callback();
+                            }
+                        });
+                    }
+
                     library[i].equals = function(game){
                         return game != null && game.id == this.id && game.saveFileId == this.saveFileId && this.fileId == game.fileId && this.patchFileId == game.patchFileId;
                     }
