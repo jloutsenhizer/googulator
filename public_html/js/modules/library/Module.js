@@ -196,6 +196,34 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                     });
                 }
             });
+            display.find(".editGameTitle").click(function(){
+                App.loadMustacheTemplate("modules/library/template.html","GameRename",function(template){
+                    var modal = $(template.render(game));
+                    modal.find("#inputNewGameName").keypress(function (e) {
+                        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                            modal.find("#Save").click();
+                            return false;
+                        }
+                        return true;
+                    });
+                    modal.find("#Save").click(function(){
+                        overlay = App.createMessageOverlay(container, "Renaming Game...");
+                        game.setGameTitle(modal.find("#inputNewGameName").val(),function(){
+                            onLibraryLoaded();
+                        });
+                        modal.modal("hide");
+
+                    });
+                    modal.find("#useDefault").click(function(){
+                        overlay = App.createMessageOverlay(container, "Resetting Game Title...");
+                        game.setGameTitle(null,function(){
+                            onLibraryLoaded();
+                        });
+                        modal.modal("hide");
+                    });
+                    App.makeModal(modal);
+                });
+            });
         });
     }
 

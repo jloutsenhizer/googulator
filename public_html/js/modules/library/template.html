@@ -1,6 +1,6 @@
 <template id="gameDisplay">
         <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
-        <h1>{{title}}</h1>
+        <h1>{{title}} <a class="editGameTitle" href="javascript:void(0);" title="Edit Title"><i class="icon-pencil"></i></a></h1>
         <div class="btn-group">
             <label class="checkbox">
                 <input id="useSaveState" type="checkbox" {{#saveStateEnabled}}checked{{/saveStateEnabled}}> Use SaveState Saving
@@ -58,4 +58,28 @@
             <button id="closeBtn" class="btn" onclick="$('#gamePicker').modal('hide')">Cancel</button>
         </div>
     </div>
+</template>
+
+<template id="GameRename">
+    <div class="modal fade" id="gameRenameDialog">
+        <div class="modal-header">
+            <h3>Rename game<a href="javascript:$('#gameRenameDialog').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="inputNewGameName">New Title:</label>
+                    <div class="controls">
+                        <input type="text" id="inputNewGameName" value="{{title}}">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="Save" class="btn">Save</button>
+            <button id="useDefault" class="btn">Use Default</button>
+            <button id="closeBtn" class="btn" onclick="$('#gameRenameDialog').modal('hide')">Cancel</button>
+        </div>
+    </div>
+
 </template>

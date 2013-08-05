@@ -40,7 +40,12 @@ while ($row = mysql_fetch_assoc($query)){
     $element["patchFileId"] = $row["patchid"];
     $element["image"] = "img/ROMPictures/" . $row["gameid"] . ".jpg";
     $element["id"] = stripslashes($row["gameid"]);
-    $element["title"] = getGameTitle($row["gameid"],$con);
+    if ($row["usergivenname"] != NULL){
+        $element["title"] = $row["usergivenname"];
+    }
+    else{
+        $element["title"] = getGameTitle($row["gameid"],$con);
+    }
     $element["uid"] = $row["uid"];
     array_push($games,$element);
 }

@@ -195,6 +195,43 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         });
                     }
 
+                    library[i].setGameTitle = function(title,callback){
+                        var game = this;
+                        if (title != null){
+                            $.ajax("php/setGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&title=" + encodeURIComponent(title),{
+                                success:function(){
+                                    game.title = title;
+                                    callback(true);
+
+                                },
+                                error:function(){
+                                    callback(false);
+                                }
+
+                            });
+                        }
+                        else{
+                            $.ajax("php/resetGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid),{
+                                success:function(result){
+                                    try{
+                                        if (typeof result === "object")
+                                            game.title = result.title
+                                        callback(true);
+                                    } catch(e){
+                                        callback(false);
+                                    }
+
+
+                                },
+                                error:function(){
+                                    callback(false);
+                                }
+
+                            });
+
+                        }
+                    }
+
                     library[i].removeFromLibrary = function(callback){
                         $.ajax("php/removeGameFromLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(this.uid),{
                             success: function(data){
