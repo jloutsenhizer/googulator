@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:///mnt/seconddrive/Programming/IntelliJ/googulator/googulator.iml" filepath="/mnt/seconddrive/Programming/IntelliJ/googulator/googulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/googulator.iml" filepath="$PROJECT_DIR$/googulator.iml" />
     </modules>
   </component>
 </project>

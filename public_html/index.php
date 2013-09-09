@@ -57,6 +57,10 @@
         </script>
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
         <script src="https://apis.google.com/js/client.js?onload=googleAPILoaded"></script>
+        <script src="lib/jszip/jszip.js"></script>
+        <script src="lib/jszip/jszip-load.js"></script>
+        <script src="lib/jszip/jszip-inflate.js"></script>
+        <script src="lib/jszip/jszip-deflate.js"></script>
         <script src="lib/jQuery.1.9.1.js"></script>
         <script src="lib/jquery-ui-1.10.3.custom.1/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="lib/jquery.fullscreen.1.1.4.js"></script>

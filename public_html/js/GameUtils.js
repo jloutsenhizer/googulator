@@ -1,6 +1,43 @@
 define(function(){
     var GameUtils = {};
 
+    GameUtils.isCompressed = function(fileData){
+        if (this.isZipCompressed(fileData))
+            return true;
+        return false;
+    }
+
+    GameUtils.decompress = function(fileData){
+        if (this.isZipCompressed(fileData)){
+            return this.zipDecompress(fileData);
+        }
+        return fileData;
+    }
+
+    var zipIdentifierBytes = new Uint8Array(4);
+    zipIdentifierBytes[0] = 0x50;
+    zipIdentifierBytes[1] = 0x4b;
+    zipIdentifierBytes[2] = 0x03;
+    zipIdentifierBytes[3] = 0x04;
+
+    GameUtils.isZipCompressed = function(fileData){
+        for (var i = 0, li = zipIdentifierBytes.length; i < li; i++){
+            if (fileData[i] != zipIdentifierBytes[i])
+                return false;
+        }
+        return true;
+    }
+
+    GameUtils.zipDecompress = function(fileData){
+        var zip = new JSZip(fileData);
+        for (var file in zip.files){
+            if (zip.files[file].options.binary){
+                return zip.files[file].asUint8Array();
+            }
+        }
+        return null;
+    }
+
     GameUtils.getHeader = function(gameData){
         if (this.isGameboyGame(gameData))
             return getGBCHeader(gameData);

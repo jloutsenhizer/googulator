@@ -341,6 +341,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
             }
             overlay = App.createMessageOverlay(container,$("<div>Loading " + curFile.name + " To Your Library...</div><div class='pbar'></div>"));
             GoogleAPIs.getFile(curFile.id,function(data){
+                data = GameUtils.decompress(data);
                 if (GameUtils.isGame(data)){
                     var header = GameUtils.getHeader(data);
                     GameLibrary.addGame(header.id,curFile.id,function(lib,success){

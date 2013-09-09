@@ -28,6 +28,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         }
                         else{
                             GoogleAPIs.getFile(this.fileId,function (gameData){
+                                gameData = GameUtils.decompress(gameData);
                                 if (game.patchFileId == ""){
                                     game.data = gameData;
                                     game.header = GameUtils.getHeader(game.data);
@@ -35,6 +36,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                                 }
                                 else{
                                     GoogleAPIs.getFile(game.patchFileId,function(patchData){
+                                        patchData = GameUtils.decompress(patchData);
                                         game.data = GameUtils.applyPatch(patchData,gameData);
                                         game.header = GameUtils.getHeader(game.data);
                                         callback(game.data,game.header);
@@ -61,6 +63,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         else{
                             if (this.saveFileId != ""){
                                 GoogleAPIs.getFile(this.saveFileId,function (saveData){
+                                    saveData = GameUtils.decompress(saveData);
                                     game.saveData = saveData;
                                     callback(game.saveData);
                                 },function(loaded,total){
@@ -82,6 +85,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         else{
                             if (this.saveStateFileId != ""){
                                 GoogleAPIs.getFile(this.saveStateFileId,function (saveState){
+                                    saveState = GameUtils.decompress(saveState);
                                     game.saveState = JSON.parse(App.stringFromArrayBuffer(saveState));
                                     callback(game.saveState);
                                 },function(loaded,total){
@@ -284,7 +288,9 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
     GameLibrary.addGamePatch = function(basegame,patchfileid,callback){
         var that = this;
         GoogleAPIs.getFile(basegame.fileId,function(baseGameData){
+            baseGameData = GameUtils.decompress(baseGameData);
             GoogleAPIs.getFile(patchfileid,function(patchData){
+                patchData = GameUtils.decompress(patchData);
                 var gameData = GameUtils.applyPatch(patchData,baseGameData);
                 var header = GameUtils.getHeader(gameData);
                 $.ajax("php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(header.id) + "&fileid=" + encodeURIComponent(basegame.fileId)
