@@ -57,6 +57,7 @@
         </script>
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
         <script src="https://apis.google.com/js/client.js?onload=googleAPILoaded"></script>
+        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
         <script src="lib/jszip/jszip.js"></script>
         <script src="lib/jszip/jszip-load.js"></script>
         <script src="lib/jszip/jszip-inflate.js"></script>
