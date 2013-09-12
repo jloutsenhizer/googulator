@@ -271,3 +271,8 @@ html, body, .mainContainer{
 #libraryList li i.gameicon-gbc{
     background-image: url("../img/icons/systems/gbc.png");
 }
+
+.gameCommentContainer{
+    width: 625px;
+    display:inline-block;
+}
