@@ -21,7 +21,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         };
         App.davis.get("/library",urlHandler);
         App.davis.get("/library/game/:gameid",urlHandler);
-        App.adavis.get("/library/game/:gameid/",urlHandler)
+        App.davis.get("/library/game/:gameid/",urlHandler)
         container = c;
         $("#addFromDrive").click(addFromDrive);
         $("#addFromFree").click(addFromFree);
