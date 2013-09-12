@@ -9,14 +9,19 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     var authenticated = false;
     var gameIdFromUrl = null;
 
+
+
     Module.init = function(c){
-        App.davis.get("/library",function(req){
+        var urlHandler = function(req){
             App.setActiveModule("library");
-        });
-        App.davis.get("/library/game/:gameid",function(req){
-            App.setActiveModule("library");
-            gameIdFromUrl = req.params["gameid"];
-        });
+            if (req.params["gameid"] == null)
+                gameIdFromUrl = null;
+            else
+                gameIdFromUrl = decodeURIComponent(req.params["gameid"]);
+        };
+        App.davis.get("/library",urlHandler);
+        App.davis.get("/library/game/:gameid",urlHandler);
+        App.adavis.get("/library/game/:gameid/",urlHandler)
         container = c;
         $("#addFromDrive").click(addFromDrive);
         $("#addFromFree").click(addFromFree);

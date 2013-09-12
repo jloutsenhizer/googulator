@@ -17,7 +17,8 @@
             echo $https;
             echo "://";
             echo $PREFERRED_HOSTNAME;
-            echo "/'>";
+            echo $_SERVER[REQUEST_URI];
+            echo "'>";
             echo "</head>";
             echo "<body></body>";
             echo "</html>";
