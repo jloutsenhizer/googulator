@@ -25,6 +25,10 @@ define(function(){
     var gamepadSelectors = [];
 
     Module.init = function(c){
+        App.davis.get("/settings",function(req){
+            App.setActiveModule("settings");
+        });
+
         container = c;
         App.loadMustacheTemplate("modules/settings/template.html","inputConfiguration",function(template){
             for (var i = 0; i < App.settings.controller.numPlayers; i++){
@@ -72,6 +76,8 @@ define(function(){
     }
 
     Module.onActivate = function(params){
+        if (Davis.location.current() != "/settings")
+            Davis.location.assign("/settings");
         active = true;
 
     }

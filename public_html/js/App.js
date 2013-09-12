@@ -7,6 +7,16 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
     var overlayTemplate = null;
 
+    App.davis = Davis();
+    App.davis.get("/test",function(req){
+        console.log("route!");
+        console.log(req);
+    });
+    App.davis.start();
+
+    var totalModules = 0;
+    var loadedModules = 0;
+
 
 
     App.initialize = function(){
@@ -26,10 +36,11 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             var navItems = $("ul.nav li a");
 
             $.each(navItems,function(index,item){
-                App.setActiveModule($(item).attr("modulename"),{initOnly:true});
+                if ($(item).attr("modulename") != null){
+                    totalModules++;
+                    App.setActiveModule($(item).attr("modulename"),{initOnly:true});
+                }
             });
-
-            App.setActiveModule($("ul.nav li.primary a").attr("modulename"),{});
 
             if (!navigator.cookieEnabled){
                 App.showModalMessage("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
@@ -73,6 +84,20 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     }
                 }
             }
+
+            function setActiveModule(){
+                if (loadedModules < totalModules){
+                    setTimeout(setActiveModule,10);
+                    return;
+                }
+                if (App.davis.lookupRoute("get",Davis.location.current()) != null)
+                    Davis.location.assign(Davis.location.current());
+                else
+                    Davis.location.assign("/home");
+
+            }
+            setActiveModule();
+
         });
     };
 
@@ -81,13 +106,14 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     var modules = {};
 
     App.setActiveModule = function(modulename,params){
+        if (params == null) params = {initOnly: false};
         if (params.initOnly == null) params.initOnly = false;
 
         if (activeModuleName == modulename)
             return;
 
+        $("#coreModuleContainer .moduleContainer").addClass("hidden");
         if (activeModule != null){
-            $("#coreModuleContainer #moduleContainer" + activeModuleName).addClass("hidden");
             activeModule.onFreeze();
         }
 
@@ -115,6 +141,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 }
                 else if (params.initOnly){
                     Module.init(container);
+                    loadedModules++;
                 }
                 if (!params.initOnly){
                     activeModule = Module;

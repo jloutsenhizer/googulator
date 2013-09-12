@@ -25,14 +25,14 @@
         }
     }
 ?>
-<html manifest="appcache.php">
+<html manifest="/appcache.php">
     <head>
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lchmgljjkaeadokijkhefbhpfbihhhda">
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-        <link rel="stylesheet" type="text/css" href="lib/bootstrap.2.3.0/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="lib/font-awesome.min.css" />
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
-        <link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
+        <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
         <?
             echo "<script type='text/javascript'>";
             if ($_GET["state"] == NULL){
@@ -58,20 +58,21 @@
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
         <script src="https://apis.google.com/js/client.js?onload=googleAPILoaded"></script>
         <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-        <script src="lib/jszip/jszip.js"></script>
-        <script src="lib/jszip/jszip-load.js"></script>
-        <script src="lib/jszip/jszip-inflate.js"></script>
-        <script src="lib/jszip/jszip-deflate.js"></script>
-        <script src="lib/jQuery.1.9.1.js"></script>
-        <script src="lib/jquery-ui-1.10.3.custom.1/js/jquery-ui-1.10.3.custom.min.js"></script>
-        <script src="lib/jquery.fullscreen.1.1.4.js"></script>
-        <script src="lib/doTimeout.1.0.js"></script>
-        <script src="lib/hogan.2.0.0.js"></script>
-        <script src="lib/bootstrap.2.3.0/js/bootstrap.min.js"></script>
-        <script src="lib/require.2.1.4.js" data-main="js/main"></script>
-        <script src="lib/Gamepad.js"></script>
-        <script src="lib/Webcam.js"></script>
-        <script src="lib/waapisim.2013.06.13.js"></script>
+        <script src="/lib/jszip/jszip.js"></script>
+        <script src="/lib/jszip/jszip-load.js"></script>
+        <script src="/lib/jszip/jszip-inflate.js"></script>
+        <script src="/lib/jszip/jszip-deflate.js"></script>
+        <script src="/lib/jQuery.1.9.1.js"></script>
+        <script src="/lib/jquery-ui-1.10.3.custom.1/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script src="/lib/jquery.fullscreen.1.1.4.js"></script>
+        <script src="/lib/doTimeout.1.0.js"></script>
+        <script src="/lib/hogan.2.0.0.js"></script>
+        <script src="/lib/bootstrap.2.3.0/js/bootstrap.min.js"></script>
+        <script src="/lib/require.2.1.4.js" data-main="/js/main"></script>
+        <script src="/lib/Gamepad.js"></script>
+        <script src="/lib/Webcam.js"></script>
+        <script src="/lib/waapisim.2013.06.13.js"></script>
+        <script src="/lib/davis.min.js"></script>
         <?
             echo $ANALYTICS_TRACKING_CODE;
         ?>
@@ -94,7 +95,7 @@
                                     if ($i == $defaultTab){
                                         echo ' class="active primary"';
                                     }
-                                    echo '><a href="#" modulename="';
+                                    echo '><a href="javacript:void(0);" modulename="';
                                     echo $tabs[$i];
                                     echo '">';
                                     echo $tabNames[$i];

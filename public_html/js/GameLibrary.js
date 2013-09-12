@@ -15,7 +15,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
     GameLibrary.refreshLibrary = function(callback){
         var that = this;
-        $.ajax("php/getLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
+        $.ajax("/php/getLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
             success: function(data){
                 library = data;
 
@@ -103,7 +103,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         game.saveState = null;
                         GoogleAPIs.uploadBinaryFile(game.getDefaultSaveStateFileName(),App.stringToArrayBuffer(JSON.stringify(game.saveState)),function(result){
                             game.saveStateFileId = result.id;
-                            $.ajax("php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
+                            $.ajax("/php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
                                 success: function(data){
                                     callback(game.saveState);
                                 },
@@ -119,7 +119,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         delete this.saveState;
                         this.saveStateFileId = fileid;
                         var game = this;
-                        $.ajax("php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
+                        $.ajax("/php/setGameSaveState.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&savestateid=" + encodeURIComponent(game.saveStateFileId),{
                             success: function(data){
                                 game.getGameSaveStateData(callback,progresscallback)
                             },
@@ -146,7 +146,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         game.saveData = new Uint8Array(ramSize);
                         GoogleAPIs.uploadBinaryFile(game.getDefaultSaveFileName(),game.saveData,function(result){
                             game.saveFileId = result.id;
-                            $.ajax("php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
+                            $.ajax("/php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
                                 success: function(data){
                                     callback(game.saveData);
                                 },
@@ -160,7 +160,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     library[i].setGameSaveFileId = function(fileId,callback,progresscallback){
                         var game = this;
                         game.saveFileId = fileId;
-                        $.ajax("php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
+                        $.ajax("/php/setGameSave.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&saveid=" + encodeURIComponent(game.saveFileId),{
                             success: function(data){
                                 game.getGameSaveData(callback,progresscallback);
                             },
@@ -202,7 +202,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     library[i].setGameTitle = function(title,callback){
                         var game = this;
                         if (title != null){
-                            $.ajax("php/setGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&title=" + encodeURIComponent(title),{
+                            $.ajax("/php/setGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid) + "&title=" + encodeURIComponent(title),{
                                 success:function(){
                                     game.title = title;
                                     callback(true);
@@ -215,7 +215,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                             });
                         }
                         else{
-                            $.ajax("php/resetGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid),{
+                            $.ajax("/php/resetGameTitle.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(game.uid),{
                                 success:function(result){
                                     try{
                                         if (typeof result === "object")
@@ -237,7 +237,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     }
 
                     library[i].removeFromLibrary = function(callback){
-                        $.ajax("php/removeGameFromLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(this.uid),{
+                        $.ajax("/php/removeGameFromLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&uid=" + encodeURIComponent(this.uid),{
                             success: function(data){
                                 callback();
                             },
@@ -271,7 +271,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
     GameLibrary.addGame = function(gameid,fileid,callback){
         var that = this;
-        $.ajax("php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(gameid) + "&fileid=" + encodeURIComponent(fileid),{
+        $.ajax("/php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(gameid) + "&fileid=" + encodeURIComponent(fileid),{
             success: function(data){
                 that.refreshLibrary(function(lib){
                     callback(lib,data == 1);
@@ -293,7 +293,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                 patchData = GameUtils.decompress(patchData);
                 var gameData = GameUtils.applyPatch(patchData,baseGameData);
                 var header = GameUtils.getHeader(gameData);
-                $.ajax("php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(header.id) + "&fileid=" + encodeURIComponent(basegame.fileId)
+                $.ajax("/php/addGameToLibrary.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&gameid=" + encodeURIComponent(header.id) + "&fileid=" + encodeURIComponent(basegame.fileId)
                     + "&patchid=" + encodeURIComponent(patchfileid),{
                     success: function(data){
                         that.refreshLibrary(function(lib){

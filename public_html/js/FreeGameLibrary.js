@@ -14,7 +14,7 @@ define(function(){
 
     FreeGameLibrary.refreshLibrary = function(callback){
         var that = this;
-        $.ajax("ROM/listFree.php",{
+        $.ajax("/php/listFree.php",{
             success: function(data){
                 library = data;
                 that.getLibrary(callback);

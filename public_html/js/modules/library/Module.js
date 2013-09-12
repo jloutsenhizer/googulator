@@ -7,8 +7,16 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     var overlay = {};
 
     var authenticated = false;
+    var gameIdFromUrl = null;
 
     Module.init = function(c){
+        App.davis.get("/library",function(req){
+            App.setActiveModule("library");
+        });
+        App.davis.get("/library/game/:gameid",function(req){
+            App.setActiveModule("library");
+            gameIdFromUrl = req.params["gameid"];
+        });
         container = c;
         $("#addFromDrive").click(addFromDrive);
         $("#addFromFree").click(addFromFree);
@@ -18,6 +26,12 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     }
 
     Module.onActivate = function(params){
+        if (Davis.location.current() != "/library" && Davis.location.current().indexOf("/library/") != 0){
+            if (selectedGame == null)
+                Davis.location.assign("/library");
+            else
+                Davis.location.assign("/library/game/" + encodeURIComponent(selectedGame.id));
+        }
         if (params.driveState != null){
             doDriveLoad(params.driveState,params.driveOverlay);
         }
@@ -105,7 +119,8 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     var selectedGame = null;
 
     function isSelectedGame(game){
-        if (game.equals(selectedGame)){
+        if (game.equals(selectedGame) || game.id == gameIdFromUrl){
+            gameIdFromUrl = null;
             selectGame(game);
             return true;
         }
@@ -113,6 +128,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     }
 
     function selectGame(game){
+        Davis.location.assign("/library/game/" + encodeURIComponent(game.id));
         selectedGame = game;
         $("#GameDisplayArea").empty();
         App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){

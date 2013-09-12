@@ -8,6 +8,9 @@ define(["gbcore/Gameboy"], function(Gameboy){
     var fullScreenSupported = false;
 
     Module.init = function(c){
+        App.davis.get("/gameboy",function(req){
+            App.setActiveModule("gameboy");
+        });
         container = c;
         canvas = $("#gbLCD");
         Gameboy.setCanvas(canvas[0]);
@@ -64,6 +67,8 @@ define(["gbcore/Gameboy"], function(Gameboy){
     }
 
     Module.onActivate = function(params){
+        if (Davis.location.current() != "/gameboy" && Davis.location.current().indexOf("/gameboy/") != 0)
+            Davis.location.assign("/gameboy");
         active = true;
         if (params.game != null){
             turnGameboyOff(function(){

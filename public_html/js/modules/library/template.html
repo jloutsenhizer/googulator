@@ -1,24 +1,33 @@
 <template id="gameDisplay">
-        <img src="{{image}}" onerror="this.src='img/defaultCover.png'">
+        <img src="{{image}}" onerror="this.src='/img/defaultCover.png'">
         <h1>{{title}} <a class="editGameTitle" href="javascript:void(0);" title="Edit Title"><i class="icon-pencil"></i></a></h1>
         <div class="btn-group">
             <label class="checkbox">
                 <input id="useSaveState" type="checkbox" {{#saveStateEnabled}}checked{{/saveStateEnabled}}> Use SaveState Saving
             </label>
         </div>
+
     <br>
         <div class="btn-group"><button id="play" class="btn">Play Game</button><button id="remove" class="btn">Remove From Library</button></div>
+    <div class="gameCommentContainer"><div id="comments-{{uid}}"></div><script>
+        gapi.comments.render('comments-{{uid}}', {
+            href: window.location,
+            width: '624',
+            first_party_property: 'BLOGGER',
+            view_type: 'FILTERED_POSTMOD'
+        });
+    </script></div>
 </template>
 <template id="mainDisplay">
     <div id="libraryListContainer">
         <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown"href="#">
+            <a class="btn dropdown-toggle" data-toggle="dropdown"href="javascript:void(0);">
                 Add Games
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li><a id="addFromDrive" href="#">From Google Drive</a></li>
-                <li><a id="addFromFree" href="#">From Free Library</a></li>
+                <li><a id="addFromDrive" href="javascript:void(0)">From Google Drive</a></li>
+                <li><a id="addFromFree" href="javascript:void(0)">From Free Library</a></li>
             </ul>
         </div>
         <ul id="libraryList">
@@ -51,7 +60,7 @@
         </div>
         <div class="modal-body">
             {{#games}}
-            <a href="#" class="selectgamelink" gameindex="{{index}}"><div class="center" style="height:144px"><img src="{{image}}" class="pull-left" />{{title}}</div></a>
+            <a href="javascript:void(0)" class="selectgamelink" gameindex="{{index}}"><div class="center" style="height:144px"><img src="{{image}}" class="pull-left" />{{title}}</div></a>
             {{/games}}
         </div>
         <div class="modal-footer">

@@ -13,6 +13,9 @@ define(["nescore/nes"], function(NES){
     var nes;
 
     Module.init = function(c){
+        App.davis.get("/nes",function(req){
+            App.setActiveModule("nes");
+        });
         container = c;
         canvas = $("#nesLCD");
         nes = new NES({canvas:canvas[0]});
@@ -83,6 +86,8 @@ define(["nescore/nes"], function(NES){
     }
 
     Module.onActivate = function(params){
+        if (Davis.location.current() != "/nes" && Davis.location.current().indexOf("/nes/") != 0)
+            Davis.location.assign("/nes");
         active = true;
         if (params.game != null){
             turnNESOff(function(){
