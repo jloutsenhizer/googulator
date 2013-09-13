@@ -187,8 +187,10 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     }
 
                     library[i].updateSaveStateData = function(saveState,callback,progresscallback){
-                        if (this.saveStateFileId === "")
+                        if (this.saveStateFileId === ""){
                             callback();
+                            return;
+                        }
                         if (progresscallback == null) progresscallback = function(){};
                         var game = this;
                         GoogleAPIs.updateBinaryFile(game.saveStateFileId,App.stringToArrayBuffer(JSON.stringify(saveState)),function(result){
