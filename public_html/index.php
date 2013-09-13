@@ -121,7 +121,7 @@
                                     if ($i == $defaultTab){
                                         echo ' class="active primary"';
                                     }
-                                    echo '><a href="javacript:void(0);" modulename="';
+                                    echo '><a href="javascript:void(0);" modulename="';
                                     echo $tabs[$i];
                                     echo '">';
                                     echo $tabNames[$i];
