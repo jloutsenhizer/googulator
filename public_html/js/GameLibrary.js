@@ -252,6 +252,15 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     }
                 }
 
+                library.getGameById = function(id){
+                    for (var i = 0, li = this.length; i < li; i++){
+                        if (this[i].id === id)
+                            return this[i];
+                    }
+                    return null;
+
+                }
+
                 that.getLibrary(callback);
             },
             error: function(){

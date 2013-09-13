@@ -14,10 +14,14 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     Module.init = function(c){
         var urlHandler = function(req){
             App.setActiveModule("library");
+            document.title = "Googulator - Library"
             if (req.params["gameid"] == null)
                 gameIdFromUrl = null;
-            else
+            else{
                 gameIdFromUrl = decodeURIComponent(req.params["gameid"]);
+                var game = library.getGameById(gameIdFromUrl);
+                document.title += " - " + (game != null ? game.title : gameIdFromUrl);
+            }
         };
         App.davis.get("/library",urlHandler);
         App.davis.get("/library/game/:gameid",urlHandler);

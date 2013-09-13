@@ -27,6 +27,7 @@ define(function(){
     Module.init = function(c){
         App.davis.get("/settings",function(req){
             App.setActiveModule("settings");
+            document.title = "Googulator - Settings";
         });
 
         container = c;

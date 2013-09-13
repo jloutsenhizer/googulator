@@ -6,10 +6,12 @@ define(["gbcore/Gameboy"], function(Gameboy){
     var active = false;
     var overlay = null;
     var fullScreenSupported = false;
+    var currentGameTitle = null;
 
     Module.init = function(c){
         App.davis.get("/gameboy",function(req){
             App.setActiveModule("gameboy");
+            document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "Gameboy");
         });
         container = c;
         canvas = $("#gbLCD");
@@ -73,6 +75,8 @@ define(["gbcore/Gameboy"], function(Gameboy){
         if (params.game != null){
             turnGameboyOff(function(){
                 Gameboy.loadGame(params.game);
+                currentGameTitle = params.game.title;
+                document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "Gameboy");
                 Gameboy.run();
                 $("#gameboyOff").removeAttr("disabled");
                 $("#gbLCD").removeClass('hidden');
@@ -94,6 +98,8 @@ define(["gbcore/Gameboy"], function(Gameboy){
         $("#gameboyOff").attr('disabled',"disabled");
         overlay = App.createMessageOverlay(container,"Turning Gameboy Off...");
         Gameboy.terminateGame(function(){
+            currentGameTitle = null;
+            document.title = "Googulator - Gameboy";
             blankScreen();
             overlay.remove();
             $("#gbLCD").addClass('hidden');

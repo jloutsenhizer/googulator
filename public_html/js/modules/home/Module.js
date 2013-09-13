@@ -6,6 +6,7 @@ define(function(){
     Module.init = function(c){
         App.davis.get("/home",function(req){
             App.setActiveModule("home");
+            document.title = "Googulator";
         });
     }
 

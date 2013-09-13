@@ -11,10 +11,12 @@ define(["nescore/nes"], function(NES){
     var canvasHeight = 1;
 
     var nes;
+    var currentGameTitle = null;
 
     Module.init = function(c){
         App.davis.get("/nes",function(req){
             App.setActiveModule("nes");
+            document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
         });
         container = c;
         canvas = $("#nesLCD");
@@ -92,6 +94,8 @@ define(["nescore/nes"], function(NES){
         if (params.game != null){
             turnNESOff(function(){
                 nes.loadROM(params.game);
+                currentGameTitle = params.game.title;
+                document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
                 nes.start();
                 $("#nesOff").removeAttr("disabled");
                 $("#nesLCD").removeClass('hidden');
@@ -115,6 +119,8 @@ define(["nescore/nes"], function(NES){
         overlay = App.createMessageOverlay(container,"Turning NES Off...");
         nes.stop();
         nes.unloadROM(function(){
+            currentGameTitle = null;
+            document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
             blankScreen();
             overlay.remove();
             $("#nesLCD").addClass('hidden');

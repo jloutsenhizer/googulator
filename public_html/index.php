@@ -1,35 +1,59 @@
 <!DOCTYPE html>
 <?
     include "configuration.php";
+    include "include.php";
     $tabs = array("home","library","gameboy","nes","settings");
     $tabNames = array("Home","Library","Gameboy","NES","Settings");
     $defaultTab = 0;
+    $requestURI = $_SERVER['REQUEST_URI'];
+    $https = "";
+    if (isset($_SERVER['HTTPS'] )  && strcmp($_SERVER['HTTPS'],"off") != 0)
+        $https = "s";
+    $hostName = $_SERVER["HTTP_HOST"];
 
     if (!$IS_LOCAL){
-        $hostName = $_SERVER["HTTP_HOST"];
         if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0){
-            $https = "";
-            if (isset($_SERVER['HTTPS'] )  && strcmp($_SERVER['HTTPS'],"off") != 0)
-                $https = "s";
-            echo "<html>";
-            echo "<head>";
-            echo "<meta http-equiv='refresh' content='0;URL=http";
-            echo $https;
-            echo "://";
-            echo $PREFERRED_HOSTNAME;
-            echo $_SERVER['REQUEST_URI'];
-            echo "'>";
-            echo "</head>";
-            echo "<body></body>";
-            echo "</html>";
+            header("HTTP/1.1 301 Moved Permanently");
+            header("Location: http$https://$PREFERRED_HOSTNAME$requestURI");
             die;
         }
     }
+
+    $title = "Googulator";
 ?>
 <html manifest="/appcache.php">
     <head>
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lchmgljjkaeadokijkhefbhpfbihhhda">
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <?
+            if (strpos($requestURI,"/library/game/") === 0){
+                $gameid = substr($requestURI,strlen("/library/game/"));
+                echo "<link rel='image_src' href='http";
+                echo $https;
+                echo "://";
+                echo $hostName;
+                echo "/img/ROMPictures/";
+                echo $gameid;
+                echo ".jpg'>";
+                $title .= " - Library - ";
+                $con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+                mysql_select_db($MYSQL_DATABASE, $con);
+                $title .= getGameTitle(urldecode($gameid),$con);
+                mysql_close($con);
+            }
+            else if (strpos($requestURI,"/library") === 0){
+                $title .= " - Library";
+            }
+            else if (strpos($requestURI,"/settings") === 0){
+                $title .= " - Settings";
+            }
+            else if (strpos($requestURI,"/gameboy") === 0){
+                $title .= " - Gameboy";
+            }
+            else if (strpos($requestURI,"/nes") === 0){
+                $title .= " - NES";
+            }
+        ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
         <link rel="stylesheet" type="text/css" href="/css/main.css" />
@@ -77,7 +101,7 @@
         <?
             echo $ANALYTICS_TRACKING_CODE;
         ?>
-        <title>Googulator</title>
+        <title><? echo $title; ?></title>
     </head>
     <body onload="htmlLoaded();">
         <div class="container-fluid mainContainer">
