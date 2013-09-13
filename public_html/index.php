@@ -98,6 +98,7 @@
         <script src="/lib/Webcam.js"></script>
         <script src="/lib/waapisim.2013.06.13.js"></script>
         <script src="/lib/davis.min.js"></script>
+        <script src="/lib/davis.google_analytics.js"></script>
         <?
             echo $ANALYTICS_TRACKING_CODE;
         ?>

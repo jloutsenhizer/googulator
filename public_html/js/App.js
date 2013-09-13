@@ -8,10 +8,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     var overlayTemplate = null;
 
     App.davis = Davis();
-    App.davis.get("/test",function(req){
-        console.log("route!");
-        console.log(req);
-    });
+    App.davis.use(Davis.googleAnalytics);
     App.davis.start();
 
     var totalModules = 0;
