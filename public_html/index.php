@@ -133,9 +133,12 @@
                             </li>
                         </ul>
 
-                        <div id="googleUserInfo" style="position:absolute; right:10px; top:0px">
-                            <div id="loadText">Loading Google Credentials...</div>
-                            <button class="btn hidden" id="loadButton">Login with Google</button>
+                        <div id="googleUserInfo" style="padding-right:1em; position:absolute; right: 0px; top: 0px;bottom: 0px;">
+                            <div id="loadText" style='margin-top:0.25em'>Loading Google Credentials...</div>
+                            <button id="loadButton" class="gPlusLoginButton hidden" style="margin-right: -1em;">
+                                <span class="gPlusIcon"></span>
+                                <span class="verticalDivider"></span>
+                                <span class="text"> Sign In</span></button>
                         </div>
                     </div>
                 </div>

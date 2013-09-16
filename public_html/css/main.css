@@ -276,3 +276,60 @@ html, body, .mainContainer{
     width: 625px;
     display:inline-block;
 }
+
+.gPlusLoginButton{
+    background: #cc3732;
+    color: white;
+    padding: 0;
+    margin: 0px;
+    border: 0;
+    height: 100%;
+    border-radius: 0;
+    padding-right: 10px;
+}
+
+.gPlusLoginButton:hover, .gPlusLoginButton:focus{
+    background: #dc4742;
+}
+
+.navbar-inner .gPlusLoginButton{
+    background-image: -moz-linear-gradient(top,#cc3732,#b5201a);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#cc3732),to(#b5201a));
+    background-image: -webkit-linear-gradient(top,#cc3732,#b5201a);
+    background-image: -o-linear-gradient(top,#cc3732,#b5201a);
+    background-image: linear-gradient(to bottom,#cc3732,#b5201a);
+    background-repeat: repeat-x;
+}
+
+.navbar-inner .gPlusLoginButton:hover, .navbar-inner .gPlusLoginButton:focus{
+    background-image: -moz-linear-gradient(top,#dc4742,#c5302a);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#dc4742),to(#c5302a));
+    background-image: -webkit-linear-gradient(top,#dc4742,#c5302a);
+    background-image: -o-linear-gradient(top,#dc4742,#c5302a);
+    background-image: linear-gradient(to bottom,#dc4742,#c5302a);
+}
+
+.gPlusLoginButton:active{
+    -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.gPlusLoginButton .gPlusIcon{
+    background-image: url("/img/googleSignInIcon.png");
+    width: 2em;
+    height: 2em;
+    display: inline-block;
+    vertical-align: middle;
+    background-size: 100%;
+}
+.gPlusLoginButton .verticalDivider{
+    display: inline-block;
+    height: 100%;
+    width: 1px;
+    vertical-align: middle;
+    border-right: 1px solid #aC1702;
+}
+.gPlusLoginButton .text{
+    padding: 0.25em;
+}
