@@ -70,7 +70,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             if (typeof chrome != "undefined"){
                 if (chrome.app != null && chrome.app.getIsInstalled != null && chrome.webstore != null && chrome.webstore.install != null){
                     if (!chrome.app.getIsInstalled()){
-                        $("ul.nav").append($("<li id='webstoreinstallparent'><a href='#' id='webstoreinstalllink'>Add to Chrome</a></li>"));
+                        $("ul.nav").append($("<li id='webstoreinstallparent'><a href='javascript:void(0);' id='webstoreinstalllink'>Add to Chrome</a></li>"));
                         $("#webstoreinstalllink").click(function(){
                             event.preventDefault();
                             chrome.webstore.install($("link[rel='chrome-webstore-item']").attr("href"),function(){
