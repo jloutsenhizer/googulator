@@ -140,9 +140,13 @@
                 <div class="navbar-inner">
                     <div class="container" style="width: auto; padding: 0 20px;">
                         <div style="position: absolute; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
-                            <?
-                                echo $GOOGLE_AD_CODE;
-                            ?>
+                            <div style="position: absolute; left: 50%; z-index:100;">
+                                <div style="position: relative; left: -50%">
+                                    <?
+                                    echo $GOOGLE_AD_CODE;
+                                    ?>
+                                </div>
+                            </div>
                         </div>
                         <ul class="nav">
                             <?
