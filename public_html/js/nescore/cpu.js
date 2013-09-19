@@ -299,7 +299,7 @@ define(["CopyUtils"],function(CopyUtils){
                 //}
                 addr += this.REG_X;
                 addr &= 0xFF;
-                addr = this.load16bit(addr);
+                addr = this.load16bitZeroPage(addr);
                 break;
             }case 11:{
                 // Post-indexed Indirect mode. Find the 16-bit address
@@ -307,11 +307,12 @@ define(["CopyUtils"],function(CopyUtils){
                 // (and the one following). Add to that address the contents
                 // of the Y register. Fetch the value
                 // stored at that adress.
-                addr = this.load16bit(this.load(opaddr+2));
+                addr = this.load16bitZeroPage(this.load(opaddr+2));
                 if((addr&0xFF00)!=((addr+this.REG_Y)&0xFF00)){
                     cycleAdd = 1;
                 }
                 addr+=this.REG_Y;
+                addr &= 0xFFFF;
                 break;
             }case 12:{
                 // Indirect Absolute mode. Find the 16-bit address contained
@@ -1128,6 +1129,29 @@ define(["CopyUtils"],function(CopyUtils){
 
                 this.write(addr,this.REG_ACC & this.REG_X);
                 break;
+            }case 57:{
+                // *******
+                // * LAX *
+                // *******
+                this.REG_ACC = this.REG_X = this.load(addr);
+                this.F_SIGN = (this.REG_X>>7)&1;
+                this.F_ZERO = this.REG_X;
+                cycleCount+=cycleAdd;
+                break;
+            }case 58:{     //TODO: implementation isn't correct
+                // *******
+                // * DCP *
+                // *******
+                var addrValue = this.load(addr);
+                temp = (this.load(addr)-1)&0xFF;
+                this.write(addr, temp);
+
+                temp = this.REG_ACC - addrValue;
+                this.F_CARRY = (temp>=0?1:0);
+                this.F_SIGN = (temp>>7)&1;
+                this.F_ZERO = temp&0xFF;
+                cycleCount+=cycleAdd;
+                break;
             }default:{
 
                 // *******
@@ -1153,6 +1177,11 @@ define(["CopyUtils"],function(CopyUtils){
             else {
                 return this.nes.mmap.load(addr);
             }
+        },
+
+        load16bitZeroPage: function(addr){
+            return this.load(addr & 0xFF) | (this.load((addr + 1) & 0xFF) << 8);
+
         },
 
         load16bit: function(addr){
@@ -1567,11 +1596,32 @@ define(["CopyUtils"],function(CopyUtils){
         this.setOp(this.INS_NOP,0xDC,this.ADDR_ABSX,3,4);
         this.setOp(this.INS_NOP,0xFC,this.ADDR_ABSX,3,4);
 
+        //SAX
         this.setOp(this.INS_SAX,0x87,this.ADDR_ZP,2,3);
         this.setOp(this.INS_SAX,0x97,this.ADDR_ZPY,2,4);
-        this.setOp(this.INS_SAX,0x8F,this.ADDR_IMM,3,4);
+        this.setOp(this.INS_SAX,0x8F,this.ADDR_ABS,3,4);
         this.setOp(this.INS_SAX,0x83,this.ADDR_PREIDXIND,2,6);
 
+        //LAX
+        this.setOp(this.INS_LAX,0xA7,this.ADDR_ZP,2,3);
+        this.setOp(this.INS_LAX,0xAB,this.ADDR_IMM,2,2);
+        this.setOp(this.INS_LAX,0xB7,this.ADDR_ZPY,2,4);
+        this.setOp(this.INS_LAX,0xAF,this.ADDR_ABS,3,4);
+        this.setOp(this.INS_LAX,0xA3,this.ADDR_PREIDXIND,2,6);
+        this.setOp(this.INS_LAX,0xB3,this.ADDR_POSTIDXIND,2,5);
+        this.setOp(this.INS_LAX,0xBF,this.ADDR_ABSY,3,4);
+
+        //DCP
+        this.setOp(this.INS_DCP,0xC7,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_DCP,0xD7,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_DCP,0xCF,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_DCP,0xC3,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_DCP,0xD3,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_DCP,0xDF,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_DCP,0xDB,this.ADDR_ABSY,3,7);
+
+        //SBC
+        this.setOp(this.INS_SBC,0xEB,this.ADDR_IMM,2,2);
 
         this.cycTable = new Array(
             /*0x00*/ 7,6,2,8,3,3,5,5,3,2,2,2,4,4,6,6,
@@ -1743,6 +1793,7 @@ define(["CopyUtils"],function(CopyUtils){
 
         INS_SAX: 56,
         INS_LAX: 57,
+        INS_DCP: 58,
 
         INS_DUMMY: 255, // dummy instruction used for 'halting' the processor some cycles
 
