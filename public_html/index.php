@@ -47,6 +47,36 @@
             else if (strpos($requestURI,"/settings") === 0){
                 $title .= " - Settings";
             }
+            else if (strpos($requestURI,"/gameboy/play/") === 0){
+                $gameid = substr($requestURI,strlen("/gameboy/play/"));
+                echo "<link rel='image_src' href='http";
+                echo $https;
+                echo "://";
+                echo $hostName;
+                echo "/img/ROMPictures/";
+                echo $gameid;
+                echo ".jpg'>";
+                $title .= " - ";
+                $con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+                mysql_select_db($MYSQL_DATABASE, $con);
+                $title .= getGameTitle(urldecode($gameid),$con);
+                mysql_close($con);
+            }
+            else if (strpos($requestURI,"/nes/play/") === 0){
+                $gameid = substr($requestURI,strlen("/nes/play/"));
+                echo "<link rel='image_src' href='http";
+                echo $https;
+                echo "://";
+                echo $hostName;
+                echo "/img/ROMPictures/";
+                echo $gameid;
+                echo ".jpg'>";
+                $title .= " - ";
+                $con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+                mysql_select_db($MYSQL_DATABASE, $con);
+                $title .= getGameTitle(urldecode($gameid),$con);
+                mysql_close($con);
+            }
             else if (strpos($requestURI,"/gameboy") === 0){
                 $title .= " - Gameboy";
             }

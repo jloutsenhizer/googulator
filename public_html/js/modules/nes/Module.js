@@ -11,13 +11,30 @@ define(["nescore/nes"], function(NES){
     var canvasHeight = 1;
 
     var nes;
+    var currentGameId = null;
     var currentGameTitle = null;
 
+    function updateUrlAndTitle(){
+        Davis.location.assign("/nes" + (currentGameId != null ? "/play/" + encodeURIComponent(currentGameId) : ""));
+    }
+
     Module.init = function(c){
-        App.davis.get("/nes",function(req){
+        function handleRequest(req){
+            var id = req.params.id == null ? null : decodeURIComponent(req.params.id);
+            if (id != currentGameId && currentGameId != null){
+                updateUrlAndTitle();
+                return;
+            }
+            else if (currentGameId == null && id != null){
+                App.setActiveModule("library",{gameid:id});
+                return;
+            }
             App.setActiveModule("nes");
             document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
-        });
+
+        }
+        App.davis.get("/nes",handleRequest);
+        App.davis.get("/nes/play/:id",handleRequest);
         container = c;
         canvas = $("#nesLCD");
         nes = new NES({canvas:canvas[0]});
@@ -88,14 +105,15 @@ define(["nescore/nes"], function(NES){
     }
 
     Module.onActivate = function(params){
-        if (Davis.location.current() != "/nes" && Davis.location.current().indexOf("/nes/") != 0)
+        if (Davis.location.current() != "/nes" && Davis.location.current().indexOf("/nes/") !== 0)
             Davis.location.assign("/nes");
         active = true;
         if (params.game != null){
             turnNESOff(function(){
                 nes.loadROM(params.game);
                 currentGameTitle = params.game.title;
-                document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
+                currentGameId = params.game.id;
+                updateUrlAndTitle();
                 nes.start();
                 $("#nesOff").removeAttr("disabled");
                 $("#nesLCD").removeClass('hidden');
@@ -120,7 +138,8 @@ define(["nescore/nes"], function(NES){
         nes.stop();
         nes.unloadROM(function(){
             currentGameTitle = null;
-            document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "NES");
+            currentGameId = null;
+            updateUrlAndTitle()
             blankScreen();
             overlay.remove();
             $("#nesLCD").addClass('hidden');

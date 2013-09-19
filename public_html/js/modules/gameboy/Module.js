@@ -6,13 +6,30 @@ define(["gbcore/Gameboy"], function(Gameboy){
     var active = false;
     var overlay = null;
     var fullScreenSupported = false;
+    var currentGameId = null;
     var currentGameTitle = null;
 
+    function updateUrlAndTitle(){
+        Davis.location.assign("/gameboy" + (currentGameId != null ? "/play/" + encodeURIComponent(currentGameId) : ""));
+    }
+
     Module.init = function(c){
-        App.davis.get("/gameboy",function(req){
+        function handleRequest(req){
+            var id = req.params.id == null ? null : decodeURIComponent(req.params.id);
+            if (id != currentGameId && currentGameId != null){
+                updateUrlAndTitle();
+                return;
+            }
+            else if (currentGameId == null && id != null){
+                App.setActiveModule("library",{gameid:id});
+                return;
+            }
             App.setActiveModule("gameboy");
             document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "Gameboy");
-        });
+
+        }
+        App.davis.get("/gameboy",handleRequest);
+        App.davis.get("/gameboy/play/:id",handleRequest);
         container = c;
         canvas = $("#gbLCD");
         Gameboy.setCanvas(canvas[0]);
@@ -69,14 +86,15 @@ define(["gbcore/Gameboy"], function(Gameboy){
     }
 
     Module.onActivate = function(params){
-        if (Davis.location.current() != "/gameboy" && Davis.location.current().indexOf("/gameboy/") != 0)
-            Davis.location.assign("/gameboy");
+        if (Davis.location.current() != "/gameboy" && Davis.location.current().indexOf("/gameboy/") !== 0)
+            updateUrlAndTitle();
         active = true;
         if (params.game != null){
             turnGameboyOff(function(){
                 Gameboy.loadGame(params.game);
                 currentGameTitle = params.game.title;
-                document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "Gameboy");
+                currentGameId = params.game.id;
+                updateUrlAndTitle();
                 Gameboy.run();
                 $("#gameboyOff").removeAttr("disabled");
                 $("#gbLCD").removeClass('hidden');
@@ -99,7 +117,8 @@ define(["gbcore/Gameboy"], function(Gameboy){
         overlay = App.createMessageOverlay(container,"Turning Gameboy Off...");
         Gameboy.terminateGame(function(){
             currentGameTitle = null;
-            document.title = "Googulator - Gameboy";
+            currentGameId = null;
+            updateUrlAndTitle();
             blankScreen();
             overlay.remove();
             $("#gbLCD").addClass('hidden');

@@ -44,6 +44,9 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         if (params.driveState != null){
             doDriveLoad(params.driveState,params.driveOverlay);
         }
+        else if (params.gameid != null){
+            doGameLoad(params.gameid);
+        }
     }
 
     Module.onFreeze = function(){
@@ -72,9 +75,24 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                 game = GameLibrary.findGame(driveState.ids[i]);
             }
             if (game != null){
+                selectGame(game);
                 loadGame(game);
             }
         });
+    }
+
+    function doGameLoad(gameid){
+        if (library == null){
+            setTimeout(function(){
+                doGameLoad(gameid);
+            },10);
+            return;
+        }
+        var game = library.getGameById(gameid);
+        if (game != null){
+            selectGame(game);
+            loadGame(game);
+        }
     }
 
 
