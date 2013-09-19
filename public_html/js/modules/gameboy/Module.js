@@ -158,7 +158,7 @@ define(["gbcore/Gameboy"], function(Gameboy){
 
     var keyhandler = function(event){
         if (!active)
-            return;
+            return false;
         switch (event.button){
             case App.constants.BUTTON_LEFT:
                 Gameboy.setButtonState(event.player,Gameboy.BUTTON_LEFT,event.pressed ? Gameboy.BUTTON_PRESSED : Gameboy.BUTTON_NOT_PRESSED);
@@ -166,7 +166,7 @@ define(["gbcore/Gameboy"], function(Gameboy){
             case App.constants.BUTTON_RIGHT:
                 Gameboy.setButtonState(event.player,Gameboy.BUTTON_RIGHT,event.pressed ? Gameboy.BUTTON_PRESSED : Gameboy.BUTTON_NOT_PRESSED);
                 break;
-            case  App.constants.BUTTON_UP:
+            case App.constants.BUTTON_UP:
                 Gameboy.setButtonState(event.player,Gameboy.BUTTON_UP,event.pressed ? Gameboy.BUTTON_PRESSED : Gameboy.BUTTON_NOT_PRESSED);
                 break;
             case App.constants.BUTTON_DOWN:
@@ -190,21 +190,28 @@ define(["gbcore/Gameboy"], function(Gameboy){
             case App.constants.QUICK_SAVE_STATE:
                 quickSaveState = Gameboy.getSaveState();
                 break;
+            default:
+                return false;
         }
+        return true;
     };
 
     $(document).keyup(function(event){
         event.up = true;
         var events = App.settings.controller.transformKeyInput(event);
+        var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
-            keyhandler(events[i]);
+            returnValue = returnValue && !keyhandler(events[i]);
+        return returnValue;
     });
 
     $(document).keydown(function(event){
         event.up = false;
         var events = App.settings.controller.transformKeyInput(event);
+        var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
-            keyhandler(events[i]);
+            returnValue = returnValue && !keyhandler(events[i]);
+        return returnValue;
     });
 
     Gamepad.addListener(function(event){

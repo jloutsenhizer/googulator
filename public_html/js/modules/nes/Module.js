@@ -179,7 +179,7 @@ define(["nescore/nes"], function(NES){
 
     var keyhandler = function(event){
         if (!active)
-            return;
+            return false;
         switch (event.button){
             case App.constants.BUTTON_LEFT:
                 nes.joypad.setButtonState(event.player,nes.joypad.BUTTON_LEFT,event.pressed ? nes.joypad.BUTTON_PRESSED : nes.joypad.BUTTON_NOT_PRESSED);
@@ -211,21 +211,28 @@ define(["nescore/nes"], function(NES){
             case App.constants.QUICK_LOAD_STATE:
                 nes.setSaveState(quickSaveState);
                 break;
+            default:
+                return false;
         }
+        return true;
     };
 
     $(document).keyup(function(event){
         event.up = true;
         var events = App.settings.controller.transformKeyInput(event);
+        var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
-            keyhandler(events[i]);
+            returnValue = returnValue && !keyhandler(events[i]);
+        return returnValue;
     });
 
     $(document).keydown(function(event){
         event.up = false;
         var events = App.settings.controller.transformKeyInput(event);
+        var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
-            keyhandler(events[i]);
+            returnValue = returnValue && !keyhandler(events[i]);
+        return returnValue;
     });
 
     $(document).mousedown(function(event){
