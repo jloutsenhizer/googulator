@@ -1143,10 +1143,10 @@ define(["CopyUtils"],function(CopyUtils){
                 // * DCP *
                 // *******
                 var addrValue = this.load(addr);
-                temp = (this.load(addr)-1)&0xFF;
+                temp = (addrValue-1)&0xFF;
                 this.write(addr, temp);
 
-                temp = this.REG_ACC - addrValue;
+                temp = this.REG_ACC - temp;
                 this.F_CARRY = (temp>=0?1:0);
                 this.F_SIGN = (temp>>7)&1;
                 this.F_ZERO = temp&0xFF;
