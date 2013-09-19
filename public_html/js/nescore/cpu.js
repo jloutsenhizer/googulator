@@ -1138,18 +1138,102 @@ define(["CopyUtils"],function(CopyUtils){
                 this.F_ZERO = this.REG_X;
                 cycleCount+=cycleAdd;
                 break;
-            }case 58:{     //TODO: implementation isn't correct
+            }case 58:{
                 // *******
                 // * DCP *
                 // *******
-                var addrValue = this.load(addr);
-                temp = (addrValue-1)&0xFF;
+                temp = (this.load(addr)-1)&0xFF;
                 this.write(addr, temp);
 
                 temp = this.REG_ACC - temp;
                 this.F_CARRY = (temp>=0?1:0);
                 this.F_SIGN = (temp>>7)&1;
                 this.F_ZERO = temp&0xFF;
+                cycleCount+=cycleAdd;
+                break;
+            }case 59:{
+                // *******
+                // * ISC *
+                // *******
+                temp = (this.load(addr)+1)&0xFF;
+                this.write(addr, temp&0xFF);
+
+                temp = this.REG_ACC-temp-(1-this.F_CARRY);
+                this.F_SIGN = (temp>>7)&1;
+                this.F_ZERO = temp&0xFF;
+                this.F_OVERFLOW = ((((this.REG_ACC^temp)&0x80)!=0 && ((this.REG_ACC^this.load(addr))&0x80)!=0)?1:0);
+                this.F_CARRY = (temp<0?0:1);
+                this.REG_ACC = (temp&0xFF);
+                cycleCount+=cycleAdd;
+
+
+                break;
+            }case 60:{
+                // *******
+                // * SLO *
+                // *******
+                temp = this.load(addr);
+                this.F_CARRY = (temp>>7)&1;
+                temp = (temp<<1)&255;
+                this.write(addr, temp);
+
+                temp = (temp|this.REG_ACC)&255;
+                this.F_SIGN = (temp>>7)&1;
+                this.F_ZERO = temp;
+                this.REG_ACC = temp;
+
+                cycleCount+=cycleAdd;
+
+
+
+                break;
+            }case 61:{
+                // *******
+                // * RLA *
+                // *******
+                temp = this.load(addr);
+                add = this.F_CARRY;
+                this.F_CARRY = (temp>>7)&1;
+                temp = (((temp<<1)&0xFF)+add) & 0xFF;
+                this.write(addr, temp);
+                this.REG_ACC = this.REG_ACC & temp;
+                this.F_SIGN = (this.REG_ACC>>7)&1;
+                this.F_ZERO = this.REG_ACC;
+
+                cycleCount+=cycleAdd;
+                break;
+            }case 62:{
+                // *******
+                // * SRE *
+                // *******
+                temp = this.load(addr) & 0xFF;
+                this.F_CARRY = temp&1;
+                temp >>= 1;
+                this.write(addr, temp);
+                this.REG_ACC = (temp^this.REG_ACC)&0xFF;
+                this.F_SIGN = (this.REG_ACC>>7)&1;
+                this.F_ZERO = this.REG_ACC;
+
+
+                cycleCount+=cycleAdd;
+                break;
+            }case 63:{
+                // *******
+                // * RRA *
+                // *******
+                temp = this.load(addr);
+                add = this.F_CARRY<<7;
+                this.F_CARRY = temp&1;
+                temp = (temp>>1)+add;
+                this.write(addr, temp);
+                temp = this.REG_ACC + temp + this.F_CARRY;
+                this.F_OVERFLOW = ((!(((this.REG_ACC ^ this.load(addr)) & 0x80)!=0) && (((this.REG_ACC ^ temp) & 0x80))!=0)?1:0);
+                this.F_CARRY = (temp>255?1:0);
+                this.F_SIGN = (temp>>7)&1;
+                this.F_ZERO = temp&0xFF;
+                this.REG_ACC = (temp&255);
+
+
                 cycleCount+=cycleAdd;
                 break;
             }default:{
@@ -1620,6 +1704,51 @@ define(["CopyUtils"],function(CopyUtils){
         this.setOp(this.INS_DCP,0xDF,this.ADDR_ABSX,3,7);
         this.setOp(this.INS_DCP,0xDB,this.ADDR_ABSY,3,7);
 
+        //ISC
+        this.setOp(this.INS_ISC,0xE7,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_ISC,0xF7,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_ISC,0xEF,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_ISC,0xE3,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_ISC,0xF3,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_ISC,0xFF,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_ISC,0xFB,this.ADDR_ABSY,3,7);
+
+        //SLO
+        this.setOp(this.INS_SLO,0x07,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_SLO,0x17,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_SLO,0x0F,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_SLO,0x03,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_SLO,0x13,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_SLO,0x1F,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_SLO,0x1B,this.ADDR_ABSY,3,7);
+
+        //RLA
+        this.setOp(this.INS_RLA,0x27,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_RLA,0x37,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_RLA,0x2F,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_RLA,0x23,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_RLA,0x33,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_RLA,0x3F,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_RLA,0x3B,this.ADDR_ABSY,3,7);
+
+        //SRE
+        this.setOp(this.INS_SRE,0x47,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_SRE,0x57,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_SRE,0x4F,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_SRE,0x43,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_SRE,0x53,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_SRE,0x5F,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_SRE,0x5B,this.ADDR_ABSY,3,7);
+
+        //RRA
+        this.setOp(this.INS_RRA,0x67,this.ADDR_ZP,2,5);
+        this.setOp(this.INS_RRA,0x77,this.ADDR_ZPX,2,6);
+        this.setOp(this.INS_RRA,0x6F,this.ADDR_ABS,3,6);
+        this.setOp(this.INS_RRA,0x63,this.ADDR_PREIDXIND,2,8);
+        this.setOp(this.INS_RRA,0x73,this.ADDR_POSTIDXIND,2,8);
+        this.setOp(this.INS_RRA,0x7F,this.ADDR_ABSX,3,7);
+        this.setOp(this.INS_RRA,0x7B,this.ADDR_ABSY,3,7);
+
         //SBC
         this.setOp(this.INS_SBC,0xEB,this.ADDR_IMM,2,2);
 
@@ -1794,6 +1923,11 @@ define(["CopyUtils"],function(CopyUtils){
         INS_SAX: 56,
         INS_LAX: 57,
         INS_DCP: 58,
+        INS_ISC: 59,
+        INS_SLO: 60,
+        INS_RLA: 61,
+        INS_SRE: 62,
+        INS_RRA: 63,
 
         INS_DUMMY: 255, // dummy instruction used for 'halting' the processor some cycles
 
