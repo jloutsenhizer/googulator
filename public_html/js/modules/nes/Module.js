@@ -113,6 +113,12 @@ define(["nescore/nes"], function(NES){
                 nes.loadROM(params.game);
                 currentGameTitle = params.game.title;
                 currentGameId = params.game.id;
+                gapi.comments.render('nesComments', {
+                    href: window.location.origin + "/library/game/" + encodeURIComponent(currentGameId),
+                    width: '625',
+                    first_party_property: 'BLOGGER',
+                    view_type: 'FILTERED_POSTMOD'
+                });
                 updateUrlAndTitle();
                 nes.start();
                 $("#nesOff").removeAttr("disabled");
@@ -139,6 +145,7 @@ define(["nescore/nes"], function(NES){
         nes.unloadROM(function(){
             currentGameTitle = null;
             currentGameId = null;
+            $("#nesComments").empty();
             updateUrlAndTitle()
             blankScreen();
             overlay.remove();

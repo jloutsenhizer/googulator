@@ -94,6 +94,12 @@ define(["gbcore/Gameboy"], function(Gameboy){
                 Gameboy.loadGame(params.game);
                 currentGameTitle = params.game.title;
                 currentGameId = params.game.id;
+                gapi.comments.render('gameboyComments', {
+                    href: window.location.origin + "/library/game/" + encodeURIComponent(currentGameId),
+                    width: '625',
+                    first_party_property: 'BLOGGER',
+                    view_type: 'FILTERED_POSTMOD'
+                });
                 updateUrlAndTitle();
                 Gameboy.run();
                 $("#gameboyOff").removeAttr("disabled");
@@ -118,6 +124,7 @@ define(["gbcore/Gameboy"], function(Gameboy){
         Gameboy.terminateGame(function(){
             currentGameTitle = null;
             currentGameId = null;
+            $("#gameboyComments").empty();
             updateUrlAndTitle();
             blankScreen();
             overlay.remove();
