@@ -61,14 +61,12 @@ window.applicationCache.addEventListener('updateready', handleCacheEvent, false)
 
 if (false){ //set to true to agressively load all the modules
     require ([
-        "modules/gameboy/Module",
-        "text!modules/gameboy/template.html",
+        "modules/play/Module",
+        "text!modules/play/template.html",
         "modules/home/Module",
         "text!modules/home/template.html",
         "modules/library/Module",
         "text!modules/library/template.html",
-        "modules/nes/Module",
-        "text!modules/nes/template.html",
         "modules/settings/Module",
         "text!modules/settings/template.html",
         "FreeROMPicker",

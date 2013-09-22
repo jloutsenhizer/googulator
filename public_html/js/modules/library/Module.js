@@ -332,8 +332,8 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     }
 
     var emulatorModules = {
-        gameboy:"gameboy",
-        nes:"nes"
+        gameboy:"play",
+        nes:"play"
     }
 
     function switchToEmulator(game){

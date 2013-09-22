@@ -2,8 +2,8 @@
 <?
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","gameboy","nes","settings");
-    $tabNames = array("Home","Library","Gameboy","NES","Settings");
+    $tabs = array("home","library","play","settings");
+    $tabNames = array("Home","Library","Play","Settings");
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
@@ -77,11 +77,23 @@
                 $title .= getGameTitle(urldecode($gameid),$con);
                 mysql_close($con);
             }
-            else if (strpos($requestURI,"/gameboy") === 0){
-                $title .= " - Gameboy";
+            else if (strpos($requestURI,"/play/") === 0){
+                $gameid = substr($requestURI,strlen("/play/"));
+                echo "<link rel='image_src' href='http";
+                echo $https;
+                echo "://";
+                echo $hostName;
+                echo "/img/ROMPictures/";
+                echo $gameid;
+                echo ".jpg'>";
+                $title .= " - ";
+                $con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+                mysql_select_db($MYSQL_DATABASE, $con);
+                $title .= getGameTitle(urldecode($gameid),$con);
+                mysql_close($con);
             }
-            else if (strpos($requestURI,"/nes") === 0){
-                $title .= " - NES";
+            else if (strpos($requestURI,"/gameboy") === 0 || strpos($requestURI,"/nes") === 0 || strpos($requestURI,"/play") === 0){
+                $title .= " - Play";
             }
         ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
