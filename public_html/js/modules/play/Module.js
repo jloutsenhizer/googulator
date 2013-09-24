@@ -22,6 +22,7 @@ define(["gbcore/Gameboy", "nescore/nes"], function(Gameboy,NES){
 
     Module.init = function(c){
         function handleRequest(req){
+            App.setActiveModule("play");
             var id = req.params.id == null ? null : decodeURIComponent(req.params.id);
             if (id != currentGameId && currentGameId != null){
                 updateUrlAndTitle();
@@ -31,7 +32,6 @@ define(["gbcore/Gameboy", "nescore/nes"], function(Gameboy,NES){
                 App.setActiveModule("library",{gameid:id});
                 return;
             }
-            App.setActiveModule("play");
             document.title = "Googulator - " + (currentGameTitle !== null ? currentGameTitle : "Play");
         }
         function requestRewriter(req){//This redirects old urls to the proper new ones

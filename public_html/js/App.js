@@ -14,6 +14,14 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     var totalModules = 0;
     var loadedModules = 0;
 
+    function setupIntialActiveModule(){
+        if (App.davis.lookupRoute("get",Davis.location.current()) != null)
+            Davis.location.assign(Davis.location.current());
+        else
+            Davis.location.assign("/home");
+
+    }
+
 
 
     App.initialize = function(){
@@ -81,20 +89,6 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     }
                 }
             }
-
-            function setActiveModule(){
-                if (loadedModules < totalModules){
-                    setTimeout(setActiveModule,10);
-                    return;
-                }
-                if (App.davis.lookupRoute("get",Davis.location.current()) != null)
-                    Davis.location.assign(Davis.location.current());
-                else
-                    Davis.location.assign("/home");
-
-            }
-            setActiveModule();
-
         });
     };
 
@@ -126,7 +120,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             }
         }
 
-        require(["modules/" + modulename + "/Module"],function(Module){
+        function finishSettingModule(Module){
             modules[modulename] = Module;
             App.loadMustacheTemplate("modules/" + modulename + "/template.html","mainDisplay",function(template){
 
@@ -139,7 +133,8 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 }
                 else if (params.initOnly){
                     Module.init(container);
-                    loadedModules++;
+                    if (++loadedModules == totalModules)
+                        setupIntialActiveModule();
                 }
                 if (!params.initOnly){
                     activeModule = Module;
@@ -148,7 +143,12 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     activeModule.onActivate(params);
                 }
             });
-        });
+
+        }
+        if (modules[modulename] != null)
+            finishSettingModule(modules[modulename]);
+        else
+            require(["modules/" + modulename + "/Module"],finishSettingModule);
     }
 
     function onAuthenticated(){
