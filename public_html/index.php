@@ -40,12 +40,15 @@
                 mysql_select_db($MYSQL_DATABASE, $con);
                 $title .= getGameTitle(urldecode($gameid),$con);
                 mysql_close($con);
+                $defaultTab = array_search("library",$tabs);
             }
             else if (strpos($requestURI,"/library") === 0){
                 $title .= " - Library";
+                $defaultTab = array_search("library",$tabs);
             }
             else if (strpos($requestURI,"/settings") === 0){
                 $title .= " - Settings";
+                $defaultTab = array_search("settings",$tabs);
             }
             else if (strpos($requestURI,"/gameboy/play/") === 0){
                 $gameid = substr($requestURI,strlen("/gameboy/play/"));
@@ -61,6 +64,7 @@
                 mysql_select_db($MYSQL_DATABASE, $con);
                 $title .= getGameTitle(urldecode($gameid),$con);
                 mysql_close($con);
+                $defaultTab = array_search("play",$tabs);
             }
             else if (strpos($requestURI,"/nes/play/") === 0){
                 $gameid = substr($requestURI,strlen("/nes/play/"));
@@ -76,6 +80,7 @@
                 mysql_select_db($MYSQL_DATABASE, $con);
                 $title .= getGameTitle(urldecode($gameid),$con);
                 mysql_close($con);
+                $defaultTab = array_search("play",$tabs);
             }
             else if (strpos($requestURI,"/play/") === 0){
                 $gameid = substr($requestURI,strlen("/play/"));
@@ -91,9 +96,11 @@
                 mysql_select_db($MYSQL_DATABASE, $con);
                 $title .= getGameTitle(urldecode($gameid),$con);
                 mysql_close($con);
+                $defaultTab = array_search("play",$tabs);
             }
             else if (strpos($requestURI,"/gameboy") === 0 || strpos($requestURI,"/nes") === 0 || strpos($requestURI,"/play") === 0){
                 $title .= " - Play";
+                $defaultTab = array_search("play",$tabs);
             }
         ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />

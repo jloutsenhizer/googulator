@@ -109,12 +109,13 @@ define(["GoogleAPIs"],function(GoogleAPIs){
         if (activeModuleName == modulename)
             return;
 
-        $("#coreModuleContainer .moduleContainer").addClass("hidden");
-        if (activeModule != null){
-            activeModule.onFreeze();
-        }
+
 
         if (!params.initOnly){
+            if (activeModule != null){
+                $("#coreModuleContainer #moduleContainer" + activeModuleName).addClass("hidden");
+                activeModule.onFreeze();
+            }
             var navitems = $("ul.nav li");
             for (var i = 0; i < navitems.length; i++){
                 var li = $(navitems[i]);
