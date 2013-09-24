@@ -107,7 +107,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
         if (!params.initOnly){
             if (activeModule != null){
-                $("#coreModuleContainer #moduleContainer" + activeModuleName).addClass("hidden");
+                $("#coreModuleContainer #moduleContainer" + activeModuleName).addClass("unactive");
                 activeModule.onFreeze();
             }
             var navitems = $("ul.nav li");
@@ -126,7 +126,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
                 var container = $("#coreModuleContainer #moduleContainer" + modulename);
                 if (container.length == 0){
-                    container = $("<div class='moduleContainer hidden' id='moduleContainer" + modulename + "'></div>");
+                    container = $("<div class='moduleContainer unactive' id='moduleContainer" + modulename + "'></div>");
                     $("#coreModuleContainer").append(container);
                     container.append(template.render());
                     Module.init(container);
@@ -139,7 +139,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 if (!params.initOnly){
                     activeModule = Module;
                     activeModuleName = modulename;
-                    container.removeClass("hidden");
+                    container.removeClass("unactive");
                     activeModule.onActivate(params);
                 }
             });

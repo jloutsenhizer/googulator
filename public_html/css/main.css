@@ -65,8 +65,10 @@ html, body, .mainContainer{
     padding: 1em;
 }
 
-.moduleContainer.hidden{
-    display:none;
+.moduleContainer.unactive{
+    position:absolute;
+    right:500%;
+    bottom:500%;
 }
 
 .libraryGameCard{

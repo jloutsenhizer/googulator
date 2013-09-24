@@ -202,7 +202,7 @@
                 for ($i = 0; $i < count($tabs); $i++){
                     echo '<div class="moduleContainer';
                     if ($i != $defaultTab)
-                        echo " hidden";
+                        echo " unactive";
                     echo '" id="moduleContainer';
                     echo $tabs[$i];
                     echo '">';
