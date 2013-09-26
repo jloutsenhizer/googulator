@@ -1,0 +1,37 @@
+<template id="mainDisplay">
+    <div style="text-align:center;">
+
+        <div style="width:50%; display:inline-block;">
+            <h1>Pay What you Want for Googulator Pro!</h1>
+            <i>$5.00 USD minimum</i>
+            <div style="text-align:left">
+                <h3>What you get with Googulator Pro</h3>
+                <ul >
+                    <li>No more ads on the website</li>
+                    <li>Direct Google Hangouts chat with the creator, Justin Loutsenhizer*</li>
+                    <li>Get a chance to show appreciation</li>
+                    <li>Any additional pro features added in the future</li>
+                    <li>Pro access for life!**</li>
+                </ul>
+                <span style="font-size:0.75em;">*This is subject to restriction for any reason including being obnoxious or rude<br>
+                **As long as Googulator remains as an active website</span>
+                <form class="form-horizontal" action="/php/paypal/buyPro.php" method="post">
+                    <h4>Googulator Lifetime Order Form</h4>
+                    <input id="paypalGoogleToken" type="hidden" name="googleToken">
+                    <div class="control-group">
+                        <label class="control-label" for="inputMoney">Price: </label>
+                        <div class="controls">
+                            <input type="text" id="inputMoney" name="payAmount" value="5.00"> USD
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input id="paywithPaypalButton" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" type="image" name="paypal" value="PayPal">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</template>

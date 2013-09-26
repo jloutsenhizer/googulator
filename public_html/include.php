@@ -21,6 +21,45 @@ function getGoogleId($access_token){
     }
 }
 
+function getRoles($googleId,$con){
+    $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
+    if ($row = mysql_fetch_assoc($query)){
+        return explode("|",$row["roles"]);
+    }
+    return array();
+
+}
+
+function hasRole($googleId,$roleSearch,$con){
+    $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
+    if ($row = mysql_fetch_assoc($query)){
+        $roles = explode("|",$row["roles"]);
+        foreach ($roles as $role){
+            if ($role === $roleSearch)
+                return true;
+        }
+    }
+    return false;
+
+}
+
+function addRole($googleId,$newRole,$con){
+    $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
+    if ($row = mysql_fetch_assoc($query)){
+        $roles = explode("|",$row["roles"]);
+        foreach ($roles as $role){
+            if ($role === $newRole)
+                return;
+        }
+        $roles[count($roles)] = $newRole;
+        $roles = implode("|",$roles);
+        mysql_query("update users set roles='$roles' where googleid='$googleId' limit 1");
+    }
+    else{
+        mysql_query("insert into users (googleid, roles) values ('$googleId','$newRole');",$con);
+    }
+}
+
 function getGameTitle($gameid,$con){
     $origid = $gameid;
     $gameid = mysql_real_escape_string($gameid,$con);

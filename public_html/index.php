@@ -2,8 +2,8 @@
 <?
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings");
-    $tabNames = array("Home","Library","Play","Settings");
+    $tabs = array("home","library","play","settings","goPro");
+    $tabNames = array("Home","Library","Play","Settings","Go Pro");
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
@@ -11,12 +11,11 @@
         $https = "s";
     $hostName = $_SERVER["HTTP_HOST"];
 
-    if (!$IS_LOCAL){
-        if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0){
-            header("HTTP/1.1 301 Moved Permanently");
-            header("Location: http$https://$PREFERRED_HOSTNAME$requestURI");
-            die;
-        }
+
+    if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0){
+        header("HTTP/1.1 301 Moved Permanently");
+        header("Location: http$https://$PREFERRED_HOSTNAME$requestURI");
+        die;
     }
 
     $title = "Googulator";
@@ -102,6 +101,10 @@
                 $title .= " - Play";
                 $defaultTab = array_search("play",$tabs);
             }
+            else if (strpos($requestURI,"/goPro") === 0){
+                $title .= " - Go Pro";
+                $defaultTab = array_search("goPro",$tabs);
+            }
         ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
@@ -109,14 +112,7 @@
         <link rel="stylesheet" type="text/css" href="/lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
         <?
             echo "<script type='text/javascript'>";
-            if ($_GET["state"] == NULL){
-                echo "window.driveState = null;";
-            }
-            else{
-                echo "window.driveState = JSON.parse('";
-                echo $_GET["state"];
-                echo "');";
-            }
+            echo "window.getParams = JSON.parse(" . json_encode(json_encode($_GET)) . ");";
 
             echo "</script>"
         ?>
@@ -158,7 +154,7 @@
             <div class="navbar navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container" style="width: auto; padding: 0 20px;">
-                        <div style="position: absolute; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
+                        <div class="adUnit" style="position: absolute; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
                             <div style="position: absolute; left: 50%; z-index:100;">
                                 <div style="position: relative; left: -50%">
                                     <?
@@ -170,11 +166,12 @@
                         <ul class="nav">
                             <?
                                 for ($i = 0; $i < count($tabs); $i++){
-                                    echo '<li';
+                                    echo '<li class="moduleTab';
+                                    echo $tabs[$i];
                                     if ($i == $defaultTab){
-                                        echo ' class="active primary"';
+                                        echo ' active primary';
                                     }
-                                    echo '><a href="javascript:void(0);" modulename="';
+                                    echo '"><a href="javascript:void(0);" modulename="';
                                     echo $tabs[$i];
                                     echo '">';
                                     echo $tabNames[$i];

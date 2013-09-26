@@ -11,12 +11,29 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     App.davis.use(Davis.googleAnalytics);
     App.davis.start();
 
+    App.userRoles = [];
+
     var totalModules = 0;
     var loadedModules = 0;
 
+    var additionalRoleMapping = {
+        "ROLE_ADMIN": ["ROLE_PRO"]
+    }
+
+    App.userHasRole = function(role){
+        for (var i = 0, li = App.userRoles.length; i < li; i++){
+            if (App.userRoles[i] == role)
+                return true;
+            var mapping = additionalRoleMapping[App.userRoles[i]];
+            if (mapping != null && mapping.indexOf(role) >= 0)
+                return true;
+        }
+        return false;
+    }
+
     function setupIntialActiveModule(){
-        if (App.davis.lookupRoute("get",Davis.location.current()) != null)
-            Davis.location.assign(Davis.location.current());
+        if (App.davis.lookupRoute("get",Davis.location.current().split("?")[0]) != null)
+            Davis.location.assign(Davis.location.current().split("?")[0]);
         else
             Davis.location.assign("/home");
 
@@ -27,7 +44,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     App.initialize = function(){
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
-            if (driveState != null)
+            if (getParams.state != null)
                 driveOverlay = App.createMessageOverlay($("body"),"Loading your file...");
             $(document).on("click","a",function(event){
                 var moduleName = event.target.getAttribute("modulename");
@@ -152,19 +169,35 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     }
 
     function onAuthenticated(){
-        GoogleAPIs.getUserInfo(function(userInfo){
-            $("#googleUserInfo").html("");
-            $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "img/genericPicture.png") + "'</img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
-            for (var modulename in modules){
-                modules[modulename].onAuthenticated();
+        function onDone(){
+            if (App.userHasRole("ROLE_PRO")){
+                $(".adUnit").remove();
+                $(".moduleTabgoPro").remove();
             }
-            if (driveState != null){
-                App.setActiveModule("library",{driveState:driveState,driveOverlay:driveOverlay});
-                driveOverlay = null;
-                driveState = null;
-                delete driveState;
+            GoogleAPIs.getUserInfo(function(userInfo){
+                $("#googleUserInfo").html("");
+                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "img/genericPicture.png") + "'</img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
+                for (var modulename in modules){
+                    modules[modulename].onAuthenticated();
+                }
+                if (getParams.state != null){
+                    App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
+                    driveOverlay = null;
+                }
+            });
+
+        }
+        $.ajax("/php/verifyAuth.php?googletoken=" + GoogleAPIs.getAuthToken(),{
+            success: function(result){
+                App.userRoles = result;
+                onDone()
+            },
+            error: function(){
+                App.userRoles = ["ROLE_USER"];
+                onDone();
             }
         });
+
     }
 
     App.loadMustacheTemplate = function(templatePath,templateId,onLoad){
@@ -340,6 +373,26 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
     var cacheOverlay = null;
 
+    App.refreshPage = function(){
+        location.assign(location.href + getHTTPGetAppendage());
+    }
+
+    function getHTTPGetAppendage(){
+        var string = "";
+        var first = true;
+        for (var object in getParams){
+            if (first){
+                string += "?";
+                first = false;
+            }
+            else{
+                string += "&";
+            }
+            string += encodeURIComponent(object) + "=" + encodeURIComponent(getParams[object]);
+        }
+        return string;
+    }
+
     App.handleCacheEvent = function(event){
         if (event.type != "noupdate" && cacheOverlay == null){
             cacheOverlay = App.createMessageOverlay($("body"),$("<div class='messageC'></div><div class='pbar'></div>"));
@@ -365,7 +418,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             }
         }
         if (event.type == "updateready" || event.type == "obsolete"){
-            location.reload();
+            App.refreshPage();
         }
     }
 
