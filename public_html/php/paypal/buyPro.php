@@ -11,6 +11,27 @@ else{
 }
 $google_id = getGoogleId($google_token);
 
+$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+
+if (!$con){
+    header("HTTP/1.1 307 Temporary Redirect");
+    header("Location: http://$PREFERRED_HOSTNAME/goPro");
+    die;
+}
+
+if (!mysql_select_db($MYSQL_DATABASE, $con)){
+    header("HTTP/1.1 307 Temporary Redirect");
+    header("Location: http://$PREFERRED_HOSTNAME/goPro");
+    die;
+}
+
+if (hasRole($google_id,"ROLE_PRO",$con)){
+    header("HTTP/1.1 307 Temporary Redirect");
+    header("Location: http://$PREFERRED_HOSTNAME/home");
+    die;
+}
+mysql_close($con);
+
 if ($google_id == null || $_POST["payAmount"] < 5){
     header("HTTP/1.1 307 Temporary Redirect");
     header("Location: http://$PREFERRED_HOSTNAME/goPro");

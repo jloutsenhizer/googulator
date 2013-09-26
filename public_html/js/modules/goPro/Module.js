@@ -4,6 +4,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     var container;
 
     var authenticated = false;
+    var active = false;
 
     Module.init = function(c){
         App.davis.get("/goPro",function(req){
@@ -60,14 +61,20 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 error: onError
             })
         }
+        active = true;
+        if (App.userHasRole("ROLE_PRO"))
+            App.setActiveModule("home");
     }
 
     Module.onFreeze = function(){
+        active = false;
 
     }
 
     Module.onAuthenticated = function(){
         authenticated = true;
+        if (active && App.userHasRole("ROLE_PRO"))
+            App.setActiveModule("home");
     }
 
     return Module;
