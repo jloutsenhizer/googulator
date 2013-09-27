@@ -3,9 +3,6 @@ require_once "include.php";
 require_once "../../configuration.php";
 require_once "../../include.php";
 
-echo getPaymentDataObject("http://$PREFERRED_HOSTNAME/goPro?finishPurchase=true&googleid=$google_id","http://$PREFERRED_HOSTNAME/goPro",$_POST["payAmount"],"USD","PWYW Lifetime Googulator Pro","Lifetime Googulator Pro");
-die;
-
 if ($AUTO_ESCAPE){
     $google_token = stripslashes($_POST["googleToken"]);
 }
@@ -41,7 +38,7 @@ if ($google_id == null || $_POST["payAmount"] < 5){
     die;
 }
 session_start();
-$paymentObject = createPaypalPayment(getpayPalAccessToken(), getPaymentDataObject("http://$PREFERRED_HOSTNAME/goPro?finishPurchase=true&googleid=$google_id","http://$PREFERRED_HOSTNAME/goPro",$_POST["payAmount"],"USD","PWYW Lifetime Googulator Pro","Lifetime Googulator Pro"));
+$paymentObject = createPaypalPayment(getpayPalAccessToken(), getPaymentDataObject("http://$PREFERRED_HOSTNAME/goPro?finishPurchase=true&googleid=$google_id","http://$PREFERRED_HOSTNAME/goPro",$_POST["payAmount"],"USD","PWYW Lifetime Googulator Pro","Lifetime Googulator Pro","PWYWGOOGPRO"));
 
 foreach($paymentObject->links as $link){
     if ($link->rel == "approval_url"){

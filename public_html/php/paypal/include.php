@@ -8,10 +8,10 @@ else
     $PAYPAL_HOST = "api.paypal.com";
 
 
-function getPaymentDataObject($return_url, $cancel_url, $amount, $currency, $description, $item_name){
+function getPaymentDataObject($return_url, $cancel_url, $amount, $currency, $description, $item_name, $item_sku){
     return '{"intent":"sale","redirect_urls":{"return_url":"' . $return_url . '","cancel_url":"' . $cancel_url .'"},'
             . '"payer":{"payment_method":"paypal"}, "transactions":[{"amount":{"total":"' . $amount . '", "currency":"' . $currency . '"},"description":"' . $description . '",'
-            . '"item_list":{"items":[{"quantity":"1","name":"' . $item_name . '","price":"' . $amount . '","currency":"' . $currency . '"}]}}]}';
+            . '"item_list":{"items":[{"quantity":"1","sku":"' . $item_sku . '","name":"' . $item_name . '","price":"' . $amount . '","currency":"' . $currency . '"}]}}]}';
 }
 
 

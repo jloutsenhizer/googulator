@@ -1,4 +1,5 @@
 <?php
+header('Content-type: application/json');
 require_once "include.php";
 require_once "../../configuration.php";
 require_once "../../include.php";
@@ -21,11 +22,13 @@ if (!hasRole($_GET["googleid"],"ROLE_USER",$con)){
 }
 
 
+
+
+
 $paymentObject = executePayment(getPaypalAccessToken(),$_SESSION["paypalPaymentId"],$_GET["PayerID"]);
 if ($paymentObject->state === "approved"){
     addRole($_GET["googleid"],"ROLE_PRO",$con);//grant user pro
-    echo "1";
-
+    echo json_encode($paymentObject);
 }
 else{
     echo "-1";

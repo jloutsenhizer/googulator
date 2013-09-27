@@ -40,6 +40,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
         if (getParams.finishPurchase){
             var overlay = App.createMessageOverlay(container,"Finalizing Your purchase...");
             function onError(){
+
                 overlay.remove();
                 alert("An error occurred processing your order!");
                 location.assign("/goPro");
@@ -47,9 +48,29 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             }
             $.ajax("/php/paypal/approvePurchase.php?googleid=" + encodeURIComponent(getParams.googleid) + "&token=" + encodeURIComponent(getParams.token) + "&PayerID=" + encodeURIComponent(getParams.PayerID),{
                 success:function(result){
-                    if (result == 1){
+
+                    if (result !== null && result.id != null){
+                        for (var i = 0, li = result.transactions.length; i < li; i++){
+                            _gaq.push(['_addTrans',
+                                result.id,           // transaction ID - required
+                                'Googulator Web Store', // affiliation or store name
+                                result.transactions[i].amount.total,          // total - required
+                            ]);
+                            for (var j = 0, lj = result.transactions[i].item_list.items.length; j < lj; j++){
+                                _gaq.push(['_addItem',
+                                    result.id,           // transaction ID - necessary to associate item with transaction
+                                    result.transactions[i].item_list.items[j].sku,           // SKU/code - required
+                                    result.transactions[i].item_list.items[j].name,        // product name
+                                    result.transactions[i].item_list.items[j].price,          // unit price - required
+                                    result.transactions[i].item_list.items[j].quantity
+                                ]);
+
+                            }
+                            _gaq.push(['_trackTrans']);
+                        }
                         overlay.remove();
                         alert("Congratulations! You now have Googulator Pro!");
+                        return;
                         location.assign("/home");
 
                     }
@@ -73,8 +94,8 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
     Module.onAuthenticated = function(){
         authenticated = true;
-        //if (active && App.userHasRole("ROLE_PRO"))
-        //    App.setActiveModule("home");
+        if (active && App.userHasRole("ROLE_PRO"))
+            App.setActiveModule("home");
     }
 
     return Module;
