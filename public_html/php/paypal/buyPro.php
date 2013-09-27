@@ -3,6 +3,9 @@ require_once "include.php";
 require_once "../../configuration.php";
 require_once "../../include.php";
 
+echo getPaymentDataObject("http://$PREFERRED_HOSTNAME/goPro?finishPurchase=true&googleid=$google_id","http://$PREFERRED_HOSTNAME/goPro",$_POST["payAmount"],"USD","PWYW Lifetime Googulator Pro","Lifetime Googulator Pro");
+die;
+
 if ($AUTO_ESCAPE){
     $google_token = stripslashes($_POST["googleToken"]);
 }

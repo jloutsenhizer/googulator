@@ -49,7 +49,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 success:function(result){
                     if (result == 1){
                         overlay.remove();
-                        alert("Congradulations! You now have Googulator Pro!");
+                        alert("Congratulations! You now have Googulator Pro!");
                         location.assign("/home");
 
                     }
@@ -73,8 +73,8 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
     Module.onAuthenticated = function(){
         authenticated = true;
-        if (active && App.userHasRole("ROLE_PRO"))
-            App.setActiveModule("home");
+        //if (active && App.userHasRole("ROLE_PRO"))
+        //    App.setActiveModule("home");
     }
 
     return Module;
