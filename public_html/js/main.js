@@ -69,6 +69,8 @@ if (false){ //set to true to agressively load all the modules
         "text!modules/library/template.html",
         "modules/settings/Module",
         "text!modules/settings/template.html",
+        "modules/goPro/Module",
+        "text!modules/goPro/template.html",
         "FreeROMPicker",
         "text!dialogTemplates.html",
         "text!globalTemplates.html"
