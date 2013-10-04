@@ -1,0 +1,37 @@
+*, .mainContainer .coreModuleContainer #moduleContainerplay *{
+    display:none;
+}
+
+html,body, .mainContainer, .mainContainer .coreModuleContainer, .mainContainer .coreModuleContainer #moduleContainerplay, .mainContainer .coreModuleContainer #moduleContainerplay #gbOuterContainer{
+    display:block;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.mainContainer .coreModuleContainer #moduleContainerplay #gbOuterContainer *{
+    display: inherit;
+}
+
+#gbOuterContainer{
+    text-align:center;
+    background:black;
+    width:100%;
+}
+
+#gbInnnerContainer{
+    width:inherit;
+    height:100%;
+    text-align:center;
+}
+
+#gbLCD{
+    height:100%;
+    display:inline-block !important;
+}
+
+#noGameLoadedDisplay{
+    display:none  !important;
+}

@@ -106,11 +106,19 @@
                 $defaultTab = array_search("goPro",$tabs);
             }
         ?>
+        <?
+            if ($_GET["noui"] == true){
+        ?>
+        <link rel="stylesheet" type="text/css" href="/css/noui.css" />
+        <?
+            } else{
+        ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
         <link rel="stylesheet" type="text/css" href="/css/main.css" />
         <link rel="stylesheet" type="text/css" href="/lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
         <?
+            }
             echo "<script type='text/javascript'>";
             echo "window.getParams = JSON.parse(" . json_encode(json_encode($_GET)) . ");";
 
