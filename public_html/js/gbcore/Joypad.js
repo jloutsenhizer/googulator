@@ -60,6 +60,14 @@ define(["CopyUtils"], function(CopyUtils){
         }
     }
 
+    Joypad.clearButtonStates = function(){
+        for (var i = 0, li = keyDown.length; i < li; i++){
+            for (var j = 0, lj = keyDown[i].length; j < lj; j++){
+                keyDown[i][j] = Joypad.BUTTON_NOT_PRESSED;
+            }
+        }
+    }
+
     Joypad.getButtonState = function(player,button){
         return keyDown[player,button];
     }
@@ -112,6 +120,8 @@ define(["CopyUtils"], function(CopyUtils){
         curPlayer = 0;
         readDPad = readButtons = false;
     }
+
+    Joypad.clearButtonStates();
 
     return Joypad;
 

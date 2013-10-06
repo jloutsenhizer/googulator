@@ -27,27 +27,36 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                             callback(this.data);
                         }
                         else{
-                            GoogleAPIs.getFile(this.fileId,function (gameData){
-                                gameData = GameUtils.decompress(gameData);
-                                if (game.patchFileId == ""){
-                                    game.data = gameData;
-                                    game.header = GameUtils.getHeader(game.data);
-                                    callback(game.data,game.header);
-                                }
-                                else{
-                                    GoogleAPIs.getFile(game.patchFileId,function(patchData){
-                                        patchData = GameUtils.decompress(patchData);
-                                        game.data = GameUtils.applyPatch(patchData,gameData);
+                            if (GameUtils.isHTML5Game(game.id)){
+                                require(["html5apps/" + game.id + "/App"],function(app){
+                                    game.data = app;
+                                    game.header = app.header;
+                                    callback(game.data);
+                                });
+                            }
+                            else{
+                                GoogleAPIs.getFile(this.fileId,function (gameData){
+                                    gameData = GameUtils.decompress(gameData);
+                                    if (game.patchFileId == ""){
+                                        game.data = gameData;
                                         game.header = GameUtils.getHeader(game.data);
                                         callback(game.data,game.header);
-                                    },function(loaded,total){
-                                        progresscallback(50 + loaded / total * 50);
-                                    });
-                                }
-                            },function(loaded,total){
-                                var multiplier = game.patchFileId == "" ? 100 : 50;
-                                progresscallback(loaded / total * multiplier);
-                            });
+                                    }
+                                    else{
+                                        GoogleAPIs.getFile(game.patchFileId,function(patchData){
+                                            patchData = GameUtils.decompress(patchData);
+                                            game.data = GameUtils.applyPatch(patchData,gameData);
+                                            game.header = GameUtils.getHeader(game.data);
+                                            callback(game.data,game.header);
+                                        },function(loaded,total){
+                                            progresscallback(50 + loaded / total * 50);
+                                        });
+                                    }
+                                },function(loaded,total){
+                                    var multiplier = game.patchFileId == "" ? 100 : 50;
+                                    progresscallback(loaded / total * multiplier);
+                                });
+                            }
                         }
                     }
 

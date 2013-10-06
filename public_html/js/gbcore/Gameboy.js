@@ -1,10 +1,14 @@
 define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
         "gbcore/APUEmulator", "gbcore/SGB"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB){
     var Gameboy = {};
-    var canvas;
+
+    var html = $("<canvas style='height:100%'></canvas>");
+    var canvas = html[0];
 
     var loadedGame;
     var game;
+
+    var quickSaveState = null;
 
     Gameboy.BUTTON_A = Joypad.BUTTON_A, Gameboy.BUTTON_B = Joypad.BUTTON_B, Gameboy.BUTTON_SELECT = Joypad.BUTTON_SELECT, Gameboy.BUTTON_START = Joypad.BUTTON_START,
     Gameboy.BUTTON_RIGHT = Joypad.BUTTON_RIGHT, Gameboy.BUTTON_LEFT = Joypad.BUTTON_LEFT, Gameboy.BUTTON_UP = Joypad.BUTTON_UP, Gameboy.BUTTON_DOWN = Joypad.BUTTON_DOWN;
@@ -13,6 +17,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
     GPUEmulator.setCPU(CPUEmulator);
     GPUEmulator.setMemoryController(MemoryController);
+    GPUEmulator.setDisplay(canvas.getContext("2d"));
     CPUEmulator.setMemoryController(MemoryController);
     APUEmulator.setMemoryController(MemoryController);
     MemoryController.setGPU(GPUEmulator);
@@ -26,11 +31,6 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     SGB.setJoypad(Joypad);
     SGB.setGPU(GPUEmulator);
     SGB.setMemoryController(MemoryController);
-
-    Gameboy.setCanvas = function(c){
-        canvas = c;
-        GPUEmulator.setDisplay(canvas.getContext("2d"));
-    }
 
     Gameboy.loadGame = function(g){
         game = g;
@@ -67,6 +67,10 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     var inPauseMode = false;
 
     var frameTimes = [];
+
+    Gameboy.start = function(){
+        this.run();
+    }
 
     Gameboy.run = function(){
         running = true;
@@ -169,6 +173,10 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         Joypad.setButtonState(player,button,state);
     }
 
+    Gameboy.clearButtonStates = function(){
+        Joypad.clearButtonStates();
+    }
+
     Gameboy.getSaveState = function(){
         return {
             gameid: game.id,
@@ -210,6 +218,60 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         }
 
         doLoad();
+    }
+
+    Gameboy.handleKey = function(event){
+        switch (event.button){
+            case App.constants.BUTTON_LEFT:
+                Joypad.setButtonState(event.player,this.BUTTON_LEFT,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_RIGHT:
+                Joypad.setButtonState(event.player,this.BUTTON_RIGHT,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_UP:
+                Joypad.setButtonState(event.player,this.BUTTON_UP,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_DOWN:
+                Joypad.setButtonState(event.player,this.BUTTON_DOWN,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_A:
+                Joypad.setButtonState(event.player,this.BUTTON_A,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_B:
+                Joypad.setButtonState(event.player,this.BUTTON_B,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_START:
+                Joypad.setButtonState(event.player,this.BUTTON_START,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.BUTTON_SELECT:
+                Joypad.setButtonState(event.player,this.BUTTON_SELECT,event.pressed ? this.BUTTON_PRESSED : this.BUTTON_NOT_PRESSED);
+                break;
+            case App.constants.QUICK_LOAD_STATE:
+                this.setSaveState(quickSaveState);
+                break;
+            case App.constants.QUICK_SAVE_STATE:
+                quickSaveState = this.getSaveState();
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    Gameboy.handleMouseEvent = function(){
+
+    }
+
+    Gameboy.onResize = function(){
+        var canvasHeight = $(canvas).height();
+        var canvasWidth =  canvasHeight/144*160;
+        $(canvas).attr("width",canvasWidth);
+        $(canvas).attr("height",canvasHeight);
+
+    }
+
+    Gameboy.getHTML = function(){
+        return html;
     }
 
     return Gameboy;

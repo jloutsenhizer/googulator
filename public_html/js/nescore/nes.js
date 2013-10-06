@@ -27,8 +27,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             sampleRate: new AudioContext().sampleRate, // Sound sample rate in hz
 
             CPU_FREQ_NTSC: 1789772.5, //1789772.72727272d;
-            CPU_FREQ_PAL: 1773447.4,
-            canvas: null
+            CPU_FREQ_PAL: 1773447.4
         };
         if (typeof opts != 'undefined') {
             var key;
@@ -39,6 +38,20 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             }
         }
 
+        this.html = $("<canvas style='height:100%'></canvas>");
+
+
+        var nes = this;
+        this.html.mousemove(function(event){
+            this.handleMouseMove(event.offsetX / nes.html.width(),event.offsetY / nes.html.height());
+
+        });
+        this.html.mouseleave(function(event){
+            this.handleMouseMove(2,2);
+        });
+
+        this.opts.canvas = this.html[0];
+
         this.frameTime = 1000 / this.opts.preferredFrameRate;
 
         this.cpu = new CPU(this);
@@ -46,6 +59,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
         this.papu = new PAPU(this);
         this.mmap = null; // set in loadRom()
         this.joypad = new Joypad();
+        this.quickSaveState = null;
     };
 
     JSNES.prototype = {
@@ -78,6 +92,11 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
                     this.resetFps();
                 }
             }
+        },
+
+        resume: function(){
+            this.start();
+
         },
 
         frame: function() {
@@ -158,6 +177,10 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             this.isRunning = false;
         },
 
+        pause: function(){
+            this.stop();
+        },
+
         reloadRom: function() {
             if (this.romData !== null) {
                 this.loadROM(this.romData);
@@ -166,7 +189,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
 
         // Loads a ROM file into the CPU and PPU.
         // The ROM file is validated first.
-        loadROM: function(game) {
+        loadGame: function(game) {
             if (this.isRunning) {
                 this.stop();
             };
@@ -197,7 +220,7 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             return valid;
         },
 
-        unloadROM: function(callback,saveprogresscallback){
+        terminateGame: function(callback,saveprogresscallback){
             if (this.game == null){
                 callback();
                 return;
@@ -262,6 +285,69 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             this.mmap = this.rom.createMapperFromSaveState(saveState.mmap);
 
             this.start();
+        },
+
+        clearButtonStates: function(){
+
+        },
+
+        handleKey: function(event){
+            switch (event.button){
+                case App.constants.BUTTON_LEFT:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_LEFT,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_RIGHT:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_RIGHT,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case  App.constants.BUTTON_UP:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_UP,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_DOWN:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_DOWN,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_A:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_A,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_B:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_B,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_START:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_START,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.BUTTON_SELECT:
+                    this.joypad.setButtonState(event.player,this.joypad.BUTTON_SELECT,event.pressed ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+                    break;
+                case App.constants.QUICK_SAVE_STATE:
+                    this.quickSaveState = this.getSaveState();
+                    break;
+                case App.constants.QUICK_LOAD_STATE:
+                    this.setSaveState(this.quickSaveState);
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        },
+
+        handleMouseEvent: function(event){
+            this.joypad.setButtonState(this.joypad.PLAYER_2,this.joypad.BUTTON_ZAPPER,event.type == "mousedown" ? this.joypad.BUTTON_PRESSED : this.joypad.BUTTON_NOT_PRESSED);
+        },
+
+        handleMouseMove: function(x,y){
+            this.joypad.setButtonState(this.joypad.PLAYER_2,this.joypad.ZAPPER_X,x * 256);
+            this.joypad.setButtonState(this.joypad.PLAYER_2,this.joypad.ZAPPER_Y,y * 240);
+
+        },
+
+        getHTML: function(){
+            return this.html;
+        },
+
+        onResize: function(){
+            var canvasHeight = $(this.opts.canvas).height();
+            var canvasWidth =  canvasHeight/240*256;
+            $(this.opts.canvas).attr("width",canvasWidth);
+            $(this.opts.canvas).attr("height",canvasHeight);
         }
     };
 

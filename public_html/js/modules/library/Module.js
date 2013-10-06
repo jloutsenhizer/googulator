@@ -331,23 +331,12 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         },progressUpdate);
     }
 
-    var emulatorModules = {
-        gameboy:"play",
-        nes:"play"
-    }
-
     function switchToEmulator(game){
         if (overlay != null)
             overlay.remove();
         overlay = App.createMessageOverlay(container,$("<div>Loading SaveState for " + game.title + "...</div><div class='pbar'></div>"));
         game.getGameSaveStateData(function(){
-            var module = emulatorModules[game.header.type];
-            if (module == null){
-                console.log("unsupported game");
-            }
-            else{
-                App.setActiveModule(module,{game: game});
-            }
+            App.setActiveModule("play",{game: game});
             if (overlay != null)
                 overlay.remove();
             overlay = null;

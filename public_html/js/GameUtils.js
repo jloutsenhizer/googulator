@@ -289,9 +289,15 @@ define(function(){
             case "GBC":
             case "SGBC":
                 return "gbc";
+            case "HTML5":
+                return "html5";
             default:
                 return "unknown";
         }
+    }
+
+    GameUtils.isHTML5Game = function(gameId){
+        return this.getGameIconClass(gameId) == "html5";
     }
 
     GameUtils.MBC_UNKNOWN = -1;

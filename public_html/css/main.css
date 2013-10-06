@@ -127,18 +127,19 @@ html, body, .mainContainer{
     width:100%;
 }
 
-#gbInnnerContainer{
+#gbInnerContainer{
     width:100%;
     height:500px;
     display:inline-block;
 }
 
-.fullscreen #gbInnnerContainer{
-    width:inherit;
+#gbOuterContainer.fullscreen {
+    width:100%;
     height:100%;
 }
 
-#gbLCD{
+.fullscreen #gbInnerContainer{
+    width:100%;
     height:100%;
 }
 
@@ -272,6 +273,9 @@ html, body, .mainContainer{
 }
 #libraryList li i.gameicon-gbc{
     background-image: url("../img/icons/systems/gbc.png");
+}
+#libraryList li i.gameicon-html5{
+    background-image: url("../img/icons/systems/html5.png");
 }
 
 .gameCommentContainer{
