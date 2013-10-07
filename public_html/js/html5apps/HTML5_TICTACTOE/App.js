@@ -2,6 +2,8 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
 
     var game = new GameApp();
 
+    game.baseHtml.css("backgroundColor","white");
+
     game.header = header;
 
     var boardContainer = $("<div style='background:white; display:inline-block;position:relative; vertical-align:top;'></div>")
