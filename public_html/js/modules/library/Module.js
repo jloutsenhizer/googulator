@@ -435,19 +435,28 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
     function addFromFree(event){
         FreeGamePicker.show(function(gameChosen){
             if (gameChosen != null){
-                overlay = App.createMessageOverlay(container,"Downloading " + gameChosen.title + " To Your Drive...");
-                App.downloadBinaryFile(gameChosen.path,{
-                    success:function(data){
-                        GoogleAPIs.uploadBinaryFile(gameChosen.fileName,data,function(result){
-                            overlay.remove();
-                            overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
-                            GameLibrary.addGame(gameChosen.id,result.id,function(lib,success){
-                                library = lib;
-                                onLibraryLoaded();
+                if (gameChosen.path === null){
+                    overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
+                    GameLibrary.addGame(gameChosen.id,"",function(lib,success){
+                        library = lib;
+                        onLibraryLoaded();
+                    });
+                }
+                else{
+                    overlay = App.createMessageOverlay(container,"Downloading " + gameChosen.title + " To Your Drive...");
+                    App.downloadBinaryFile(gameChosen.path,{
+                        success:function(data){
+                            GoogleAPIs.uploadBinaryFile(gameChosen.fileName,data,function(result){
+                                overlay.remove();
+                                overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
+                                GameLibrary.addGame(gameChosen.id,result.id,function(lib,success){
+                                    library = lib;
+                                    onLibraryLoaded();
+                                });
                             });
-                        });
-                    }
-                })
+                        }
+                    })
+                }
             }
         });
         event.preventDefault();

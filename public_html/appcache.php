@@ -13,7 +13,9 @@ CACHE:
 outputDirectoryListing("css");
 outputDirectoryListing("js");
 outputDirectoryListing("lib");
-outputDirectoryListing("img/icons/systems");
+outputDirectoryListing("img/icons");
+outputDirectoryListing("img/html5apps");
+outputDirectoryListing("img",false);
 ?>
 
 NETWORK:

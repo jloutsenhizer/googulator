@@ -19,10 +19,11 @@ html,body, .mainContainer, .mainContainer .coreModuleContainer, .mainContainer .
     text-align:center;
     background:black;
     width:100%;
+    width:100%;
 }
 
-#gbInnnerContainer{
-    width:inherit;
+#gbInnerContainer{
+    width:100%;
     height:100%;
     text-align:center;
 }

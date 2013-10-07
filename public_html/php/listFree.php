@@ -18,8 +18,14 @@ $games = array();
 
 while ($row = mysql_fetch_assoc($query)){
     $element = array();
-    $element["fileName"] = $row["fileName"];
-    $element["path"] = "ROM/" . $row["fileName"];
+    if ($row["fileName"] === "" || $row["fileName"] == NULL){
+        $element["fileName"] = NULL;
+        $element["path"] = NULL;
+    }
+    else{
+        $element["fileName"] = $row["fileName"];
+        $element["path"] = "ROM/" . $row["fileName"];
+    }
     $element["image"] = "img/ROMPictures/" . $row["gameid"] . ".png";
     $element["id"] = $row["gameid"];
     $element["title"] = getGameTitle($row["gameid"],$con);
