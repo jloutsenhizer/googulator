@@ -73,7 +73,8 @@ if (false){ //set to true to agressively load all the modules
         "text!modules/goPro/template.html",
         "FreeROMPicker",
         "text!dialogTemplates.html",
-        "text!globalTemplates.html"
+        "text!globalTemplates.html",
+        "html5apps/HTML5_TICTACTOE/App"
 
     ]);
 

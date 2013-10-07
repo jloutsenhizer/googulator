@@ -11,7 +11,7 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
     var currentTurnText = controls.find(".currentTurn");
     var newGameBtn = controls.find(".newGameBtn");
 
-    var victoryLine = $('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position:absolute; left:0;width:100%;top:0;height:100%;z-index:-1;" viewBox="0 0 100 100"></svg>');
+    var victoryLine = $('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="position:absolute; left:0;width:100%;top:0;height:100%;z-index:-1;" viewBox="0 0 90 90"></svg>');
     function parseSVG(s) {
         var div= document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
         div.innerHTML= '<svg xmlns="http://www.w3.org/2000/svg">'+s+'</svg>';
@@ -175,7 +175,7 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
                 return;
         }
 
-        victoryLine.empty().css("zIndex","1").append(parseSVG('<line x1="' + (x1 * 35 + 15) + '" y1="' + (y1 * 35 + 15) + '" x2="' + (x2 * 35 + 15) + '" y2="' + (y2 * 35 + 15) + '" style="stroke:black;stroke-width:3;stroke-linecap:round;" />'));
+        victoryLine.empty().css("zIndex","1").append(parseSVG('<line x1="' + (x1 * 30 + 15) + '" y1="' + (y1 * 30 + 15) + '" x2="' + (x2 * 30 + 15) + '" y2="' + (y2 * 30 + 15) + '" style="stroke:black;stroke-width:3;stroke-linecap:round;" />'));
 
 
 
