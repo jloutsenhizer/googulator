@@ -6,7 +6,7 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
 
     var boardContainer = $("<div style='background:white; display:inline-block;position:relative; vertical-align:top;'></div>")
 
-    var controls = $("<div style='background:white; display:inline-block;position:relative;height:100%; width:10em;'><div style='font-weight:bold; font-size:2em; margin-top:1em;'>Turn</div><div class='currentTurn' style='font-size:2em; margin-top:1em; margin-bottom:2em;'>X's Turn</div><button class='newGameBtn'>New Game</button></div>");
+    var controls = $("<div style='background:white; display:inline-block;position:relative;height:100%; width:140px;'><div style='font-weight:bold; font-size:28px; margin-top:1em;'>Turn</div><div class='currentTurn' style='font-size:28px; margin-top:1em; margin-bottom:2em;'>X's Turn</div><button class='newGameBtn'>New Game</button></div>");
 
     var currentTurnText = controls.find(".currentTurn");
     var newGameBtn = controls.find(".newGameBtn");
@@ -26,7 +26,9 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
     boardContainer.append(victoryLine);
 
     game.onResize = function(width,height){
-        boardContainer.css('width',height + 'px');
+        width -= 140;
+        width = height = Math.min(width,height);
+        boardContainer.css('width',width + 'px');
         boardContainer.css('height',height  +"px");
     }
 
@@ -44,6 +46,7 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
             board[i][j].css("backgroundSize","80%");
             board[i][j].css("backgroundRepeat","no-repeat");
             board[i][j].css("backgroundPosition","center");
+            board[i][j].css("cursor","pointer");
 
             if (i > 0){
                 board[i][j].css("borderLeft","1px solid black");
@@ -57,6 +60,15 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
             if (j < 2){
                 board[i][j].css("borderBottom","1px solid black");
             }
+
+            board[i][j].mouseenter({
+                i: i,
+                j: j
+            },function(event){
+                cursorPosX = event.data.i;
+                cursorPosY = event.data.j;
+                resyncDisplay();
+            })
 
             board[i][j].click({
                 i: i,
@@ -77,6 +89,42 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
     var NO_PLAYER = 0;
     var PLAYER_X = 1;
     var PLAYER_O = 2;
+
+    var cursorPosX = 0;
+    var cursorPosY = 0;
+
+    game.handleKey = function(event){
+        if (event.pressed){
+            switch (event.button){
+                case App.constants.BUTTON_A:
+                    board[cursorPosX][cursorPosY].click();
+                    break;
+                case App.constants.BUTTON_LEFT:
+                    cursorPosX -= 1;
+                    if (cursorPosX < 0) cursorPosX += 3;
+                    break;
+                case App.constants.BUTTON_RIGHT:
+                    cursorPosX += 1;
+                    if (cursorPosX >= 3) cursorPosX -= 3;
+                    break;
+                case App.constants.BUTTON_UP:
+                    cursorPosY -= 1;
+                    if (cursorPosY < 0) cursorPosY += 3;
+                    break;
+                case App.constants.BUTTON_DOWN:
+                    cursorPosY += 1;
+                    if (cursorPosY >= 3) cursorPosY -= 3;
+                    break;
+                case App.constants.BUTTON_SELECT:
+                    newGameBtn.click();
+                    break;
+                default:
+                    return false;
+            }
+        }
+        resyncDisplay();
+        return true;
+    }
 
     var winner = null;
 
@@ -116,22 +164,41 @@ define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(head
 
     }
 
+    var xUrl = "url(/img/html5apps/HTML5_TICTACTOE/cross.svg)";
+    var oUrl = "url(/img/html5apps/HTML5_TICTACTOE/circle.svg)";
+
     function resyncDisplay(){
         for (var i = 0, li = board.length; i < li; i++){
             for (var j = 0, lj = board[i].length; j < lj; j++){
                 var t;
                 switch (boardState[i][j]){
                     case PIECE_X:
-                        t = "url('/img/html5apps/HTML5_TICTACTOE/cross.svg')";
+                        t = xUrl;
                         break;
                     case PIECE_O:
-                        t = "url('/img/html5apps/HTML5_TICTACTOE/circle.svg')";
+                        t = oUrl;
                         break;
                     default:
                         t = "none";
                         break;
                 }
-                board[i][j].css("backgroundImage",t);
+                if (board[i][j].css("backgroundImage") !== t){
+                    board[i][j].css("backgroundImage",t);
+                    switch (boardState[i][j]){
+                        case PIECE_X:
+                            xUrl = board[i][j].css("backgroundImage");
+                            break;
+                        case PIECE_O:
+                            oUrl = board[i][j].css("backgroundImage");
+                            break;
+                    }
+                }
+                if (i == cursorPosX && j == cursorPosY){
+                    board[i][j].css("outline","2px solid orange");
+                }
+                else{
+                    board[i][j].css("outline","none");
+                }
             }
         }
 
