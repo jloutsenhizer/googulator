@@ -23,6 +23,7 @@ define(function(){
     var buttonMappers = {};
     var gamepadSelectorDivs = [];
     var gamepadSelectors = [];
+    var inputTypeSelector = [];
 
     Module.init = function(c){
         App.davis.get("/settings",function(req){
@@ -38,6 +39,7 @@ define(function(){
             }
             $(".enabledCheckbox").change(function(event){
                 App.settings.controller[$(event.delegateTarget).attr("player")].enabled = event.delegateTarget.checked;
+                localStorage["controllerSettings"] = JSON.stringify(App.settings.controller);
             }).each(function(index,checkbox){
                     checkbox.checked = App.settings.controller[$(checkbox).attr("player")].enabled;
             });
@@ -47,7 +49,8 @@ define(function(){
             });
             $(".gamepadSelector").change(function(event){
                 var playerNum = $(event.delegateTarget).attr("player");
-                App.settings.controller[playerNum].gamepadNum = event.delegateTarget.selectedIndex
+                App.settings.controller[playerNum].gamepadNum = event.delegateTarget.selectedIndex;
+                localStorage["controllerSettings"] = JSON.stringify(App.settings.controller);
             }).each(function(index,selector){
                     var player = $(selector).attr("player");
                     gamepadSelectors[player] = $(selector);
@@ -71,7 +74,9 @@ define(function(){
                     App.settings.controller[playerNum].type = event.delegateTarget.selectedIndex;
                     setControllerToDefault(playerNum);
                 }
-            });
+            }).each(function(index,selector){
+                    inputTypeSelector[$(selector).attr("player")] = $(selector);
+                });
             updateAllButtons();
         });
     }
@@ -393,6 +398,7 @@ define(function(){
         for (var member in App.settings.controller.default[App.settings.controller[player].type]){
             App.settings.controller[player][member] = App.settings.controller.default[App.settings.controller[player].type][member];
         }
+        localStorage["controllerSettings"] = JSON.stringify(App.settings.controller);
         updateAllButtons();
     }
 
@@ -407,17 +413,29 @@ define(function(){
             else{
                 gamepadSelectorDivs[i].addClass("hidden");
             }
-        }
-        for (var player = 0; player < App.settings.controller.numPlayers; player++){
-            for (var button in buttonMappers[player]){
-                buttonMappers[player][button].text(App.getKeyName(App.settings.controller[player][button],App.settings.controller[player].type));
+            for (var button in buttonMappers[i]){
+                buttonMappers[i][button].text(App.getKeyName(App.settings.controller[i][button],App.settings.controller[i].type));
             }
+            inputTypeSelector[i][0].selectedIndex = App.settings.controller[i].type;
+
+        }
+
+    }
+
+    if (localStorage["controllerSettings"] != null){
+        App.settings.controller = JSON.parse(localStorage["controllerSettings"]);
+        App.settings.controller.transformKeyInput = transformKeyInput;
+        App.settings.controller.transformGamepadInput = transformGamepadInput;
+        updateAllButtons();
+    }
+    else{
+        for (var i = 0; i < App.settings.controller.numPlayers; i++){
+            setControllerToDefault(i);
         }
     }
 
-    for (var i = 0; i < App.settings.controller.numPlayers; i++){
-        setControllerToDefault(i);
-    }
+
+
 
     var iCadeButtonNames = ["Bottom Right Black", "Joystick Up", "Joystick Down", "Joystick Left", "Joystick Right", "Top Red", "Bottom Red", "Top Left Black", "Bottom Left Black", "Top Right Black",
                         "Top White", "Bottom White"];
@@ -578,6 +596,7 @@ define(function(){
         var controller = App.settings.controller[rebindingButton.attr("player")];
         rebindingButton.text(App.getKeyName(controller[rebindingButton.attr("button")],controller.type));
         rebindingButton = null;
+        localStorage["controllerSettings"] = JSON.stringify(App.settings.controller);
     }
 
 
