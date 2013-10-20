@@ -17,15 +17,28 @@ define(function(){
 
     var fileCache = {};
 
-    GoogleAPIs.checkAuthentication = function(callback){
+    GoogleAPIs.checkAuthentication = function(callback,errorCount,overlay){
+        if (errorCount == null) errorCount = 0;
         if (!initialized){
             if (gapi.client == null){
+                if (errorCount >= 1500 && overlay == null){
+                    overlay = App.createMessageOverlay($("body"),$("<span>We're having difficulties loading Google APIs. These are needed to login and play games.<br>If you have anti tracking software, it could be causing the issue and you should try disabling it for www.googulator.com and then <a href='javascript:void(0);' class='reloadLink'>reloading the app</a>.<br><a href='javascript:void(0);' class='dismissLink'>Click here to dismiss this popup</a></span>"));
+                    overlay.find(".reloadLink").click(function(){
+                        App.refreshPage();
+                    });
+                    overlay.find(".dismissLink").click(function(){
+                        overlay.remove();
+                    });
+
+                }
                 var that = this;
                 setTimeout(function(){
-                    that.checkAuthentication(callback);
+                    that.checkAuthentication(callback,errorCount + 1, overlay);
                 },1);
                 return;
             }
+            if (overlay != null)
+                overlay.remove();
             gapi.client.setApiKey(apiKey);
             window.setTimeout(function(){
                 gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, function (authResult) {
