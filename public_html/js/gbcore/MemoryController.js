@@ -145,6 +145,10 @@ define(function(){
         return this.signWord(this.readWord(offset));
     }
 
+    MemoryController.writeRAMByte = function(offset,ramBankNo,data,silent){
+        loadedGame.writeRAMByte(offset,ramBankNo,data);
+    }
+
      MemoryController.writeByte = function(offset, data, silent){
         data &= 0xFF;
         offset &= 0xFFFF;

@@ -1,5 +1,5 @@
 define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
-        "gbcore/APUEmulator", "gbcore/SGB"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB){
+        "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark){
     var Gameboy = {};
 
     var html = $("<canvas style='height:100%'></canvas>");
@@ -19,6 +19,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     GPUEmulator.setMemoryController(MemoryController);
     GPUEmulator.setDisplay(canvas.getContext("2d"));
     CPUEmulator.setMemoryController(MemoryController);
+    CPUEmulator.setGameshark(Gameshark);
     APUEmulator.setMemoryController(MemoryController);
     MemoryController.setGPU(GPUEmulator);
     MemoryController.addIOListener(CPUEmulator);
@@ -31,6 +32,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
     SGB.setJoypad(Joypad);
     SGB.setGPU(GPUEmulator);
     SGB.setMemoryController(MemoryController);
+    Gameshark.setMemoryController(MemoryController);
 
     Gameboy.loadGame = function(g){
         game = g;

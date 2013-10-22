@@ -23,6 +23,12 @@ define (function(){
     var gbcEnabled;
     INT_VBLANK = 0, INT_LCDSTAT = 1, INT_TIMER = 2, INT_SERIAL = 3, INT_JPAD = 4;
 
+    var gameShark;
+
+    CPUEmulator.setGameshark = function(g){
+        gameShark = g;
+    }
+
     CPUEmulator.getSaveState = function(){
         return {
             AF: AF,
@@ -404,8 +410,8 @@ define (function(){
 
     CPUEmulator.interrupt = function(type){
         memoryController.writeByte(0xFF0F, memoryController.readByte(0xFF0F) | (1 << type));
-        /*if (type == INT_VBLANK)            GAME SHARK NOT IMPLEMENTED
-            gameShark.applyCodes(); */
+        if (type == INT_VBLANK)
+            gameShark.applyCodes();
     }
 
     CPUEmulator.executeNextInstruction = function(){
