@@ -96,7 +96,7 @@ define(function(){
             return;
         }
         if (google.picker == null){
-            google.load("picker", "1", {callback:function(){onAuthenticate(callback)}});
+            gapi.load("picker", {callback:function(){onAuthenticate(callback)}});
             return;
         }
         $.doTimeout(gapi.auth.getToken().expires_in * 500,function(){
@@ -126,8 +126,9 @@ define(function(){
             var picker = new google.picker.PickerBuilder()
                 //.enableFeature(google.picker.Feature.NAV_HIDDEN)
                 .setAppId(clientId)
+                .setDeveloperKey(apiKey)
                 .setAuthUser(userInfo.id)
-                .setOAuthToken(GoogleAPIs.getAuthToken())
+                .setOAuthToken(gapi.auth.getToken().access_token)
                 .addView(view)
                 .addView(new google.picker.View(google.picker.ViewId.FOLDERS))
                 .addView(new google.picker.DocsUploadView().setIncludeFolders(true))
