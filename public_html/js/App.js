@@ -176,7 +176,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             }
             GoogleAPIs.getUserInfo(function(userInfo){
                 $("#googleUserInfo").html("");
-                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "img/genericPicture.png") + "'</img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
+                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
                 for (var modulename in modules){
                     modules[modulename].onAuthenticated();
                 }
