@@ -44,6 +44,26 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     App.initialize = function(){
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
+            if (getParams.unsubscribe != null){
+                App.showModalConfirmation("Unsubscribe from Googulator Updates","Are you sure you no longer want to receive emails about Googulator updates?",function(result){
+                    if (result){
+                        $.ajax("/php/unsubscribeFromUpdates.php?address=" + encodeURIComponent(getParams.unsubscribe),{
+                            success:function(result){
+                                if (result.result == "success"){
+                                    App.showModalMessage("Email Updates Unsubscribed","You will no longer get emails about Googulator updates!");
+                                }
+                                else{
+                                    App.showModalMessage("An Error Occurred","We were unable to remove your email address from the email list!");
+                                }
+
+                            },
+                            error:function(){
+                                App.showModalMessage("An Error Occurred","We were unable to remove your email address from the email list!");
+                            }
+                        })
+                    }
+                });
+            }
             if (getParams.state != null)
                 driveOverlay = App.createMessageOverlay($("body"),"Loading your file...");
             $(document).on("click","a",function(event){

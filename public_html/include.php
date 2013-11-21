@@ -1,5 +1,6 @@
 <?
 require_once "google_php/Google_Client.php";
+require_once "configuration.php";
 
 function getGoogleId($access_token){
     try{
@@ -102,5 +103,19 @@ function outputDirectoryListing($directory,$recursive = true){
             echo "\n";
         }
     }
+}
+
+function sendEmail($to,$message){
+    global $PREFERRED_HOSTNAME;
+    $headers = 'From: noreply@' . $PREFERRED_HOSTNAME  . "\r\n" .
+        'Reply-To: noreply@' . $PREFERRED_HOSTNAME;
+    $message = $message . "\r\n\r\n" . "Tired of these messages? Use the following url to unsubscribe:\r\n"
+        . "http://$PREFERRED_HOSTNAME/?unsubscribe=" . encodeURIComponent($to);
+    return mail($to,"New Updates to Googulator",$message,$headers);
+}
+
+function encodeURIComponent($str) {
+    $revert = array('%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')');
+    return strtr(rawurlencode($str), $revert);
 }
 ?>
