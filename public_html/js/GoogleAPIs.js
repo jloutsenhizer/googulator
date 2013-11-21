@@ -241,9 +241,17 @@ define(function(){
                 'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
             },
             'body': multipartRequestBody});
-        request.execute(function(result){
-            fileCache[result.id] = contents;
-            callback(result);
+        request.execute(function(result,rawResponse){
+            var response = JSON.parse(rawResponse);
+            if (response.gapiRequest != null && response.gapiRequest.data.status == 200){
+                fileCache[result.id] = contents;
+                callback(result);
+            }
+            else{
+                setTimeout(function(){
+                    GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
+                },1000);//wait a second and try again
+            }
         });
 
     }
