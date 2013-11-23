@@ -215,8 +215,6 @@ define(function(){
                     GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
                 },1000);//wait a second and try again
             }
-            fileCache[result.id] = contents;
-            callback(result);
         });
     }
 
