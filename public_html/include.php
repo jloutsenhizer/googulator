@@ -106,9 +106,10 @@ function outputDirectoryListing($directory,$recursive = true){
 }
 
 function sendEmail($to,$message){
-    global $PREFERRED_HOSTNAME;
-    $headers = 'From: noreply@' . $PREFERRED_HOSTNAME  . "\r\n" .
-        'Reply-To: noreply@' . $PREFERRED_HOSTNAME;
+    global $PREFERRED_HOSTNAME, $UPDATE_EMAIL_ADDRESS;
+    $headers = 'From: ' . $UPDATE_EMAIL_ADDRESS   . "\r\n" .
+        'Reply-To: ' . $UPDATE_EMAIL_ADDRESS  . "\r\n" .
+        'X-Mailer: PHP/' . phpversion();;
     $message = $message . "\r\n\r\n" . "Tired of these messages? Use the following url to unsubscribe:\r\n"
         . "http://$PREFERRED_HOSTNAME/?unsubscribe=" . encodeURIComponent($to);
     return mail($to,"New Updates to Googulator",$message,$headers);
