@@ -16,8 +16,8 @@ define([
         this.noise = new NoiseChannel();
         this.connected = false;
 
-        this.node = this.context.createJavaScriptNode(BUFFER_LENGTH);
-        this.gainNode = this.context.createGainNode();
+        this.node = this.context.createScriptProcessor(BUFFER_LENGTH);
+        this.gainNode = this.context.createGain();
         this.volume = 0;
         this.gainNode.gain.value = this.volume;
         this.node.connect(this.gainNode);

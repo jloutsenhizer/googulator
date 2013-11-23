@@ -113,7 +113,7 @@ define(["CopyUtils"],function(CopyUtils){
             }
         }
 
-        this.gainNode = this.audioContext.createGainNode();
+        this.gainNode = this.audioContext.createGain();
 
         this.setVolume(0.5);
 
@@ -795,7 +795,7 @@ define(["CopyUtils"],function(CopyUtils){
                 out2[j] = samples[i+1] / 32768;
             }
             source.connect(this.gainNode);
-            source.noteOn(0);
+            source.start();
         },
 
         getVolume: function(){

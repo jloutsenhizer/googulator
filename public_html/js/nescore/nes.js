@@ -43,11 +43,11 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
 
         var nes = this;
         this.html.mousemove(function(event){
-            this.handleMouseMove(event.offsetX / nes.html.width(),event.offsetY / nes.html.height());
+            nes.handleMouseMove(event.offsetX / nes.html.width(),event.offsetY / nes.html.height());
 
         });
         this.html.mouseleave(function(event){
-            this.handleMouseMove(2,2);
+            nes.handleMouseMove(2,2);
         });
 
         this.opts.canvas = this.html[0];
