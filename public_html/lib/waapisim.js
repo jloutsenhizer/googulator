@@ -106,6 +106,7 @@ if(typeof(webkitAudioContext)!=="undefined") {
 }
 if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
     ||(typeof(AudioContext)!=="undefined"&&typeof(AudioContext.prototype.createOscillator)==="undefined"&&(typeof(waapisimForceSimWhenLackOsc)==="undefined"||(typeof(waapisimForceSimWhenLackOsc)!=="undefined"&&waapisimForceSimWhenLackOsc)))
+    ||(typeof(webkitAudioContext)==="undefined" && typeof(waapisimForceSimWhenNotWebkit)!=="undefined"&&waapisimForceSimWhenNotWebkit)
     ||(typeof(webkitAudioContext)==="undefined" && typeof(AudioContext)==="undefined")) {
     waapisimSampleRate=44100;
     waapisimAudioIf=0;
@@ -315,10 +316,12 @@ if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
     waapisimAddFlashObj=function() {
         var div=document.createElement("DIV");
         div.setAttribute("id","WAAPISIMFLASHOBJ");
-        div.setAttribute("style","background:#ff00ff;positoin:static;");
+        div.setAttribute("style","background:#ff00ff;position:static;");
         var body=document.getElementsByTagName("BODY");
         body[0].appendChild(div);
         document.getElementById("WAAPISIMFLASHOBJ").innerHTML="<div style='position:fixed;right:0px;bottom:0px'> <object id='waapisim_swf' CLASSID='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' CODEBASE='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=4,0,0,0' width=150 height=20><param name=movie value='"+waapisimSwfPath+"'><PARAM NAME=bgcolor VALUE=#FFFFFF><PARAM NAME=LOOP VALUE=false><PARAM NAME=quality VALUE=high><param name='allowScriptAccess' value='always'><embed src='"+waapisimSwfPath+"' width=150 height=20 bgcolor=#FFFFFF loop=false quality=high pluginspage='http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash' type='application/x-shockwave-flash' allowScriptAccess='always'></embed></object></div>";
+        if(typeof(document.getElementById("waapisim_swf").SetReturnValue)==="undefined")
+            document.getElementById("waapisim_swf").SetReturnValue=function(v){document.getElementById("waapisim_swf").impl.SetReturnValue(v);};
     };
     waapisimFlashOffset=function(pos) {
         waapisimUpdateCurrentTime(pos/1000);
@@ -333,8 +336,7 @@ if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
         for(l=waapisimOutBufSize*2,i=0;i<l;++i) {
             var v=(waapisimOutBuf[i]*16384+32768)|0;
             if(isNaN(v)) v=32768;
-            if(v>49152) v=49152;
-            if(v<16384) v=16384;
+            v = Math.min(49152, Math.max(16384, v));
             s+=String.fromCharCode(v);
         }
         return s;
@@ -405,8 +407,8 @@ if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
             else
                 errorCallback();
         };
-        this.createWaveTable=function(real,imag) {
-            return new waapisimWaveTable(real,imag);
+        this.createPeriodicWave=this.createWaveTable=function(real,imag) {
+            return new waapisimPeriodicWave(real,imag);
         };
         this._SortNode=function() {
             var i,j,k,n;
@@ -452,7 +454,7 @@ if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
         this.setOrientation=function(x,y,z,ux,uy,uz) {this.ox=x;this.oy=y;this.oz=z;this.ux=ux;this.uy=uy;this.uz=uz;};
         this.setVelocity=function(x,y,z) {};
     };
-    waapisimWaveTable=function(real,imag) {
+    waapisimPeriodicWave=function(real,imag) {
         var n=4096;
         var ar=new Array(n);
         var ai=new Array(n);
@@ -1029,7 +1031,7 @@ if((typeof(waapisimForceSim)!=="undefined"&&waapisimForceSim)
         this.stop=this.noteOff=function(w) {
             this._whenstop=w;
         };
-        this.setWaveTable=function(tab) {
+        this.setPeriodicWave=this.setWaveTable=function(tab) {
             this.type=4;
             this._wavtable=tab;
         };
