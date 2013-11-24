@@ -1,4 +1,4 @@
-define(["GoogleAPIs"],function(GoogleAPIs){
+define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
     var App = {};
 
     var compiledTemplates = {};
@@ -13,6 +13,8 @@ define(["GoogleAPIs"],function(GoogleAPIs){
 
     App.userRoles = [];
 
+    App.metadataManager = MetadataManager;
+
     var totalModules = 0;
     var loadedModules = 0;
 
@@ -21,10 +23,10 @@ define(["GoogleAPIs"],function(GoogleAPIs){
     }
 
     App.userHasRole = function(role){
-        for (var i = 0, li = App.userRoles.length; i < li; i++){
-            if (App.userRoles[i] == role)
+        for (var i = 0, li = App.userInfo.roles.length; i < li; i++){
+            if (App.userInfo.roles[i] == role)
                 return true;
-            var mapping = additionalRoleMapping[App.userRoles[i]];
+            var mapping = additionalRoleMapping[App.userInfo.roles[i]];
             if (mapping != null && mapping.indexOf(role) >= 0)
                 return true;
         }
@@ -197,23 +199,27 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             GoogleAPIs.getUserInfo(function(userInfo){
                 $("#googleUserInfo").html("");
                 $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
-                for (var modulename in modules){
-                    modules[modulename].onAuthenticated();
-                }
-                if (getParams.state != null){
-                    App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
-                    driveOverlay = null;
-                }
+                App.metadataManager.loadMetadata(function(){
+                    for (var modulename in modules){
+                        modules[modulename].onAuthenticated();
+                    }
+                    if (getParams.state != null){
+                        App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
+                        driveOverlay = null;
+                    }
+
+                });
+
             });
 
         }
-        $.ajax("/php/verifyAuth.php?googletoken=" + GoogleAPIs.getAuthToken(),{
+        $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
             success: function(result){
-                App.userRoles = result;
+                App.userInfo = result;
                 onDone()
             },
             error: function(){
-                App.userRoles = ["ROLE_USER"];
+                App.userInfo = {};
                 onDone();
             }
         });

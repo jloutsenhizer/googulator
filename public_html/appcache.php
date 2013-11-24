@@ -17,6 +17,7 @@ outputDirectoryListing("img/icons");
 outputDirectoryListing("img/html5apps");
 outputDirectoryListing("img",false);
 ?>
+/php/titlesDB.php <?echo filemtime("/php/titlesDB.php"); ?>
 
 NETWORK:
 *

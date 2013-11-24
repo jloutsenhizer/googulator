@@ -22,12 +22,10 @@ if (!$con)
     die("-2");
 
 if ($AUTO_ESCAPE){
-    $uid = $_GET["uid"];
-    $title = $_GET["title"];
+    $id = $_GET["id"];
 }
 else{
-    $uid = mysql_real_escape_string($_GET["uid"],$con);
-    $title = mysql_real_escape_string($_GET["title"],$con);
+    $id = mysql_real_escape_string($_GET["id"],$con);
 }
 
 
@@ -37,7 +35,7 @@ if (!mysql_select_db($MYSQL_DATABASE, $con)){
     die("-3");
 }
 
-mysql_query("update gameLibrary set usergivenname='$title' where googleid='$google_id' and uid=$uid limit 1;",$con);
+mysql_query("update users set metadataFileId='$id' where googleid='$google_id' limit 1;",$con);
 
 if (mysql_affected_rows($con) != 1){
     mysql_close($con);
@@ -45,4 +43,4 @@ if (mysql_affected_rows($con) != 1){
 }
 
 mysql_close($con);
-die("1");
+die(json_encode(["success" => "true"]));

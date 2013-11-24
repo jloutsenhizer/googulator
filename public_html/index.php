@@ -149,7 +149,7 @@
         <script src="/lib/require.2.1.4.js" data-main="/js/main"></script>
         <script src="/lib/Gamepad.js"></script>
         <script src="/lib/Webcam.js"></script>
-        <script src="/lib/waapisim.2013.06.13.js"></script>
+        <script src="/lib/waapisim.js"></script>
         <script src="/lib/davis.min.js"></script>
         <script src="/lib/davis.google_analytics.js"></script>
         <?

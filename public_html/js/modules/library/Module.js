@@ -160,7 +160,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         $("#GameDisplayArea").empty();
         App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){
             var display = $(template.render($.extend({
-                saveStateEnabled: game.saveStateFileId !== ""
+                saveStateEnabled: game.saveStateFileId != null
             },game)));
             $("#GameDisplayArea").append(display);
             display.find("#play").click(function(event){
@@ -385,7 +385,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                     App.loadMustacheTemplate("modules/library/template.html","GamePicker",function(template){
                         var params = {games:[],patchName:curFile.name};
                         for (var i = 0; i < library.length; i++){
-                            if (library[i].patchFileId != "")
+                            if (library[i].patchFileId != null)
                                 continue;
                             params.games[i] = $.extend({}, library[i]);
                             params.games[i].index = i;

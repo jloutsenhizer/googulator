@@ -61,6 +61,21 @@ function addRole($googleId,$newRole,$con){
     }
 }
 
+function getUserData($googleId,$con){
+    $query = mysql_query("select * from users where googleid='$googleId' limit 1;",$con);
+    if ($row = mysql_fetch_assoc($query)){
+        $row["roles"] = explode("|",$row["roles"]);
+        $query = mysql_query("select count(*) from gameLibrary where googleid='$googleId';",$con);
+        if ($row2 = mysql_fetch_row($query)){
+            $row["needsLibraryExport"] = $row2[0] > 0;
+        }
+        return $row;
+    }
+    else{
+        return json_decode("{}");
+    }
+}
+
 function getGameTitle($gameid,$con){
     $origid = $gameid;
     $gameid = mysql_real_escape_string($gameid,$con);
