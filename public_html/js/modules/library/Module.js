@@ -58,7 +58,11 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         if (overlay != null)
             overlay.remove();
         overlay = null;
-        refreshGameLibrary();
+        if (!App.websiteBrokenMode)
+            refreshGameLibrary();
+        else{
+            App.createMessageOverlay(container,"The website isn't functioning currently. Unfortunately you aren't able to access the library tab in this state!");
+        }
     }
 
     function doDriveLoad(driveState,driveOverlay){

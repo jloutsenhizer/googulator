@@ -94,6 +94,9 @@ define(function(){
     }
 
     Module.onAuthenticated = function(){
+        if (App.websiteBrokenMode){
+            App.createMessageOverlay(container,"The website isn't functioning currently. Unfortunately you aren't able to access the Settings tab in this state!");
+        }
 
     }
 

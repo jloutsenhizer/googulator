@@ -15,6 +15,8 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
 
     App.metadataManager = MetadataManager;
 
+    App.websiteBrokenMode = false;
+
     var totalModules = 0;
     var loadedModules = 0;
 
@@ -192,23 +194,41 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
 
     function onAuthenticated(){
         function onDone(){
+            App.websiteBrokenMode = App.userInfo.websiteState == "broken";
+            if (App.websiteBrokenMode){
+                App.showModalMessage("The Website is Currently Broken","We apologize for the inconvenience. Check back later. If the problem has been persisting please email our administrative staff: " + window.supportEmailAddress,null);
+            }
+
             if (App.userHasRole("ROLE_PRO")){
                 $(".adUnit").remove();
                 $(".moduleTabgoPro").remove();
             }
+            if (App.userHasRole("ROLE_ADMIN")){
+                $(".moduleTabadmin").removeClass("hidden");
+            }
+            else{
+                $(".moduleTabadmin").remove();
+            }
             GoogleAPIs.getUserInfo(function(userInfo){
                 $("#googleUserInfo").html("");
                 $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
-                App.metadataManager.loadMetadata(function(){
+                if (!App.websiteBrokenMode){
+                    App.metadataManager.loadMetadata(function(){
+                        for (var modulename in modules){
+                            modules[modulename].onAuthenticated();
+                        }
+                        if (getParams.state != null){
+                            App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
+                            driveOverlay = null;
+                        }
+
+                    });
+                }
+                else{
                     for (var modulename in modules){
                         modules[modulename].onAuthenticated();
                     }
-                    if (getParams.state != null){
-                        App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
-                        driveOverlay = null;
-                    }
-
-                });
+                }
 
             });
 
@@ -280,7 +300,10 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
     App.showModalMessage = function(title,text,closeCallback){
         if (closeCallback == null) closeCallback = function(){};
         App.loadMustacheTemplate("dialogTemplates.html","GenericMessageModal",function(template){
-            App.makeModal(template.render({title:title,message:text})).on("hidden",function(){
+
+            var dialog = App.makeModal(template.render({title:title,message:text}))
+            dialog.find(".modal-body").html(dialog.find(".modal-body").html().replace(/\n/g,"<br>"));
+            dialog.on("hidden",function(){
                 closeCallback();
             });
         });
@@ -290,6 +313,7 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
         if (closeCallback == null) closeCallback = function(){};
         App.loadMustacheTemplate("dialogTemplates.html","GenericConfirmationModal",function(template){
             var dialog = App.makeModal(template.render({title:title,message:text}));
+            dialog.find(".modal-body").html(dialog.find(".modal-body").html().replace(/\n/g,"<br>"));
             dialog.find(".yesBtn").click(function(){
                 closeCallback(true);
                 closeCallback = function(){};

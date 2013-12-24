@@ -2,8 +2,9 @@
 <?php
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings","goPro");
-    $tabNames = array("Home","Library","Play","Settings","Go Pro");
+    $tabs = array("home","library","play","settings","goPro","admin");
+    $tabNames = array("Home","Library","Play","Settings","Go Pro","Admin");
+    $tabDefaultShow = array(true,true,true,true,true,false);
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
@@ -105,6 +106,11 @@
                 $title .= " - Go Pro";
                 $defaultTab = array_search("goPro",$tabs);
             }
+            else if (strpos($requestURI,"/admin") === 0){
+                $title .= " - Administrative Center";
+                $defaultTab = array_search("admin",$tabs);
+            }
+
         ?>
         <?php
             if ($_GET["noui"] == true){
@@ -121,6 +127,7 @@
             }
             echo "<script type='text/javascript'>";
             echo "window.getParams = JSON.parse(" . json_encode(json_encode($_GET)) . ");";
+            echo "window.supportEmailAddress = '$SUPPORT_EMAIL_ADDRESS';";
 
             echo "</script>"
         ?>
@@ -178,6 +185,9 @@
                                     echo $tabs[$i];
                                     if ($i == $defaultTab){
                                         echo ' active primary';
+                                    }
+                                    if (!$tabDefaultShow[$i]){
+                                        echo ' hidden';
                                     }
                                     echo '"><a href="javascript:void(0);" modulename="';
                                     echo $tabs[$i];
