@@ -18,7 +18,7 @@ if (!preg_match($emailRegex,$email)){
 if (sendEmail($email,"This is a test email to verify that we can send emails to you.")){
 
 
-    $con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+    $con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
     mysql_select_db($MYSQL_DATABASE, $con);
     mysql_query("insert into emailUpdates (email) values ('$email');",$con);
     mysql_close($con);

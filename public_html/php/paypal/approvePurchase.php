@@ -6,7 +6,7 @@ require_once "../../include.php";
 session_start();
 
 
-$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+$con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
 
 if (!$con)
     die("-2");

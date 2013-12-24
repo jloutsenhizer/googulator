@@ -17,7 +17,7 @@ if (!preg_match($emailRegex,$email)){
 
 
 
-$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+$con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
 mysql_select_db($MYSQL_DATABASE, $con);
 mysql_query("delete from emailUpdates where email='$email';",$con);
 mysql_close($con);

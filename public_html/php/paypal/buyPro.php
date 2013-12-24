@@ -11,7 +11,7 @@ else{
 }
 $google_id = getGoogleId($google_token);
 
-$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+$con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
 
 if (!$con){
     header("HTTP/1.1 307 Temporary Redirect");

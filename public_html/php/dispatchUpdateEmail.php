@@ -10,7 +10,7 @@ else{
 }
 $google_id = getGoogleId($google_token);
 
-$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+$con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
 mysql_select_db($MYSQL_DATABASE, $con);
 
 if (true || hasRole($google_id,"ROLE_ADMIN",$con)){

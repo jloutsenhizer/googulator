@@ -17,7 +17,7 @@ if ($google_id == null){
     die("-1");
 }
 
-$con = mysql_connect('localhost', $MYSQL_USERNAME, $MYSQL_PASSWORD);
+$con = mysql_connect($MYSQL_HOSTNAME, $MYSQL_USERNAME, $MYSQL_PASSWORD);
 
 if (!$con)
     die("-2");
