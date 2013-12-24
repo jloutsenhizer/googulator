@@ -1,4 +1,4 @@
-<?
+<?php
 include "configuration.php";
 include "include.php";
 header('Content-Type: text/cache-manifest');
@@ -9,7 +9,7 @@ header('Content-Type: text/cache-manifest');
 #configuration modificationtime: <?echo filemtime("configuration.php");?>
 
 CACHE:
-<?
+<?php
 outputDirectoryListing("css");
 outputDirectoryListing("js");
 outputDirectoryListing("lib");
@@ -17,7 +17,7 @@ outputDirectoryListing("img/icons");
 outputDirectoryListing("img/html5apps");
 outputDirectoryListing("img",false);
 ?>
-/php/titlesDB.php <?echo filemtime("/php/titlesDB.php"); ?>
+php/titlesDB.php <?php echo filemtime("php/titlesDB.php"); ?>
 
 NETWORK:
 *

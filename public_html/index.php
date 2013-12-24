@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?
+<?php
     include "configuration.php";
     include "include.php";
     $tabs = array("home","library","play","settings","goPro");
@@ -24,7 +24,7 @@
     <head>
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lchmgljjkaeadokijkhefbhpfbihhhda">
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-        <?
+        <?php
             if (strpos($requestURI,"/library/game/") === 0){
                 $gameid = substr($requestURI,strlen("/library/game/"));
                 echo "<link rel='image_src' href='http";
@@ -106,18 +106,18 @@
                 $defaultTab = array_search("goPro",$tabs);
             }
         ?>
-        <?
+        <?php
             if ($_GET["noui"] == true){
         ?>
         <link rel="stylesheet" type="text/css" href="/css/noui.css" />
-        <?
+        <?php
             } else{
         ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
         <link rel="stylesheet" type="text/css" href="/css/main.css" />
         <link rel="stylesheet" type="text/css" href="/lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
-        <?
+        <?php
             }
             echo "<script type='text/javascript'>";
             echo "window.getParams = JSON.parse(" . json_encode(json_encode($_GET)) . ");";
@@ -125,7 +125,7 @@
             echo "</script>"
         ?>
         <script>
-            <?
+            <?php
             echo "window.configuration = {google:{clientId:'";
             echo $GOOGLE_CLIENT_OAUTH_CLIENT_ID;
             echo "',apiKey:'";
@@ -152,10 +152,10 @@
         <script src="/lib/waapisim.js"></script>
         <script src="/lib/davis.min.js"></script>
         <script src="/lib/davis.google_analytics.js"></script>
-        <?
+        <?php
             echo $ANALYTICS_TRACKING_CODE;
         ?>
-        <title><? echo $title; ?></title>
+        <title><?php echo $title; ?></title>
     </head>
     <body onload="htmlLoaded();">
         <div class="container-fluid mainContainer">
@@ -165,14 +165,14 @@
                         <div class="adUnit" style="position: absolute; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
                             <div style="position: absolute; left: 50%; z-index:100;">
                                 <div style="position: relative; left: -50%">
-                                    <?
+                                    <?php
                                     echo $GOOGLE_AD_CODE;
                                     ?>
                                 </div>
                             </div>
                         </div>
                         <ul class="nav">
-                            <?
+                            <?php
                                 for ($i = 0; $i < count($tabs); $i++){
                                     echo '<li class="moduleTab';
                                     echo $tabs[$i];
@@ -202,7 +202,7 @@
                 </div>
             </div>
             <div class="coreModuleContainer" id="coreModuleContainer">
-                <?
+                <?php
                 $regex = '/<template id="mainDisplay">/i';
                 for ($i = 0; $i < count($tabs); $i++){
                     echo '<div class="moduleContainer';

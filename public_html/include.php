@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "google_php/Google_Client.php";
 require_once "configuration.php";
 
