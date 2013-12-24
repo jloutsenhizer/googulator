@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
-    <file url="file://$PROJECT_DIR$/public_html/js/text.js" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/public_html/lib/hogan.2.0.0.js" charset="UTF-8" />
-  </component>
-</project>
-
