@@ -1,0 +1,15 @@
+INSERT INTO `freeGames` (`gameid`, `fileName`) VALUES
+('GB_BOXES', 'Boxes.gb'),
+('GBC_JETPAKDX', 'JetPakDX.gbc'),
+('GBC_KLONDIKE', 'Klondike.gbc'),
+('GBC_MAZEZAM', 'MazezaM.gb'),
+('GBC_MINES', 'Mines.gbc'),
+('GBC_NIBBLES BY SACK', 'Nibbler.gbc'),
+('GBC_OYOYO', 'Oyoyo.gbc'),
+('GBC_PACMAN', 'Pakman.gbc'),
+('GBC_PAKUS', 'Pakus.gbc'),
+('GBC_PAZEEK', 'PaZeek.gb'),
+('GBC_QBERT', 'Q-Bert.gbc'),
+('GBC_SIMON', 'SimonClone.gbc'),
+('GB_FISHER', 'StarFisher.gb'),
+('HTML5_TICTACTOE', NULL);

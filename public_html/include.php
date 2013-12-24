@@ -45,6 +45,8 @@ function hasRole($googleId,$roleSearch,$con){
 }
 
 function addRole($googleId,$newRole,$con){
+    global $PRIMARY_ADMIN_USER;
+
     $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
     if ($row = mysql_fetch_assoc($query)){
         $roles = explode("|",$row["roles"]);
@@ -58,6 +60,10 @@ function addRole($googleId,$newRole,$con){
     }
     else{
         mysql_query("insert into users (googleid, roles) values ('$googleId','$newRole');",$con);
+        //grant the administrator role to the primary admin
+        if (strcmp($PRIMARY_ADMIN_USER,$googleId) == 0){
+            addRole($googleId,"ROLE_ADMIN",$con);
+        }
     }
 }
 

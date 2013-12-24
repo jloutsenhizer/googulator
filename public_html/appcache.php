@@ -17,7 +17,7 @@ outputDirectoryListing("img/icons");
 outputDirectoryListing("img/html5apps");
 outputDirectoryListing("img",false);
 ?>
-php/titlesDB.php <?php echo filemtime("php/titlesDB.php"); ?>
+php/titlesDB.php # <?php echo filemtime("php/titlesDB.php");//TODO: specify this in a way that doesn't depend on the php scripts modification time ?>
 
 NETWORK:
 *

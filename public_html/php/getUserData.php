@@ -28,6 +28,7 @@ if (!mysql_select_db($MYSQL_DATABASE, $con)){
     die("-3");
 }
 
+//this insures that the user is created in the database and has ROLE_USER at a minimum
 addRole($google_id,"ROLE_USER",$con);
 
 echo json_encode(getUserData($google_id,$con));

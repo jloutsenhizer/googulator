@@ -74,7 +74,6 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 modal.on("hidden",function(){
                     overlay.remove();
                     MetadataManager.loadMetadata(callback);
-
                 });
                 modal.find("#createMetadataFile").click(function(){
                     overlay.remove();
@@ -90,9 +89,16 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                                     overlay.remove();
                                     MetadataManager.loadMetadata(callback);
                                 }
+                                else{
+                                    App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                        MetadataManager.loadMEtadata(callback);
+                                    });
+                                }
                             },
                             error: function(){
-
+                                App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                    MetadataManager.loadMEtadata(callback);
+                                });
                             }
 
                         });
@@ -101,6 +107,41 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                 });
 
                 modal.find("#loadMetadataFile").click(function(){
+                    GoogleAPIs.showFilePicker(function(result){
+                        if (result != null && result.docs.length == 1){
+                            overlay = App.createMessageOverlay($("body"),"Updating metadata reference...");
+                            $.ajax("/php/setMetadataFileId.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&id=" + result.docs[0].id,{
+                                success:function(result2){
+                                    if (result2.success){
+                                        App.userInfo.metadataFileId = result.docs[0].id;
+                                        overlay.remove();
+                                        MetadataManager.loadMetadata(callback);
+                                    }
+                                    else{
+                                        App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                            MetadataManager.loadMEtadata(callback);
+                                        });
+                                    }
+                                },
+                                error: function(){
+                                    App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                        MetadataManager.loadMEtadata(callback);
+                                    });
+
+                                }
+
+                            });
+                        }
+                        else{
+                            MetadataManager.loadMetadata(callback);
+                        }
+                    },{
+                        multiSelect:false,
+                        query:"googulator.metadata"
+                    });
+                    overlay.remove();
+                    modal.off("hidden");
+                    modal.modal("hide");
 
                 });
             });
@@ -132,8 +173,6 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                                 })
                             }
                             loadTitleDB();
-
-
                         }
                     });
                 }
