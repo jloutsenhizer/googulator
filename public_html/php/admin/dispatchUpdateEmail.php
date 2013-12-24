@@ -19,14 +19,14 @@ if (hasRole($google_id,"ROLE_ADMIN",$con)){
     if ($startPosition == NULL){
         $startPosition = 0;
     }
-    $query = mysql_query("select * from emailUpdates where id>$startPosition limit 5;",$con);
+    $query = mysql_query("select * from emailUpdates where id>$startPosition limit 1;",$con);
     $numRows = mysql_num_rows($query);
     $lastId = $startPosition;
     while ($row = mysql_fetch_assoc($query)){
         sendEmail($row["email"],$_GET["message"]);
         $lastId = $row["id"];
     }
-    echo json_encode(["status"=>"success","done"=>($numRows < 5),"lastId"=>$lastId,"numSent" => $numRows]);
+    echo json_encode(["status"=>"success","done"=>($numRows < 1),"lastId"=>$lastId,"numSent" => $numRows]);
 }
 else{
     echo json_encode(["status"=>"failed","error"=>"PERMISSION_DENIED"]);
