@@ -58,6 +58,10 @@ define(function(){
     }
 
     Module.onAuthenticated = function(){
+        if (App.websiteBrokenMode){
+            $("#subscribeToUpdates").attr("disabled","disabled");
+            $("#emailSubscribeWith").attr('disabled',"disabled");
+        }
     }
 
     return Module;
