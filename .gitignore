@@ -32,9 +32,8 @@ tasks.xml
 .hg
 .svn
 .CVS
-
-# Files to ignore
-.idea/workspace.xml
+.idea
 chrome_webstore
+
 public_html/configuration.php
 public_html_optimized
