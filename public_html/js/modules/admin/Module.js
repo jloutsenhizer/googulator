@@ -52,8 +52,11 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                         success:function(result){
                             overlay.remove();
                             if (result.status == "failed"){
-                                var errorMessage = "An unknown error occurred!";
+                                var errorMessage = "An unknown error occurred!" + result.error;
                                 switch (result.error){
+                                    case "PERMISSION_DENIED":
+                                        errorMessage = "You don't seem to have permission to do this...";
+                                        break;
                                     case "MYSQL_CONFIG_ERROR":
                                         errorMessage = "There seems to be a problem connecting to the MySQL server. Please check the configuration files to ensure the connection information is correct.";
                                         break;
