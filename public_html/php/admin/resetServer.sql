@@ -1,5 +1,11 @@
 drop table if exists emailUpdates;
-CREATE TABLE `emailUpdates` (  `email` varchar(45) COLLATE utf8_unicode_ci NOT NULL,  PRIMARY KEY (`email`),  UNIQUE KEY `email_UNIQUE` (`email`));
+CREATE TABLE IF NOT EXISTS `emailUpdates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+);
 drop table if exists freeGames;
 CREATE  TABLE `freeGames` (`gameid` VARCHAR(100) NOT NULL , `fileName` VARCHAR(100) NULL , PRIMARY KEY (`gameid`) );
 drop table if exists gameNames;

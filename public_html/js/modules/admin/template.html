@@ -12,4 +12,20 @@
     <h1>Administrative Control Center</h1>
     <h3>Website Initialization</h3>
     <p><button class="btn resetDB">Reset Database</button> - This action will reset the website database to an initial state (or initialize it)</p>
+    <h3>Community</h3>
+    <p><button class="btn sendUpdateEmail">Send Update Email</button> - This will send an email to all users who have subscribed for update emails</p>
+</template>
+<template id="updateEmailCompose">
+    <div class="modal fade" id="UpdateEmailCompose">
+    <div class="modal-header">
+        <h3>Compose Update Email<a href="javascript:$('#UpdateEmailCompose').modal('hide')" class="close">&times;</a></h3>
+    </div>
+    <div class="modal-body">
+        <textarea class="emailMessage" style="width:90%;"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button class="btn sendBtn">Send</button>
+        <button class="btn cancelBtn">Cancel</button>
+    </div>
+    </div>
 </template>

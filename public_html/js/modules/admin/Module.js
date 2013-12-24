@@ -80,7 +80,77 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     })
                 }
             });
-        })
+        });
+
+        container.find(".sendUpdateEmail").click(function(){
+            App.loadMustacheTemplate("modules/admin/template.html","updateEmailCompose",function(template){
+                var dialog = App.makeModal(template.render());
+                dialog.find('.cancelBtn').click(function(){
+                    dialog.modal("hide");
+                });
+                dialog.find('.sendBtn').click(function(){
+                    var text = dialog.find(".emailMessage").val();
+                    dialog.modal("hide");
+                    App.showModalConfirmation("Confirm Email Text","Please confirm you are certain you want to send the following email out:\n" + text,function(agreed){
+                        if (agreed){
+                            var overlay = App.createMessageOverlay(container,$("<div class='message'>Sending out update email, do not close the tab...</div><div class='pbar'></div>"));
+                            $.ajax("/php/admin/getEmailListSize.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
+                                success:function(result){
+                                    if (result.status == "success"){
+                                        var numEmails = result.numEmails;
+                                        overlay.find(".message").text("Sending out email, do not close the tab (Progress: 0/" + numEmails + ")...");
+                                        overlay.find(".pbar").progressbar({value:0});
+                                        var totalSent = 0;
+                                        var startId = 0;
+                                        function sendMore(){
+                                            $.ajax("/php/admin/dispatchUpdateEmail.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&message=" + encodeURIComponent(text) + "&startId=" + startId,{
+                                                success:function(result){
+                                                    if (result.status == "success"){
+                                                        if (result.done){
+                                                            overlay.remove();
+                                                            App.showModalMessage("Success","All emails have successfully been sent!");
+                                                        }
+                                                        else{
+                                                            totalSent += result.numSent;
+                                                            startId = result.lastId;
+                                                            overlay.find(".message").text("Sending out email, do not close the tab (Progress: " + totalSent +"/" + numEmails + ")...");
+                                                            overlay.find(".pbar").progressbar({value:totalSent / numEmails * 100});
+                                                            sendMore();
+                                                        }
+
+                                                    }
+                                                    else{
+                                                        sendMore();
+                                                    }
+                                                },
+                                                error:function(){
+                                                    sendMore();
+                                                }
+                                            });
+                                        }
+                                        sendMore();
+                                    }
+                                    else{
+                                        overlay.remove();
+                                        App.showModalMessage("Error","Some error occurred and none of the emails could be sent!");
+
+                                    }
+
+
+                                },
+                                error:function(){
+                                    overlay.remove();
+                                    App.showModalMessage("Error","Some error occurred and none of the emails could be sent!");
+
+                                }
+                            });
+                        }
+
+                    });
+                })
+            })
+
+        });
 
     }
 
