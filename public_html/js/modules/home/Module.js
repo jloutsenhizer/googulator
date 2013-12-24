@@ -23,6 +23,12 @@ define(function(){
                             $("#emailSubscribeWith").removeAttr("disabled");
                         });
                     }
+                    else if (result.result == "alreadySubscribed"){
+                        App.showModalMessage("You are Already Subscribed","The provided email address is already subscribed to updates!",function(){
+                            $("#subscribeToUpdates").removeAttr("disabled");
+                            $("#emailSubscribeWith").removeAttr("disabled");
+                        });
+                    }
                     else{
                         App.showModalMessage("An Error Occurred","We were unable to add your email address to the email list!",function(){
                             $("#subscribeToUpdates").removeAttr("disabled");
