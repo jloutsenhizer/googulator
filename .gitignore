@@ -34,6 +34,5 @@ tasks.xml
 .CVS
 .idea
 chrome_webstore
-
 public_html/configuration.php
 public_html_optimized
