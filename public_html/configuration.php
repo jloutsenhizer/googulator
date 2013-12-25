@@ -1,10 +1,11 @@
-<?
+<?php
 //this is a skeleton configuration file
 //you must configure the variables so that your instance will be able to work correctly
 $MYSQL_USERNAME = "root";                       //mysql username
 $MYSQL_PASSWORD = 'root';                       //mysql password
 $MYSQL_DATABASE = "googulator";                 //mysql database
 $MYSQL_HOSTNAME = "localhost";                  //mysql hostname, only edit this if the mysql server you're connecting to is on a different host
+$PREFERRED_HOSTNAME = "localhost";              //this is the preferred hostname to run on. If the page is loaded from a different address it will be redirected to this hostname
 
 $UPDATE_EMAIL_ADDRESS = "noreply@domain.com";   //this is the email address that update emails are sent from
 $SUPPORT_EMAIL_ADDRESS = "support@domain.com";  //this is the email address that is advertised as the support email for users
