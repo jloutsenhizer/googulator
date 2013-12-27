@@ -1,4 +1,4 @@
-define(["GoogleAPIs"],function(GoogleAPIs){
+define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
 
     var MetadataManager = {};
 
@@ -46,6 +46,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                             success:function(){
                                 overlay.remove();
                                 App.userInfo.needsLibraryExport = false;
+                                OfflineUtils.storeUserInfo();
                                 callback();
                             },
                             error: donePersist
@@ -86,6 +87,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                             success:function(result2){
                                 if (result2.success){
                                     App.userInfo.metadataFileId = result.id;
+                                    OfflineUtils.storeUserInfo();
                                     overlay.remove();
                                     MetadataManager.loadMetadata(callback);
                                 }
@@ -114,6 +116,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                                 success:function(result2){
                                     if (result2.success){
                                         App.userInfo.metadataFileId = result.docs[0].id;
+                                        OfflineUtils.storeUserInfo();
                                         overlay.remove();
                                         MetadataManager.loadMetadata(callback);
                                     }

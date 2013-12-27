@@ -1,4 +1,4 @@
-define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
+define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,MetadataManager,OfflineUtils){
     var App = {};
 
     var compiledTemplates = {};
@@ -16,6 +16,8 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
     App.metadataManager = MetadataManager;
 
     App.websiteBrokenMode = false;
+    App.googulatorOffline = false;
+    App.googleOffline = false;
 
     var totalModules = 0;
     var loadedModules = 0;
@@ -193,12 +195,7 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
     }
 
     function onAuthenticated(){
-        function onDone(){
-            App.websiteBrokenMode = App.userInfo.websiteState == "broken";
-            if (App.websiteBrokenMode){
-                App.showModalMessage("The Website is Currently Broken","We apologize for the inconvenience. Check back later. If the problem has been persisting please email our administrative staff: " + window.supportEmailAddress,null);
-            }
-
+        function afterEverything(){
             if (App.userHasRole("ROLE_PRO")){
                 $(".adUnit").remove();
                 $(".moduleTabgoPro").remove();
@@ -229,8 +226,25 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
                         modules[modulename].onAuthenticated();
                     }
                 }
-
             });
+        }
+
+        function onDone(){
+            App.websiteBrokenMode = App.userInfo.websiteState == "broken";
+            if (App.websiteBrokenMode){
+                App.showModalMessage("The Website is Currently Broken","We apologize for the inconvenience. Check back later. If the problem has been persisting please email our administrative staff: " + window.supportEmailAddress + ". We will now attempt to switch to offline mode.",function(){
+                    if (OfflineUtils.enableGoogulatorOffline()){
+                        App.showModalMessage("Offline Mode Enabled","You are now in offline mode!");
+                        App.websiteBrokenMode = false;
+                    }
+                    afterEverything();
+                });
+
+            }
+            else{
+                OfflineUtils.storeUserInfo();
+                afterEverything();
+            }
 
         }
         $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
@@ -239,7 +253,7 @@ define(["GoogleAPIs","MetadataManager"],function(GoogleAPIs,MetadataManager){
                 onDone()
             },
             error: function(){
-                App.userInfo = {};
+                App.userInfo = {websiteState: "broken", roles:["ROLE_USER"]};
                 onDone();
             }
         });
