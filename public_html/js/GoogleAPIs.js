@@ -1,4 +1,4 @@
-define(function(){
+define(["OfflineUtils"], function(OfflineUtils){
     var GoogleAPIs = {};
 
     var clientId = window.configuration.google.clientId;
@@ -13,11 +13,22 @@ define(function(){
     var initialized = false;
     var authenticated = false;
 
-    var userInfo = null;
-
     var fileCache = {};
 
     GoogleAPIs.checkAuthentication = function(callback,errorCount,overlay){
+        if (gapi == null){
+            console.error("no gapi");
+            if (OfflineUtils.enableGoogleOffline()){
+                App.showModalMessage("Offline Mode","We were unable to load Google scripts, offline mode has been enabled!",function(){
+                    callback(true);
+                });
+            }
+            else{
+                callback(false);
+            }
+            return;
+        }
+
         if (errorCount == null) errorCount = 0;
         if (!initialized){
             if (gapi.client == null){
@@ -146,8 +157,8 @@ define(function(){
     }
 
     GoogleAPIs.getUserInfo = function(callback){
-        if (userInfo != null){
-            callback(userInfo);
+        if (App.googleUserInfo != null){
+            callback(App.googleUserInfo);
             return;
         }
         else{
@@ -165,9 +176,20 @@ define(function(){
     }
 
     GoogleAPIs.refreshUserInfo = function(callback){
+        if (App.googleOffline){
+            if (App.googleUserInfo == null){
+                App.googleUserInfo = {};
+                OfflineUtils.storeGoogleUserInfo();
+            }
+            this.getUserInfo(callback);
+            return;
+        }
         var that = this;
         gapi.client.oauth2.userinfo.get().execute(function(result){
-            userInfo = result;
+            App.googleUserInfo = result;
+            if (App.googleUserInfo == null)
+                App.googleUserInfo = {};
+            OfflineUtils.storeGoogleUserInfo();
             that.getUserInfo(callback);
         });
     }

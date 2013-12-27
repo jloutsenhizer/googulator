@@ -141,7 +141,7 @@
             ?>
         </script>
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
-        <script src="https://apis.google.com/js/client.js?onload=googleAPILoaded"></script>
+        <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=googleAPILoaded" onerror="window.gapi = null; try{window.googleAPILoaded();}catch(e){}"></script>
         <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
         <script src="/lib/jszip/jszip.js"></script>
         <script src="/lib/jszip/jszip-load.js"></script>
@@ -153,12 +153,12 @@
         <script src="/lib/doTimeout.1.0.js"></script>
         <script src="/lib/hogan.2.0.0.js"></script>
         <script src="/lib/bootstrap.2.3.0/js/bootstrap.min.js"></script>
-        <script src="/lib/require.2.1.4.js" data-main="/js/main"></script>
         <script src="/lib/Gamepad.js"></script>
         <script src="/lib/Webcam.js"></script>
         <script src="/lib/waapisim.js"></script>
         <script src="/lib/davis.min.js"></script>
         <script src="/lib/davis.google_analytics.js"></script>
+        <script src="/lib/require.2.1.4.js" data-main="/js/main"></script>
         <?php
             echo $ANALYTICS_TRACKING_CODE;
         ?>

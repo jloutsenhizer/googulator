@@ -12,6 +12,8 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
     App.davis.start();
 
     App.userRoles = [];
+    App.userInfo = null;
+    App.googleUserInfo = null;
 
     App.metadataManager = MetadataManager;
 
@@ -208,7 +210,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
             }
             GoogleAPIs.getUserInfo(function(userInfo){
                 $("#googleUserInfo").html("");
-                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
+                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' onerror='this.src = \"/img/genericProfilePicture.png\"' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
                 if (!App.websiteBrokenMode){
                     App.metadataManager.loadMetadata(function(){
                         for (var modulename in modules){
@@ -247,16 +249,21 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
             }
 
         }
-        $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
-            success: function(result){
-                App.userInfo = result;
-                onDone()
-            },
-            error: function(){
-                App.userInfo = {websiteState: "broken", roles:["ROLE_USER"]};
-                onDone();
-            }
-        });
+        if (!App.googulatorOffline){
+            $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
+                success: function(result){
+                    App.userInfo = result;
+                    onDone()
+                },
+                error: function(){
+                    App.userInfo = {websiteState: "broken", roles:["ROLE_USER"]};
+                    onDone();
+                }
+            });
+        }
+        else{//googulator is offline so we have to depend on the cache
+            onDone();
+        }
 
     }
 
