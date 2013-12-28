@@ -1,4 +1,4 @@
-define(function(){
+define(["OfflineUtils"],function(OfflineUtils){
     var Module = {};
 
     App.constants.TYPE_KEYBOARD = 0;
@@ -78,6 +78,19 @@ define(function(){
                     inputTypeSelector[$(selector).attr("player")] = $(selector);
                 });
             updateAllButtons();
+
+            OfflineUtils.checkLocalStorageEnabled(function(enabled){
+                if (enabled){
+                    container.find("#Offline .enableLocalStorage")[0].checked = true;
+                }
+                container.find("#Offline .enableLocalStorage").removeAttr("disabled");
+            });
+
+            container.find("#Offline .enableLocalStorage").click(function(event){
+                OfflineUtils.enableLocalStorage(event.target.checked,function(enabled){
+                    event.target.checked = enabled;
+                });
+            });
         });
     }
 

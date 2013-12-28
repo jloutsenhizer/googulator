@@ -289,6 +289,14 @@ define(["OfflineUtils"], function(OfflineUtils){
     GoogleAPIs.getFile = function(fileid,callback,progresscallback){
         if (progresscallback == null) progresscallback = function(){};
         progresscallback(0,100);
+
+        var oldCallback = callback;
+        callback = function(data){
+            OfflineUtils.cacheGoogleDriveFile(fileid,data,function(){
+                oldCallback(data);
+            });
+        }
+
         if (fileCache[fileid] != null){
             callback(fileCache[fileid]);
             return;

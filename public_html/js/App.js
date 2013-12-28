@@ -52,88 +52,90 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
     App.initialize = function(){
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
-            if (getParams.unsubscribe != null){
-                App.showModalConfirmation("Unsubscribe from Googulator Updates","Are you sure you no longer want to receive emails about Googulator updates?",function(result){
-                    if (result){
-                        $.ajax("/php/unsubscribeFromUpdates.php?address=" + encodeURIComponent(getParams.unsubscribe),{
-                            success:function(result){
-                                if (result.result == "success"){
-                                    App.showModalMessage("Email Updates Unsubscribed","You will no longer get emails about Googulator updates!");
-                                }
-                                else{
+            OfflineUtils.initialize(function(){
+                if (getParams.unsubscribe != null){
+                    App.showModalConfirmation("Unsubscribe from Googulator Updates","Are you sure you no longer want to receive emails about Googulator updates?",function(result){
+                        if (result){
+                            $.ajax("/php/unsubscribeFromUpdates.php?address=" + encodeURIComponent(getParams.unsubscribe),{
+                                success:function(result){
+                                    if (result.result == "success"){
+                                        App.showModalMessage("Email Updates Unsubscribed","You will no longer get emails about Googulator updates!");
+                                    }
+                                    else{
+                                        App.showModalMessage("An Error Occurred","We were unable to remove your email address from the email list!");
+                                    }
+
+                                },
+                                error:function(){
                                     App.showModalMessage("An Error Occurred","We were unable to remove your email address from the email list!");
                                 }
-
-                            },
-                            error:function(){
-                                App.showModalMessage("An Error Occurred","We were unable to remove your email address from the email list!");
-                            }
-                        })
-                    }
-                });
-            }
-            if (getParams.state != null)
-                driveOverlay = App.createMessageOverlay($("body"),"Loading your file...");
-            $(document).on("click","a",function(event){
-                var moduleName = event.target.getAttribute("modulename");
-                if (moduleName == null){
-                    return true;
-                }
-                App.setActiveModule(moduleName,{});
-                return false;
-            });
-
-            var navItems = $("ul.nav li a");
-
-            $.each(navItems,function(index,item){
-                if ($(item).attr("modulename") != null){
-                    totalModules++;
-                    App.setActiveModule($(item).attr("modulename"),{initOnly:true});
-                }
-            });
-
-            if (!navigator.cookieEnabled){
-                App.showModalMessage("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
-            }
-
-            GoogleAPIs.checkAuthentication(function(authenticated){
-                if (!authenticated){
-                    $("#loadText").addClass("hidden");
-                    $("#loadButton").removeClass("hidden");
-                    $("#loadButton").click(function(){
-                        if (GoogleAPIs.authenticate(function(auth){
-                            if (auth){
-                                onAuthenticated();
-                            }
-                            else{
-                                $("#loadText").addClass("hidden");
-                                $("#loadButton").removeClass("hidden");
-                            }
-                        })){
-                           $("#loadButton").addClass("hidden");
-                           $("#loadText").removeClass("hidden");
+                            })
                         }
                     });
                 }
-                else{
-                    onAuthenticated();
-                }
-            });
+                if (getParams.state != null)
+                    driveOverlay = App.createMessageOverlay($("body"),"Loading your file...");
+                $(document).on("click","a",function(event){
+                    var moduleName = event.target.getAttribute("modulename");
+                    if (moduleName == null){
+                        return true;
+                    }
+                    App.setActiveModule(moduleName,{});
+                    return false;
+                });
 
-            if (typeof chrome != "undefined"){
-                if (chrome.app != null && chrome.app.getIsInstalled != null && chrome.webstore != null && chrome.webstore.install != null){
-                    if (!chrome.app.getIsInstalled()){
-                        $("ul.nav").append($("<li id='webstoreinstallparent'><a href='javascript:void(0);' id='webstoreinstalllink'>Add to Chrome</a></li>"));
-                        $("#webstoreinstalllink").click(function(){
-                            event.preventDefault();
-                            chrome.webstore.install($("link[rel='chrome-webstore-item']").attr("href"),function(){
-                                $("#webstoreinstallparent").remove();
-                            },function(){
-                            });
+                var navItems = $("ul.nav li a");
+
+                $.each(navItems,function(index,item){
+                    if ($(item).attr("modulename") != null){
+                        totalModules++;
+                        App.setActiveModule($(item).attr("modulename"),{initOnly:true});
+                    }
+                });
+
+                if (!navigator.cookieEnabled){
+                    App.showModalMessage("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
+                }
+
+                GoogleAPIs.checkAuthentication(function(authenticated){
+                    if (!authenticated){
+                        $("#loadText").addClass("hidden");
+                        $("#loadButton").removeClass("hidden");
+                        $("#loadButton").click(function(){
+                            if (GoogleAPIs.authenticate(function(auth){
+                                if (auth){
+                                    onAuthenticated();
+                                }
+                                else{
+                                    $("#loadText").addClass("hidden");
+                                    $("#loadButton").removeClass("hidden");
+                                }
+                            })){
+                                $("#loadButton").addClass("hidden");
+                                $("#loadText").removeClass("hidden");
+                            }
                         });
                     }
+                    else{
+                        onAuthenticated();
+                    }
+                });
+
+                if (typeof chrome != "undefined"){
+                    if (chrome.app != null && chrome.app.getIsInstalled != null && chrome.webstore != null && chrome.webstore.install != null){
+                        if (!chrome.app.getIsInstalled()){
+                            $("ul.nav").append($("<li id='webstoreinstallparent'><a href='javascript:void(0);' id='webstoreinstalllink'>Add to Chrome</a></li>"));
+                            $("#webstoreinstalllink").click(function(){
+                                event.preventDefault();
+                                chrome.webstore.install($("link[rel='chrome-webstore-item']").attr("href"),function(){
+                                    $("#webstoreinstallparent").remove();
+                                },function(){
+                                });
+                            });
+                        }
+                    }
                 }
-            }
+            });
         });
     };
 
