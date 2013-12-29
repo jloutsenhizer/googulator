@@ -7,7 +7,7 @@ define(function(){
     navigator.persistentStorage = navigator.persistentStorage || navigator.webkitPersistentStorage;
 
     /* This is the offline api for googulator
-     * localStorage - used for metadata regarding the local file System, all fields should be JSON encoded when written and JSON decoded when read
+     * localStorage - used for metadata regarding the local file System and small cached resources, all fields should be JSON encoded when written and JSON decoded when read
      * localStorage.extraQuotaNeeded - used to specify how much extra quota is required for the longTermStorageFiles
      * localStorage.localStorageEnabled - specifies whether or not local file system is enabled for caching google drive files
      * localStorage.userInfo - cached from googulator user info lookup. Key information for emulator operation is metafileid
@@ -301,22 +301,15 @@ define(function(){
         if (App.googulatorOffline)
             return true;
         try{
-            if (App.userInfo == null){
-                if (localStorage.userInfo != null){
-                    var info = JSON.parse(localStorage.userInfo);
-                    if (info.metadataFileId != null && info.googleid != null){
-                        App.userInfo = info;
-                        App.googulatorOffline = true;
-                        return true;
-                    }
-
+            if (localStorage.userInfo != null){
+                var info = JSON.parse(localStorage.userInfo);
+                if (info.metadataFileId != null && info.googleid != null){
+                    App.userInfo = info;
+                    App.googulatorOffline = true;
+                    return true;
                 }
-            }
-            else{
-                App.googulatorOffline = true;
-                return true;
-            }
 
+            }
         }
         catch (e){}
         return false;

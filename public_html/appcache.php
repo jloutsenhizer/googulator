@@ -16,7 +16,10 @@ outputDirectoryListing("lib");
 outputDirectoryListing("img/icons");
 outputDirectoryListing("img/html5apps");
 outputDirectoryListing("img",false);
+outputDirectoryListing("font");
 ?>
+font/fontawesome-webfont.ttf?v=3.2.1 #<?php echo filemtime("font/fontawesome-webfont.ttf") ?>
+
 php/titlesDB.php # <?php echo filemtime("php/titlesDB.php");//TODO: specify this in a way that doesn't depend on the php scripts modification time ?>
 
 NETWORK:
