@@ -183,6 +183,60 @@ define(function(){
         });
     }
 
+    OfflineUtils.getGoogleDriveFileContents = function(id,callback){
+        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
+            callback(null);
+            return;
+        }
+        getFileSystem(function(fileSystem){
+            if (fileSystem == null){
+                callback(null);
+                return;
+            }
+            fileSystem.root.getFile("longTermGDrive/" + id,{create: false},function(file){
+                if (file == null){
+                    checkShortTerm();
+                }
+                else{
+                    processFile(file,true);
+
+                }
+
+            }, function(error){
+                checkShortTerm();
+
+            });
+            function checkShortTerm(){
+                fileSystem.root.getFile("shortTermGDrive/" + id,{create: false},function(file){
+                    if (file == null){
+                        callback(null);
+                    }
+                    else{
+                        processFile(file,false);
+                    }
+                }, function(error){
+                    callback(null);
+                })
+            }
+            function processFile(file,longTerm){
+                file.file(function(file){
+                    var reader = new FileReader();
+                    reader.onload = function(){
+                        callback(new Uint8Array(reader.result));
+                    }
+                    reader.onerror = function(){
+                        callback(null);
+                    }
+                    reader.readAsArrayBuffer(file);
+                },function(){
+                    callback(null);
+                });
+            }
+
+        });
+
+    }
+
     OfflineUtils.cacheGoogleDriveFile = function(id,data,callback){
         if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
             callback(false);

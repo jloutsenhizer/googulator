@@ -302,19 +302,32 @@ define(["OfflineUtils"], function(OfflineUtils){
             return;
         }
         gapi.client.drive.files.get({fileId:fileid,updateViewedDate:true}).execute(function(data){
-            App.downloadBinaryFile(data.downloadUrl,{
-                accessToken: gapi.auth.getToken().access_token,
-                success: function(data){
-                    fileCache[fileid] = data;
-                    callback(data);
-                },
-                error: function(){
-                    callback(null);
-                },
-                onProgress:function(event){
-                    progresscallback(event.loaded,event.total);
+            OfflineUtils.getGoogleDriveFileMetadata(fileid,function(metadata){
+                if (metadata == null || metadata.modificationTime.getTime() < new Date(data.modifiedDate).getTime()){
+                    App.downloadBinaryFile(data.downloadUrl,{
+                        accessToken: gapi.auth.getToken().access_token,
+                        success: function(data){
+                            fileCache[fileid] = data;
+                            callback(data);
+                        },
+                        error: function(){
+                            callback(null);
+                        },
+                        onProgress:function(event){
+                            progresscallback(event.loaded,event.total);
+                        }
+                    });
+                }
+                else{
+                    OfflineUtils.getGoogleDriveFileContents(fileid,function(data){
+                        if (data != null){
+                            fileCache[fileid] = data;
+                        }
+                        callback(data);
+                    });
                 }
             });
+
         });
     }
 
