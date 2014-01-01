@@ -227,7 +227,7 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             currentApp.loadGame(game);
             currentGameTitle = game.title;
             currentGameId = game.id;
-            if (!App.googleOffline && gapi != null){
+            if (!App.googleOffline && gapi != null && gapi.comments != null && gapi.comments.render != null){
                 gapi.comments.render('gameboyComments', {
                     href: window.location.origin + "/library/game/" + encodeURIComponent(currentGameId),
                     width: '625',

@@ -11,7 +11,7 @@
         <div class="btn-group"><button id="play" class="btn">Play Game</button><button id="remove" class="btn">Remove From Library</button></div>
     <div><div class="gameCommentContainer"><div id="comments-{{uid}}"></div><script>
         console.log(window.location.href);
-        if (!App.googleOffline && gapi != null){
+        if (!App.googleOffline && gapi != null && gapi.comments != null && gapi.comments.render != null){
             gapi.comments.render('comments-{{uid}}', {
                 href: window.location.href,
                 width: '625',
