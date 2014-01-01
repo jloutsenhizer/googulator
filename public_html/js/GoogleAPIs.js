@@ -235,7 +235,6 @@ define(["OfflineUtils"], function(OfflineUtils){
             if (response.gapiRequest != null && response.gapiRequest.data.status == 200){
                 fileCache[result.id] = contents;
                 fileCacheModifiedDate[result.id] = new Date(result.modifiedDate);
-                callback(result);
                 OfflineUtils.cacheGoogleDriveFile(result.id,contents,new Date(result.modifiedDate),function(success){
                     //should we do something if the local filesystem fails??
                     callback(result.id);

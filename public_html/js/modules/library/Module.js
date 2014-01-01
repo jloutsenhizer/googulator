@@ -1,4 +1,4 @@
-define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(GameLibrary,FreeGamePicker,GoogleAPIs, GameUtils){
+define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils"], function(GameLibrary,FreeGamePicker,GoogleAPIs, GameUtils, OfflineUtils){
     var Module = {};
 
     var container;
@@ -47,6 +47,12 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         else if (params.gameid != null){
             doGameLoad(params.gameid);
         }
+        OfflineUtils.checkLocalStorageEnabled(function(offlineEnabled){
+            if (offlineEnabled)
+                container.find("#availableOffline").removeAttr("disabled");
+            else
+                container.find("#availableOffline").attr("disabled","disabled");
+        });
     }
 
     Module.onFreeze = function(){
@@ -162,113 +168,144 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
         Davis.location.assign("/library/game/" + encodeURIComponent(game.id));
         selectedGame = game;
         $("#GameDisplayArea").empty();
-        App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){
-            var display = $(template.render($.extend({
-                saveStateEnabled: game.saveStateFileId != null
-            },game)));
-            $("#GameDisplayArea").append(display);
-            display.find("#play").click(function(event){
-                event.preventDefault();
-                loadGame(game);
-            });
-            display.find("#remove").click(function(event){
-                event.preventDefault();
-                App.showModalConfirmation("Are you sure?","Are you sure you want to remove " + game.title + " from your library?",function(confirm){
-                    if (confirm){
-                        if (overlay != null)
-                            overlay.remove();
-                        overlay = App.createMessageOverlay(container,"Removing " + game.title + " from your library...");
-                        game.removeFromLibrary(function(){
-                            refreshGameLibrary();
+        OfflineUtils.checkLocalStorageEnabled(function(offlineEnabled){
+            game.isMadeAvailableOffline(function(availableOffline){
+                App.loadMustacheTemplate("modules/library/template.html","gameDisplay",function(template){
+                    var display = $(template.render($.extend({
+                        saveStateEnabled: game.saveStateFileId != null,
+                        offlineModeEnabled: offlineEnabled,
+                        availableOffline: availableOffline
+                    },game)));
+                    $("#GameDisplayArea").append(display);
+                    display.find("#play").click(function(event){
+                        event.preventDefault();
+                        loadGame(game);
+                    });
+                    display.find("#remove").click(function(event){
+                        event.preventDefault();
+                        App.showModalConfirmation("Are you sure?","Are you sure you want to remove " + game.title + " from your library?",function(confirm){
+                            if (confirm){
+                                if (overlay != null)
+                                    overlay.remove();
+                                overlay = App.createMessageOverlay(container,"Removing " + game.title + " from your library...");
+                                game.removeFromLibrary(function(){
+                                    refreshGameLibrary();
+                                });
+                            }
                         });
-                    }
-                });
-            })
-            display.find("#useSaveState").click(function(event){
-                //App.showModalConfirmation
-                if (event.delegateTarget.checked){
-                    App.loadMustacheTemplate("modules/library/template.html","saveNotFound",function(template){
-                        App.makeModal(template.render(game));
-                        var noEvent= true;
-                        $("#loadSave").click(function(){
-                            noEvent = false;
-                            $("#chooseRAMDialog").modal("hide");
-                            overlay = App.createMessageOverlay(container,$("<div>Creating saveState for " + game.title + "...</div><div class='pbar'></div>"));
-                            GoogleAPIs.showFilePicker(function(result){
-                                if (result != null && result.docs.length == 1){
-                                    game.setGameSaveStateFileId(result.docs[0].id,function(success){
-                                        if (!success){
-                                            event.delegateTarget.checked = false;
+                    });
+                    display.find("#availableOffline").click(function(event){
+                        if (event.delegateTarget.checked){
+                            overlay = App.createMessageOverlay(container,"Making " + game.title + " available offline...");
+                            game.makeAvailableOffline(function(success){
+                                if (!success){
+                                    App.showModalMessage("Something Went Wrong","We were unable to make the game available offline!");
+                                }
+                                event.delegateTarget.checked = success;
+                                overlay.remove();
+                            });
+                        }
+                        else{
+                            overlay = App.createMessageOverlay(container,"Restoring " + game.title + " to temporary storage...");
+                            game.unMakeAvailableOffline(function(success){
+                                if (!success){
+                                    App.showModalMessage("Something Went Wrong","We were unable to remove the game from offline storage!");
+                                }
+                                event.delegateTarget.checked = !success;
+                                overlay.remove();
+
+                            });
+                        }
+
+                    });
+                    display.find("#useSaveState").click(function(event){
+                        //App.showModalConfirmation
+                        if (event.delegateTarget.checked){
+                            App.loadMustacheTemplate("modules/library/template.html","saveNotFound",function(template){
+                                App.makeModal(template.render(game));
+                                var noEvent= true;
+                                $("#loadSave").click(function(){
+                                    noEvent = false;
+                                    $("#chooseRAMDialog").modal("hide");
+                                    overlay = App.createMessageOverlay(container,$("<div>Loading saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    GoogleAPIs.showFilePicker(function(result){
+                                        if (result != null && result.docs.length == 1){
+                                            game.setGameSaveStateFileId(result.docs[0].id,function(success){
+                                                if (!success){
+                                                    event.delegateTarget.checked = false;
+                                                }
+                                                else{
+                                                    if (overlay != null)
+                                                        overlay.remove();
+                                                    overlay = null;
+                                                }
+                                            },progressUpdate);
                                         }
                                         else{
                                             if (overlay != null)
                                                 overlay.remove();
                                             overlay = null;
                                         }
+                                    },{multiSelect:false,query:game.getDefaultSaveStateFileName()});
+                                });
+                                $("#createSave").click(function(){
+                                    noEvent = false;
+                                    $("#chooseRAMDialog").modal("hide");
+                                    overlay = App.createMessageOverlay(container,$("<div>Creating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    game.createGameSaveStateData(function(saveState){
+                                        if (overlay != null)
+                                            overlay.remove();
+                                        overlay = null;
+                                    })
+                                });
+                            });
+                        }
+                        else{
+                            App.showModalConfirmation("Dissociate SaveState","Are you sure you want to dissociate the saveState file with this game?",function(result){
+                                if (result){
+                                    if (overlay != null)
+                                        overlay.remove();
+                                    overlay = App.createMessageOverlay(container,$("<div>Dissociating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    game.setGameSaveStateFileId(null,function(success){
+                                        if (overlay != null)
+                                            overlay.remove();
+                                        overlay = null;
                                     },progressUpdate);
                                 }
                                 else{
-                                    if (overlay != null)
-                                        overlay.remove();
-                                    overlay = null;
+                                    event.delegateTarget.checked = true;
                                 }
-                            },{multiSelect:false,query:game.getDefaultSaveStateFileName()});
-                        });
-                        $("#createSave").click(function(){
-                            noEvent = false;
-                            $("#chooseRAMDialog").modal("hide");
-                            game.createGameSaveStateData(function(saveState){
-                                if (overlay != null)
-                                    overlay.remove();
-                                overlay = null;
-                            })
-                        });
-                    });
-                }
-                else{
-                    App.showModalConfirmation("Dissociate SaveState","Are you sure you want to dissociate the saveState file with this game?",function(result){
-                        if (result){
-                            if (overlay != null)
-                                overlay.remove();
-                            overlay = App.createMessageOverlay(container,$("<div>Dissociating saveState for " + game.title + "...</div><div class='pbar'></div>"));
-                            game.setGameSaveStateFileId(null,function(success){
-                                if (overlay != null)
-                                    overlay.remove();
-                                overlay = null;
-                            },progressUpdate);
-                        }
-                        else{
-                            event.delegateTarget.checked = true;
+                            });
                         }
                     });
-                }
-            });
-            display.find(".editGameTitle").click(function(){
-                App.loadMustacheTemplate("modules/library/template.html","GameRename",function(template){
-                    var modal = $(template.render(game));
-                    modal.find("#inputNewGameName").keypress(function (e) {
-                        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-                            modal.find("#Save").click();
-                            return false;
-                        }
-                        return true;
-                    });
-                    modal.find("#Save").click(function(){
-                        overlay = App.createMessageOverlay(container, "Renaming Game...");
-                        game.setGameTitle(modal.find("#inputNewGameName").val(),function(){
-                            onLibraryLoaded();
-                        });
-                        modal.modal("hide");
+                    display.find(".editGameTitle").click(function(){
+                        App.loadMustacheTemplate("modules/library/template.html","GameRename",function(template){
+                            var modal = $(template.render(game));
+                            modal.find("#inputNewGameName").keypress(function (e) {
+                                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                                    modal.find("#Save").click();
+                                    return false;
+                                }
+                                return true;
+                            });
+                            modal.find("#Save").click(function(){
+                                overlay = App.createMessageOverlay(container, "Renaming Game...");
+                                game.setGameTitle(modal.find("#inputNewGameName").val(),function(){
+                                    onLibraryLoaded();
+                                });
+                                modal.modal("hide");
 
-                    });
-                    modal.find("#useDefault").click(function(){
-                        overlay = App.createMessageOverlay(container, "Resetting Game Title...");
-                        game.setGameTitle(null,function(){
-                            onLibraryLoaded();
+                            });
+                            modal.find("#useDefault").click(function(){
+                                overlay = App.createMessageOverlay(container, "Resetting Game Title...");
+                                game.setGameTitle(null,function(){
+                                    onLibraryLoaded();
+                                });
+                                modal.modal("hide");
+                            });
+                            App.makeModal(modal);
                         });
-                        modal.modal("hide");
                     });
-                    App.makeModal(modal);
                 });
             });
         });

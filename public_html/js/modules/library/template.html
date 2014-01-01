@@ -5,6 +5,9 @@
             <label class="checkbox">
                 <input id="useSaveState" type="checkbox" {{#saveStateEnabled}}checked{{/saveStateEnabled}}> Use SaveState Saving
             </label>
+            <label class="checkbox">
+                <input id="availableOffline" {{^offlineModeEnabled}}disabled{{/offlineModeEnabled}} type="checkbox" {{#availableOffline}}checked{{/availableOffline}}> Make Available Offline
+            </label>
         </div>
 
     <br>

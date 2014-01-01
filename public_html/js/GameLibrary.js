@@ -1,4 +1,4 @@
-define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
+define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils, OfflineUtils){
 
     var GameLibrary = {};
 
@@ -109,13 +109,83 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     }
                 }
 
+                library[i].modifySaveStateIdValue = function(fileid,callback){
+                    var game = this;
+                    game.isMadeAvailableOffline(function(isLongTerm){
+                        var oldId = game.saveStateFileId;
+                        game.saveStateFileId = fileid;
+                        App.metadataManager.setGameSaveStateFileId(i,fileid);
+                        App.metadataManager.persistChanges(function(){
+                            if (isLongTerm){
+                                function afterUnmarkOld(){
+                                    if (fileid != null && fileid != ""){
+                                        OfflineUtils.markFileForLongTermStorage(fileid,function(success){
+                                            //do something if it fails?
+                                            callback(true);
+                                        });
+                                    }
+                                    else{
+                                        callback(true);
+                                    }
+                                }
+                                if (oldId != null && oldId != ""){
+                                    OfflineUtils.unmarkFileForLongTermStorage(oldId,function(success){
+                                        //do something if it fails?
+                                        afterUnmarkOld();
+                                    });
+                                }
+                                else{
+                                    afterUnmarkOld();
+                                }
+                            }
+                            else{
+                                callback(true);
+                            }
+                        });
+                    });
+                }
+
+                library[i].modifySaveFileIdValue = function(fileid,callback){
+                    var game = this;
+                    game.isMadeAvailableOffline(function(isLongTerm){
+                        var oldId = game.saveFileId;
+                        game.saveFileId = fileid;
+                        App.metadataManager.setGameSaveFileId(i,fileid);
+                        App.metadataManager.persistChanges(function(){
+                            if (isLongTerm){
+                                function afterUnmarkOld(){
+                                    if (fileid != null && fileid != ""){
+                                        OfflineUtils.markFileForLongTermStorage(fileid,function(success){
+                                            //do something if it fails?
+                                            callback(true);
+                                        });
+                                    }
+                                    else{
+                                        callback(true);
+                                    }
+                                }
+                                if (oldId != null && oldId != ""){
+                                    OfflineUtils.unmarkFileForLongTermStorage(oldId,function(success){
+                                        //do something if it fails?
+                                        afterUnmarkOld();
+                                    });
+                                }
+                                else{
+                                    afterUnmarkOld();
+                                }
+                            }
+                            else{
+                                callback(true);
+                            }
+                        });
+                    });
+                }
+
                 library[i].createGameSaveStateData = function(callback){
                     var game = this;
                     game.saveState = null;
                     GoogleAPIs.uploadBinaryFile(game.getDefaultSaveStateFileName(),App.stringToArrayBuffer(JSON.stringify(game.saveState)),function(fileid){
-                        game.saveStateFileId = fileid;
-                        App.metadataManager.setGameSaveStateFileId(i,fileid);
-                        App.metadataManager.persistChanges(function(){
+                        game.modifySaveStateIdValue(fileid,function(){
                             callback(game.saveState);
                         });
                     });
@@ -123,12 +193,10 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
                 library[i].setGameSaveStateFileId = function(fileid,callback,progresscallback){
                     delete this.saveState;
-                    this.saveStateFileId = fileid;
                     var game = this;
-                    App.metadataManager.setGameSaveStateFileId(i,fileid);
-                    App.metadataManager.persistChanges(function(){
+                    game.modifySaveStateIdValue(fileid,function(){
                         game.getGameSaveStateData(callback,progresscallback);
-                    });
+                    })
 
                 }
 
@@ -147,9 +215,7 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                         ramSize += 13;
                     game.saveData = new Uint8Array(ramSize);
                     GoogleAPIs.uploadBinaryFile(game.getDefaultSaveFileName(),game.saveData,function(fileid){
-                        game.saveFileId = fileid;
-                        App.metadataManager.setGameSaveFileId(i,fileid);
-                        App.metadataManager.persistChanges(function(){
+                        game.modifySaveFileIdValue(fileid,function(){
                             callback(game.saveData);
                         });
                     });
@@ -157,11 +223,10 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
                 library[i].setGameSaveFileId = function(fileId,callback,progresscallback){
                     var game = this;
-                    game.saveFileId = fileId;
-                    App.metadataManager.setGameSaveFileId(i,fileId);
-                    App.metadataManager.persistChanges(function(){
+                    game.modifySaveFileIdValue(fileId,function(){
                         game.getGameSaveData(callback,progresscallback);
-                    });
+
+                    })
                 }
 
                 library[i].updateSaveData = function(data,callback,progresscallback){
@@ -214,6 +279,86 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
 
                 library[i].equals = function(game){
                     return game != null && game.id == this.id && game.saveFileId == this.saveFileId && this.fileId == game.fileId && this.patchFileId == game.patchFileId;
+                }
+
+                library[i].isMadeAvailableOffline = function(callback){
+                    var game = this;
+                    var fileList = [];
+                    if (game.fileId != null && game.fileId != "")
+                        fileList.push(game.fileId);
+                    if (game.saveFileId != null && game.saveFileId != "")
+                        fileList.push(game.saveFileId);
+                    if (game.saveStateFileId != null && game.saveStateFileId != "")
+                        fileList.push(game.saveStateFileId);
+                    OfflineUtils.getGoogleDriveFileMetadata(fileList,function(results){
+                        var available = true;
+                        for (var member in results){
+                            if (results[member] == null || !results[member].longTerm){
+                                available = false;
+                                break;
+                            }
+                        }
+                        callback(available);
+                    });
+                }
+
+                library[i].unMakeAvailableOffline = function(callback){
+                    var game = this;
+                    var fileList = [];
+                    if (game.fileId != null && game.fileId != "")
+                        fileList.push(game.fileId);
+                    if (game.saveFileId != null && game.saveFileId != "")
+                        fileList.push(game.saveFileId);
+                    if (game.saveStateFileId != null && game.saveStateFileId != "")
+                        fileList.push(game.saveStateFileId);
+                    function process(i){
+                        if (i == fileList.length){
+                            callback(true);
+                            return;
+                        }
+                        OfflineUtils.unmarkFileForLongTermStorage(fileList[i],function(success){
+                            if (!success){
+                                callback(false);
+                                return;
+                            }
+                            process(i+1);
+                        })
+
+                    }
+                    process(0);
+                }
+
+                library[i].makeAvailableOffline = function(callback){
+                    var game = this;
+                    var fileList = [];
+                    if (game.fileId != null && game.fileId != "")
+                        fileList.push(game.fileId);
+                    if (game.saveFileId != null && game.saveFileId != "")
+                        fileList.push(game.saveFileId);
+                    if (game.saveStateFileId != null && game.saveStateFileId != "")
+                        fileList.push(game.saveStateFileId);
+                    function process(i){
+                        if (i == fileList.length){
+                            callback(true);
+                            return;
+                        }
+                        OfflineUtils.markFileForLongTermStorage(fileList[i],function(success){
+                            if (!success){
+                                callback(false);
+                                return;
+                            }
+                            GoogleAPIs.getFile(fileList[i],function(data){
+                                if (data == null){
+                                    callback(false);
+                                    return;
+                                }
+                                process(i+1);
+                            });
+
+                        })
+
+                    }
+                    process(0);
                 }
             })(i);
         }

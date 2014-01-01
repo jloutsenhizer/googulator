@@ -23,7 +23,7 @@ define(function(){
     var defaultCacheMetadata = {version:0,fileMetadata:{}};
 
     //this is the amount we want to round the quota by so that we constantly don't need to be requesting more quota when fiddling with long term files
-    var quotaRoundingFactor = 1024*1024;//1MB
+    var quotaRoundingFactor = 1024*1024 * 5;//5MB
 
 
     function roundUpQuota(bytes){
@@ -208,6 +208,21 @@ define(function(){
     }
 
     OfflineUtils.getGoogleDriveFileMetadata = function(id,callback){
+        if (id instanceof Array){//if id is an array we return a dictionary for all the results
+            var returnVal = {};
+            function process(i){
+                if (i == id.length){
+                    callback(returnVal);
+                    return;
+                }
+                OfflineUtils.getGoogleDriveFileMetadata(id[i],function(metadata){
+                    returnVal[id[i]] = metadata;
+                    process(i+1);
+                });
+            }
+            process(0);
+            return;
+        }
         if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
             callback(null);
             return;
@@ -404,6 +419,65 @@ define(function(){
         });
     }
 
+    OfflineUtils.unmarkFileForLongTermStorage = function(id,callback){
+        function applyMetadataChange(callback){
+            var metadata = cacheMetadata.fileMetadata[id];
+            if (metadata == null){
+                metadata = cacheMetadata.fileMetadata[id] = {};
+            }
+            metadata.shouldBeInLongTerm = false;
+            syncCacheMetadata(callback);
+        }
+        getFileSystem(function(fileSystem){
+            if (fileSystem == null){
+                callback(false);
+                return;
+            }
+            fileSystem.root.getFile("longTermGDrive/" + id,{create:false},function(file){
+                if (file != null){
+                    file.getMetadata(function(metadata){
+                        if (metadata == null){
+                            callback(false);
+                        }
+                        else{
+                            localStorage.extraNeededQuota = JSON.stringify(JSON.parse(localStorage.extraNeededQuota) - metadata.size);
+                            verifyStorageQuota(function(success){
+                                if (!success){
+                                    callback(false);
+                                }
+                                else{
+                                    fileSystem.root.getDirectory("shortTermGDrive",{create: true, exclusive: false},function(directory){
+                                        if (directory == null){
+                                            callback(false);
+                                            return;
+                                        }
+                                        file.moveTo(directory,id,function(){
+                                            applyMetadataChange(callback);
+                                        },function(){
+                                            callback(false);
+                                        });
+
+                                    },function(){
+                                        callback(false);
+                                    })
+
+                                }
+                            })
+                        }
+                    },function(){
+                        callback(false);
+                    });
+                }
+                else{
+                    applyMetadataChange(callback);
+                }
+
+            },function(){
+                applyMetadataChange(callback);
+            })
+        })
+    }
+
     OfflineUtils.markFileForLongTermStorage = function(id,callback){
 
         function applyMetadataChange(callback){
@@ -416,8 +490,10 @@ define(function(){
         }
 
         getFileSystem(function(fileSystem){
-            if (fileSystem == null)
+            if (fileSystem == null){
                 callback(false);
+                return;
+            }
 
             fileSystem.root.getFile("shortTermGDrive/" + id,{create: false},function(file){
                 if (file != null){
@@ -426,18 +502,27 @@ define(function(){
                             callback(false);
                         }
                         else{
-                            //anytime we adjust this number we round up so that we aren't requesting quota if a file changes by a small amount in size
                             localStorage.extraNeededQuota = JSON.stringify(JSON.parse(localStorage.extraNeededQuota) + metadata.size);
                             verifyStorageQuota(function(success){
                                 if (!success){
                                     callback(false);
                                 }
                                 else{
-                                    file.moveTo(fileSystem.root,"longTermGDrive/" + id,function(){
-                                        applyMetadataChange(callback);
+                                    fileSystem.root.getDirectory("longTermGDrive",{create: true, exclusive: false},function(directory){
+                                        if (directory == null){
+                                            callback(false);
+                                            return;
+                                        }
+                                        file.moveTo(directory,id,function(){
+                                            applyMetadataChange(callback);
+                                        },function(){
+                                            callback(false);
+                                        });
+
                                     },function(){
                                         callback(false);
-                                    });
+                                    })
+
                                 }
                             })
                         }
