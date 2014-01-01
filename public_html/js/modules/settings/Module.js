@@ -1,4 +1,4 @@
-define(["OfflineUtils"],function(OfflineUtils){
+define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
     var Module = {};
 
     App.constants.TYPE_KEYBOARD = 0;
@@ -89,6 +89,11 @@ define(["OfflineUtils"],function(OfflineUtils){
             container.find("#Offline .enableLocalStorage").click(function(event){
                 OfflineUtils.enableLocalStorage(event.target.checked,function(enabled){
                     event.target.checked = enabled;
+
+                    //this little hack will make sure the metadata file gets cached
+                    if (App.userInfo != null && App.userInfo.metadataFileId != null && GoogleAPIs.hasFileInMemoryCache(App.userInfo.metadataFileId)){
+                        GoogleAPIs.getFile(App.userInfo.metadataFileId,function(){});
+                    }
                 });
             });
         });

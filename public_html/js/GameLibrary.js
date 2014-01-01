@@ -112,9 +112,9 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                 library[i].createGameSaveStateData = function(callback){
                     var game = this;
                     game.saveState = null;
-                    GoogleAPIs.uploadBinaryFile(game.getDefaultSaveStateFileName(),App.stringToArrayBuffer(JSON.stringify(game.saveState)),function(result){
-                        game.saveStateFileId = result.id;
-                        App.metadataManager.setGameSaveStateFileId(i,result.id);
+                    GoogleAPIs.uploadBinaryFile(game.getDefaultSaveStateFileName(),App.stringToArrayBuffer(JSON.stringify(game.saveState)),function(fileid){
+                        game.saveStateFileId = fileid;
+                        App.metadataManager.setGameSaveStateFileId(i,fileid);
                         App.metadataManager.persistChanges(function(){
                             callback(game.saveState);
                         });
@@ -146,9 +146,9 @@ define(["GoogleAPIs","GameUtils"], function(GoogleAPIs, GameUtils){
                     if (game.header.mbcType == GameUtils.MBC_3)
                         ramSize += 13;
                     game.saveData = new Uint8Array(ramSize);
-                    GoogleAPIs.uploadBinaryFile(game.getDefaultSaveFileName(),game.saveData,function(result){
-                        game.saveFileId = result.id;
-                        App.metadataManager.setGameSaveFileId(i,result.id);
+                    GoogleAPIs.uploadBinaryFile(game.getDefaultSaveFileName(),game.saveData,function(fileid){
+                        game.saveFileId = fileid;
+                        App.metadataManager.setGameSaveFileId(i,fileid);
                         App.metadataManager.persistChanges(function(){
                             callback(game.saveData);
                         });

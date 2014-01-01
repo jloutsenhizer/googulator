@@ -795,7 +795,7 @@ define(["CopyUtils"],function(CopyUtils){
                 out2[j] = samples[i+1] / 32768;
             }
             source.connect(this.gainNode);
-            source.start();
+            source.start(0);
         },
 
         getVolume: function(){

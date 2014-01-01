@@ -14,6 +14,7 @@ define(["OfflineUtils"], function(OfflineUtils){
     var authenticated = false;
 
     var fileCache = {};
+    var fileCacheModifiedDate = {};
 
     GoogleAPIs.checkAuthentication = function(callback,errorCount,overlay){
         if (gapi == null){
@@ -196,6 +197,9 @@ define(["OfflineUtils"], function(OfflineUtils){
 
     GoogleAPIs.uploadBinaryFile = function(filename, contents, callback, progresscallback){
         if (progresscallback == null) progresscallback = function(){};
+
+        //TODO: handle if google is offline gracefully
+
         var boundary = '-------314159265358979323846';
         var delimiter = "\r\n--" + boundary + "\r\n";
         var close_delim = "\r\n--" + boundary + "--";
@@ -230,11 +234,16 @@ define(["OfflineUtils"], function(OfflineUtils){
             var response = JSON.parse(rawResponse);
             if (response.gapiRequest != null && response.gapiRequest.data.status == 200){
                 fileCache[result.id] = contents;
+                fileCacheModifiedDate[result.id] = new Date(result.modifiedDate);
                 callback(result);
+                OfflineUtils.cacheGoogleDriveFile(result.id,contents,new Date(result.modifiedDate),function(success){
+                    //should we do something if the local filesystem fails??
+                    callback(result.id);
+                });
             }
             else{
                 setTimeout(function(){
-                    GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
+                    GoogleAPIs.uploadBinaryFile(filename,contents,callback,progresscallback);
                 },1000);//wait a second and try again
             }
         });
@@ -242,6 +251,15 @@ define(["OfflineUtils"], function(OfflineUtils){
 
     GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback){
         if (progresscallback == null) progresscallback = function(){};
+
+        if (App.googleOffline){//if google is offline then we should just update the local file
+            OfflineUtils.cacheGoogleDriveFile(fileid,contents,null,function(success){
+                callback(success);
+            });
+            return;
+        }
+
+
         var boundary = '-------314159265358979323846';
         var delimiter = "\r\n--" + boundary + "\r\n";
         var close_delim = "\r\n--" + boundary + "--";
@@ -275,7 +293,11 @@ define(["OfflineUtils"], function(OfflineUtils){
             var response = JSON.parse(rawResponse);
             if (response.gapiRequest != null && response.gapiRequest.data.status == 200){
                 fileCache[result.id] = contents;
-                callback(result);
+                fileCacheModifiedDate[result.id] = new Date(result.modifiedDate);
+                OfflineUtils.cacheGoogleDriveFile(fileid,contents,new Date(result.modifiedDate),function(success){
+                    //should we do something if the local filesystem fails??
+                    callback(true);
+                });
             }
             else{
                 setTimeout(function(){
@@ -286,29 +308,50 @@ define(["OfflineUtils"], function(OfflineUtils){
 
     }
 
+    GoogleAPIs.hasFileInMemoryCache = function(fileid){
+        return fileCache[fileid] != null;
+    }
+
     GoogleAPIs.getFile = function(fileid,callback,progresscallback){
         if (progresscallback == null) progresscallback = function(){};
         progresscallback(0,100);
 
-        var oldCallback = callback;
-        callback = function(data){
-            OfflineUtils.cacheGoogleDriveFile(fileid,data,function(){
-                oldCallback(data);
-            });
-        }
+
 
         if (fileCache[fileid] != null){
-            callback(fileCache[fileid]);
+            OfflineUtils.googleDriveFileExists(fileid,function(exists){
+                if (!exists){
+                    OfflineUtils.cacheGoogleDriveFile(fileid,fileCache[fileid],fileCacheModifiedDate[fileid],function(success){
+                        callback(fileCache[fileid]);
+                    });
+                }
+                else{
+                    callback(fileCache[fileid]);
+                }
+            });
             return;
         }
-        gapi.client.drive.files.get({fileId:fileid,updateViewedDate:true}).execute(function(data){
+
+        if (App.googleOffline){//if google is offline our only hope is to get the file from the offline cache
+            OfflineUtils.getGoogleDriveFileContents(fileid,function(data){
+                if (data != null)
+                    fileCache[fileid] = data;
+                callback(data);
+            });
+            return;
+        }
+
+        gapi.client.drive.files.get({fileId:fileid,updateViewedDate:true}).execute(function(driveMetadata){
             OfflineUtils.getGoogleDriveFileMetadata(fileid,function(metadata){
-                if (metadata == null || metadata.modificationTime.getTime() < new Date(data.modifiedDate).getTime()){
-                    App.downloadBinaryFile(data.downloadUrl,{
+                if (metadata == null || metadata.contentsModifiedDate.getTime() < new Date(driveMetadata.modifiedDate).getTime()){
+                    App.downloadBinaryFile(driveMetadata.downloadUrl,{
                         accessToken: gapi.auth.getToken().access_token,
                         success: function(data){
                             fileCache[fileid] = data;
-                            callback(data);
+                            fileCacheModifiedDate[fileid] = new Date(driveMetadata.modifiedDate);
+                            OfflineUtils.cacheGoogleDriveFile(fileid,data,new Date(driveMetadata.modifiedDate),function(){
+                                callback(data);
+                            });
                         },
                         error: function(){
                             callback(null);
@@ -322,6 +365,7 @@ define(["OfflineUtils"], function(OfflineUtils){
                     OfflineUtils.getGoogleDriveFileContents(fileid,function(data){
                         if (data != null){
                             fileCache[fileid] = data;
+                            fileCacheModifiedDate[fileid] = metadata.contentsModifiedDate;
                         }
                         callback(data);
                     });

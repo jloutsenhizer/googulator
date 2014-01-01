@@ -227,12 +227,14 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             currentApp.loadGame(game);
             currentGameTitle = game.title;
             currentGameId = game.id;
-            gapi.comments.render('gameboyComments', {
-                href: window.location.origin + "/library/game/" + encodeURIComponent(currentGameId),
-                width: '625',
-                first_party_property: 'BLOGGER',
-                view_type: 'FILTERED_POSTMOD'
-            });
+            if (!App.googleOffline && gapi != null){
+                gapi.comments.render('gameboyComments', {
+                    href: window.location.origin + "/library/game/" + encodeURIComponent(currentGameId),
+                    width: '625',
+                    first_party_property: 'BLOGGER',
+                    view_type: 'FILTERED_POSTMOD'
+                });
+            }
             updateUrlAndTitle();
             currentApp.start();
             $("#gameboyOff").removeAttr("disabled");

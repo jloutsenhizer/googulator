@@ -450,10 +450,10 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils"], function(Gam
                     overlay = App.createMessageOverlay(container,"Downloading " + gameChosen.title + " To Your Drive...");
                     App.downloadBinaryFile(gameChosen.path,{
                         success:function(data){
-                            GoogleAPIs.uploadBinaryFile(gameChosen.fileName,data,function(result){
+                            GoogleAPIs.uploadBinaryFile(gameChosen.fileName,data,function(fileid){
                                 overlay.remove();
                                 overlay = App.createMessageOverlay(container,"Refreshing Game Library...");
-                                GameLibrary.addGame(gameChosen.id,result.id,function(lib,success){
+                                GameLibrary.addGame(gameChosen.id,fileid,function(lib,success){
                                     library = lib;
                                     onLibraryLoaded();
                                 });

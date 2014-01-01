@@ -11,12 +11,14 @@
         <div class="btn-group"><button id="play" class="btn">Play Game</button><button id="remove" class="btn">Remove From Library</button></div>
     <div><div class="gameCommentContainer"><div id="comments-{{uid}}"></div><script>
         console.log(window.location.href);
-        gapi.comments.render('comments-{{uid}}', {
-            href: window.location.href,
-            width: '625',
-            first_party_property: 'BLOGGER',
-            view_type: 'FILTERED_POSTMOD'
-        });
+        if (!App.googleOffline && gapi != null){
+            gapi.comments.render('comments-{{uid}}', {
+                href: window.location.href,
+                width: '625',
+                first_party_property: 'BLOGGER',
+                view_type: 'FILTERED_POSTMOD'
+            });
+        }
     </script></div></div>
 </template>
 <template id="mainDisplay">

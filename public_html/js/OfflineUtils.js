@@ -1,7 +1,7 @@
 define(function(){
     var OfflineUtils = {};
 
-    var MINIMUM_LOCAL_STORAGE = 1024 * 1024 * 20;//20MB used to swap in and out temporary files and for the metadata storage
+    var MINIMUM_LOCAL_STORAGE = 1024 * 1024 * 40;//40MB used to swap in and out temporary files and for the metadata storage
 
     window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
     navigator.persistentStorage = navigator.persistentStorage || navigator.webkitPersistentStorage;
@@ -9,7 +9,7 @@ define(function(){
     /* This is the offline api for googulator
      * localStorage - used for metadata regarding the local file System and small cached resources, all fields should be JSON encoded when written and JSON decoded when read
      * localStorage.extraQuotaNeeded - used to specify how much extra quota is required for the longTermStorageFiles
-     * localStorage.localStorageEnabled - specifies whether or not local file system is enabled for caching google drive files
+     * localStorage.fileSystemEnabled - specifies whether or not local file system is enabled for caching google drive files
      * localStorage.userInfo - cached from googulator user info lookup. Key information for emulator operation is metafileid
      * localStorage.googleUserInfo - cached from google user info lookup. Doesn't contain anything particulary important
      *
@@ -19,12 +19,76 @@ define(function(){
      *
      */
 
+    var cacheMetadata = null;
+    var defaultCacheMetadata = {version:0,fileMetadata:{}};
+
+    //this is the amount we want to round the quota by so that we constantly don't need to be requesting more quota when fiddling with long term files
+    var quotaRoundingFactor = 1024*1024;//1MB
+
+
+    function roundUpQuota(bytes){
+        return Math.ceil(bytes / quotaRoundingFactor) * quotaRoundingFactor;
+    }
+
+    function syncCacheMetadata(callback){
+        getFileSystem(function(fileSystem){
+            if (fileSystem == false)
+                callback(false);
+            else{
+                fileSystem.root.getFile("cache.metadata",{create: true},function(file){
+                    if (cacheMetadata == null){//read it if we don't have it
+                        file.file(function(file){
+                            var reader = new FileReader();
+                            reader.onload = function(){
+                                try{
+                                    if (reader.result.byteLength == 0)
+                                        throw "empty";
+                                    cacheMetadata = JSON.parse(App.stringFromArrayBuffer(reader.result));
+                                    callback(true);
+                                }
+                                catch (e){
+                                    cacheMetadata = defaultCacheMetadata;
+                                    syncCacheMetadata(callback);
+                                }
+                            }
+                            reader.onerror = function(){
+                                callback(false);
+                            }
+                            reader.readAsArrayBuffer(file);
+                        },function(){
+                            callback(false);
+                        });
+                    }
+                    else{
+                        var data = App.stringToArrayBuffer(JSON.stringify(cacheMetadata));
+                        file.createWriter(function(writer){
+                            writer.onwriteend = function(){
+                                writer.onwriteend = function(){
+                                    callback(true);
+                                }
+                                writer.write(new Blob([data]));
+                            }
+                            writer.truncate(data.byteLength);
+
+                        },function(){
+                            callback(false);
+                        });
+                    }
+                },function(){
+                    callback(false);
+                })
+            }
+        })
+    }
+
 
 
     function verifyStorageQuota(callback){
-        navigator.persistentStorage.queryUsageAndQuota(function(used,remaining){
-            var total = used + remaining;
-            var totalNeeded = JSON.parse(localStorage.extraNeededQuota) + MINIMUM_LOCAL_STORAGE;
+        navigator.persistentStorage.queryUsageAndQuota(function(used,avaiable){
+            var total = avaiable;
+            var extraAmount = JSON.parse(localStorage.extraNeededQuota);
+            if (extraAmount == 0) extraAmount = quotaRoundingFactor;//forces the initial quota request to cover an extra step amount
+            var totalNeeded = roundUpQuota(extraAmount + MINIMUM_LOCAL_STORAGE);
             if (total < totalNeeded){
                 var overlay = App.createMessageOverlay($("body"),"Googulator needs " + (totalNeeded - total) + "B more of local storage.");
                 navigator.persistentStorage.requestQuota(totalNeeded,function(amount){
@@ -81,8 +145,9 @@ define(function(){
                         callback(false);
                         return;
                     }
-                    //all necessary directories are in place
-                    callback(true);
+
+                    //all necessary directories exist
+                    syncCacheMetadata(callback);
 
                 },function(error){
                     callback(false);
@@ -97,7 +162,7 @@ define(function(){
     }
 
     OfflineUtils.googleDriveFileExists = function(id,callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
             callback(false);
             return;
         }
@@ -129,7 +194,7 @@ define(function(){
     }
 
     OfflineUtils.getGoogleDriveFileMetadata = function(id,callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
             callback(null);
             return;
         }
@@ -169,11 +234,17 @@ define(function(){
                         callback(null);
                         return;
                     }
-                    callback({
+                    var extraMetadata = cacheMetadata.fileMetadata[id];
+                    if (extraMetadata == null)
+                        extraMetadata = {};
+                    metadata = $.extend(extraMetadata,{
                         modificationTime: metadata.modificationTime,
                         size: metadata.size,
                         longTerm: longTerm
                     });
+                    metadata.contentsModifiedDate = new Date(metadata.contentsModifiedDate);
+                    metadata.lastAccessTime = new Date(metadata.lastAccessTime);
+                    callback(metadata);
                 },function(){
                     callback(null);
                 });
@@ -184,7 +255,7 @@ define(function(){
     }
 
     OfflineUtils.getGoogleDriveFileContents = function(id,callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
             callback(null);
             return;
         }
@@ -222,7 +293,15 @@ define(function(){
                 file.file(function(file){
                     var reader = new FileReader();
                     reader.onload = function(){
-                        callback(new Uint8Array(reader.result));
+                        var meta = cacheMetadata.fileMetadata[id];
+                        if (meta == null)
+                            meta = cacheMetadata.fileMetadata[id] = {};
+                        meta.lastAccessTime = new Date().getTime();
+                        syncCacheMetadata(function(success){
+                            //should we do something if we can't sync the changes?
+                            callback(new Uint8Array(reader.result));
+                        });
+
                     }
                     reader.onerror = function(){
                         callback(null);
@@ -237,8 +316,8 @@ define(function(){
 
     }
 
-    OfflineUtils.cacheGoogleDriveFile = function(id,data,callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled)){
+    OfflineUtils.cacheGoogleDriveFile = function(id,data,dateModified,callback){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
             callback(false);
             return;
         }
@@ -247,51 +326,143 @@ define(function(){
                 callback(false);
                 return;
             }
-            if (id == App.userInfo.metadataFileId){
-                fileSystem.root.getFile("longTermGDrive/" + id,{create:true},function(file){
-                    file.createWriter(function(writer){
-                        writer.onwriteend = function(){
-                            writer.onwriteend = function(){
-                                callback(true);
-                                file.getMetadata(function(){console.log(arguments)},function(){console.log(argumnets)})
-                            }
-                            writer.write(new Blob([data]));
-                        }
-                        writer.truncate(data.byteLength);
 
+            OfflineUtils.getGoogleDriveFileMetadata(id,function(oldMetadata){//oldMetadata = null if it isn't found
+                var longTerm = (cacheMetadata.fileMetadata[id] != null && cacheMetadata.fileMetadata[id].shouldBeInLongTerm);
+                var pathStart = longTerm ? "longTermGDrive/" : "shortTermGDrive/";
+                function doWrite(){
+                    fileSystem.root.getFile(pathStart + id,{create:true},function(file){
+                        file.createWriter(function(writer){
+                            writer.onwriteend = function(){
+                                writer.onwriteend = function(){
+                                    //done writing file store its modified date
+
+                                    //if we don't get a date its local modification
+                                    if (dateModified == null) dateModified = new Date();
+
+                                    var meta = cacheMetadata.fileMetadata[id];
+                                    if (meta == null)
+                                        meta = cacheMetadata.fileMetadata[id] = {};
+                                    meta.contentsModifiedDate = dateModified.getTime();
+                                    meta.lastAccessTime = new Date().getTime();
+                                    syncCacheMetadata(function(success){
+                                        //should we delete the file if we fail???
+                                        callback(success);
+                                    })
+
+
+                                }
+                                writer.write(new Blob([data]));
+                            }
+                            writer.truncate(data.byteLength);
+
+                        },function(){
+                            callback(false);
+                        })
+                    },function(e){
+                        callback(false);
+                    });
+                }
+                if (longTerm){
+                    var sizeChange = data.byteLength;
+                    if (oldMetadata != null){
+                        sizeChange -= oldMetadata.size;
+                    }
+                    localStorage.extraNeededQuota = JSON.stringify(JSON.parse(localStorage.extraNeededQuota) + sizeChange);
+                    verifyStorageQuota(function(success){
+                        if (success){
+                            //TODO: check if we have enough storage, if we don't delete least accessed short term files
+                            doWrite();
+                        }
+                        else{
+                            callback(false);
+                        }
+                    });
+                }
+                else{
+                    //TODO: check if we'll have enough storage, if we won't we should delete least accessed files until we do
+                    doWrite();
+                }
+
+
+            });
+
+        });
+    }
+
+    OfflineUtils.markFileForLongTermStorage = function(id,callback){
+
+        function applyMetadataChange(callback){
+            var metadata = cacheMetadata.fileMetadata[id];
+            if (metadata == null){
+                metadata = cacheMetadata.fileMetadata[id] = {};
+            }
+            metadata.shouldBeInLongTerm = true;
+            syncCacheMetadata(callback);
+        }
+
+        getFileSystem(function(fileSystem){
+            if (fileSystem == null)
+                callback(false);
+
+            fileSystem.root.getFile("shortTermGDrive/" + id,{create: false},function(file){
+                if (file != null){
+                    file.getMetadata(function(metadata){
+                        if (metadata == null){
+                            callback(false);
+                        }
+                        else{
+                            //anytime we adjust this number we round up so that we aren't requesting quota if a file changes by a small amount in size
+                            localStorage.extraNeededQuota = JSON.stringify(JSON.parse(localStorage.extraNeededQuota) + metadata.size);
+                            verifyStorageQuota(function(success){
+                                if (!success){
+                                    callback(false);
+                                }
+                                else{
+                                    file.moveTo(fileSystem.root,"longTermGDrive/" + id,function(){
+                                        applyMetadataChange(callback);
+                                    },function(){
+                                        callback(false);
+                                    });
+                                }
+                            })
+                        }
                     },function(){
                         callback(false);
-                    })
-                },function(e){
-                    callback(false);
-                });
-            }
-            else{
-                callback(false);
-                return;
-            }
+                    });
+                }
+                else{
+                    applyMetadataChange(callback);
+                }
+            },function(){
+                applyMetadataChange(callback);
+            });
 
         })
+    }
 
+    function alterLocalStorageEnabledProperty(enabled){
+        console.log(enabled ? "WRITING TRUE" : "WRITING FALSE");
+        localStorage.fileSystemEnabled = enabled;
     }
 
 
 
     OfflineUtils.initialize = function(callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled) || navigator.persistentStorage == null || window.requestFileSystem == null){
-            localStorage.localStorageEnabled = JSON.stringify(false);
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled) || navigator.persistentStorage == null || window.requestFileSystem == null){
+            alterLocalStorageEnabledProperty(false);
             callback();
             return;
         }
         verifyBasicLocalFileSystemSetup(function(isUsable){
-            localStorage.localStorageEnabled = JSON.stringify(isUsable);
+            alterLocalStorageEnabledProperty(isUsable);
             callback();
         });
     }
 
     OfflineUtils.enableLocalStorage = function(enable,callback){
         if (!enable || navigator.persistentStorage == null || window.requestFileSystem == null){
-            localStorage.localStorageEnabled = JSON.stringify(false);
+            alterLocalStorageEnabledProperty(false);
             callback(false);
             return;
         }
@@ -300,13 +471,35 @@ define(function(){
         }
         verifyStorageQuota(function(haveEnoughStorage){
             if (!haveEnoughStorage){
-                localStorage.localStorageEnabled = JSON.stringify(false);
+                alterLocalStorageEnabledProperty(false);
                 callback(false);
                 return;
             }
             verifyBasicLocalFileSystemSetup(function(verified){
-                localStorage.localStorageEnabled = JSON.stringify(verified);
-                callback(verified);
+                if (!verified){
+                    callback(false);
+                    return;
+                }
+                function afterDone(){
+                    alterLocalStorageEnabledProperty(true);
+                    callback(true);
+                }
+                if (App.userInfo != null && App.userInfo.metadataFileId != null){
+                    OfflineUtils.markFileForLongTermStorage(App.userInfo.metadataFileId,function(success){
+                        if (success){
+                            afterDone();
+
+                        }
+                        else{
+                            callback(false);
+                        }
+
+                    });
+                }
+                else{
+                    afterDone();
+                }
+
             });
 
 
@@ -315,23 +508,23 @@ define(function(){
     }
 
     OfflineUtils.checkLocalStorageEnabled = function(callback){
-        if (localStorage.localStorageEnabled == null || !JSON.parse(localStorage.localStorageEnabled) || navigator.persistentStorage == null || window.requestFileSystem == null){
-            localStorage.localStorageEnabled = JSON.stringify(false);
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled) || navigator.persistentStorage == null || window.requestFileSystem == null){
+            alterLocalStorageEnabledProperty(false);
             callback(false);
             return;
         }
         //it is enabled and the browser supports it
-        navigator.persistentStorage.queryUsageAndQuota(function(used,remaining){
-            if ((used + remaining) >= MINIMUM_LOCAL_STORAGE){
+        navigator.persistentStorage.queryUsageAndQuota(function(used,available){
+            if (available >= MINIMUM_LOCAL_STORAGE){
                 callback(true);
                 return;
             }
 
-            localStorage.localStorageEnabled = JSON.stringify(false);
+            alterLocalStorageEnabledProperty(false);
             callback(false);
 
         },function(e){
-            localStorage.localStorageEnabled = JSON.stringify(false);
+            alterLocalStorageEnabledProperty(false);
             callback(false);
             return;
         })
@@ -371,7 +564,7 @@ define(function(){
 
     //attempts to enable google offline mode
     OfflineUtils.enableGoogleOffline = function(){
-        if (!JSON.parse(localStorage.localStorageEnabled))
+        if (!JSON.parse(localStorage.fileSystemEnabled))
             return false;
         if (App.googleOffline)
             return true;
