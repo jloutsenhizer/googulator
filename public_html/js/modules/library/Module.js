@@ -19,8 +19,11 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                 gameIdFromUrl = null;
             else{
                 gameIdFromUrl = decodeURIComponent(req.params["gameid"]);
-                var game = library.getGameById(gameIdFromUrl);
-                document.title += " - " + (game != null ? game.title : gameIdFromUrl);
+                if (library != null){
+                    var game = library.getGameById(gameIdFromUrl);
+                    if (game != null)
+                        document.title += " - " + (game != null ? game.title : gameIdFromUrl);
+                }
             }
         };
         App.davis.get("/library",urlHandler);

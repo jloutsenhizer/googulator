@@ -195,7 +195,9 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                     delete this.saveState;
                     var game = this;
                     game.modifySaveStateIdValue(fileid,function(){
-                        game.getGameSaveStateData(callback,progresscallback);
+                        game.getGameSaveStateData(function(){
+                            callback(true);
+                        },progresscallback);
                     })
 
                 }

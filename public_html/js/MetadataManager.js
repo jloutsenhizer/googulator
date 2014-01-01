@@ -82,11 +82,11 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                     modal.off("hidden");
                     modal.modal("hide");
                     var metadata = createEmptyMetadata();
-                    GoogleAPIs.uploadBinaryFile("googulator.metadata",App.stringToArrayBuffer(JSON.stringify(metadata)),function(result){
-                        $.ajax("/php/setMetadataFileId.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&id=" + result.id,{
+                    GoogleAPIs.uploadBinaryFile("googulator.metadata",App.stringToArrayBuffer(JSON.stringify(metadata)),function(fileid){
+                        $.ajax("/php/setMetadataFileId.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&id=" + fileid,{
                             success:function(result2){
                                 if (result2.success){
-                                    App.userInfo.metadataFileId = result.id;
+                                    App.userInfo.metadataFileId = fileid;
                                     OfflineUtils.storeUserInfo();
                                     overlay.remove();
                                     MetadataManager.loadMetadata(callback);
@@ -122,13 +122,13 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                                     }
                                     else{
                                         App.showModalMessage("Error","Failed to update metadata reference id!",function(){
-                                            MetadataManager.loadMEtadata(callback);
+                                            MetadataManager.loadMetadata(callback);
                                         });
                                     }
                                 },
                                 error: function(){
                                     App.showModalMessage("Error","Failed to update metadata reference id!",function(){
-                                        MetadataManager.loadMEtadata(callback);
+                                        MetadataManager.loadMetadata(callback);
                                     });
 
                                 }

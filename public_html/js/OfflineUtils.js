@@ -420,6 +420,10 @@ define(function(){
     }
 
     OfflineUtils.unmarkFileForLongTermStorage = function(id,callback){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
+            callback(false);
+            return;
+        }
         function applyMetadataChange(callback){
             var metadata = cacheMetadata.fileMetadata[id];
             if (metadata == null){
@@ -479,6 +483,10 @@ define(function(){
     }
 
     OfflineUtils.markFileForLongTermStorage = function(id,callback){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
+            callback(false);
+            return;
+        }
 
         function applyMetadataChange(callback){
             var metadata = cacheMetadata.fileMetadata[id];
@@ -584,7 +592,10 @@ define(function(){
                     callback(true);
                 }
                 if (App.userInfo != null && App.userInfo.metadataFileId != null){
+                    //we need to hackily enable it so the call to mark the metadata file as a long term file doesn't fail
+                    alterLocalStorageEnabledProperty(true);
                     OfflineUtils.markFileForLongTermStorage(App.userInfo.metadataFileId,function(success){
+                        alterLocalStorageEnabledProperty(false);
                         if (success){
                             afterDone();
 
@@ -634,7 +645,30 @@ define(function(){
     //persists user info from googulator server into the offline cache
     //TODO: determine scheme to be able to sync local user info changes (really only needed if metadata file changed)
     OfflineUtils.storeUserInfo = function(){
-        localStorage.userInfo = JSON.stringify(App.userInfo);
+        function afterUnmarkOld(){
+            localStorage.userInfo = JSON.stringify(App.userInfo);
+            if (App.userInfo.metadataFileId != null){
+                OfflineUtils.markFileForLongTermStorage(App.userInfo.metadataFileId,function(success){
+                    //do something on failure?
+                });
+            }
+        }
+        if (localStorage.userInfo != null){
+            var oldUserInfo = JSON.parse(localStorage.userInfo);
+            if (oldUserInfo != null && oldUserInfo.metadataFileId != null && oldUserInfo.metadataFileId != App.userInfo.metadataFileId){
+                OfflineUtils.unmarkFileForLongTermStorage(oldUserInfo.metadataFileId,function(success){
+                    //should we do something on failure?
+                    afterUnmarkOld();
+                });
+            }
+            else{
+                afterUnmarkOld();
+            }
+        }
+        else{
+            afterUnmarkOld();
+        }
+
     }
 
     //persist google user info
@@ -663,7 +697,7 @@ define(function(){
 
     //attempts to enable google offline mode
     OfflineUtils.enableGoogleOffline = function(){
-        if (!JSON.parse(localStorage.fileSystemEnabled))
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled))
             return false;
         if (App.googleOffline)
             return true;
