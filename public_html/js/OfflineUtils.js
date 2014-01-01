@@ -30,6 +30,19 @@ define(function(){
         return Math.ceil(bytes / quotaRoundingFactor) * quotaRoundingFactor;
     }
 
+    function formatDataSize(bytes){
+        if (bytes > 1024*1024*1024*0.9){
+            return (bytes / 1024 / 1024 / 1024).toFixed(2) + " GB"; //gigabytes
+        }
+        if (bytes > 1024*1024*0.9){
+            return (bytes/1024/1024).toFixed(2) + " MB"; //megabytes
+        }
+        if (bytes > 1024*0.9){
+            return (bytes/1024).toFixed(2) + " KB"; //kilobytes
+        }
+        return bytes + " B"; //bytes
+    }
+
     function syncCacheMetadata(callback){
         getFileSystem(function(fileSystem){
             if (fileSystem == false)
@@ -60,6 +73,7 @@ define(function(){
                         });
                     }
                     else{
+                        //TODO: determine if there is enough sapce and if not delete oldest short term files
                         var data = App.stringToArrayBuffer(JSON.stringify(cacheMetadata));
                         file.createWriter(function(writer){
                             writer.onwriteend = function(){
@@ -90,7 +104,7 @@ define(function(){
             if (extraAmount == 0) extraAmount = quotaRoundingFactor;//forces the initial quota request to cover an extra step amount
             var totalNeeded = roundUpQuota(extraAmount + MINIMUM_LOCAL_STORAGE);
             if (total < totalNeeded){
-                var overlay = App.createMessageOverlay($("body"),"Googulator needs " + (totalNeeded - total) + "B more of local storage.");
+                var overlay = App.createMessageOverlay($("body"),"Googulator needs " + formatDataSize(totalNeeded - total) + " more of local file system storage.");
                 navigator.persistentStorage.requestQuota(totalNeeded,function(amount){
                     overlay.remove();
                     if (amount < totalNeeded){
