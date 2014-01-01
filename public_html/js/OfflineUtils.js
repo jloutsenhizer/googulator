@@ -73,26 +73,145 @@ define(function(){
                         });
                     }
                     else{
-                        //TODO: determine if there is enough sapce and if not delete oldest short term files
-                        var data = App.stringToArrayBuffer(JSON.stringify(cacheMetadata));
-                        file.createWriter(function(writer){
-                            writer.onwriteend = function(){
-                                writer.onwriteend = function(){
-                                    callback(true);
-                                }
-                                writer.write(new Blob([data]));
+                        file.getMetadata(function(metadata){
+                            if (metadata == null){
+                                callback(false);
+                                return;
                             }
-                            writer.truncate(data.byteLength);
+                            var data = App.stringToArrayBuffer(JSON.stringify(cacheMetadata));
+                            freeUpSpace(data.byteLength - metadata.size,function(success){
+                                if (!success){
+                                    callback(false);
+                                    return;
+                                }
+                                file.createWriter(function(writer){
+                                    writer.onwriteend = function(){
+                                        writer.onwriteend = function(){
+                                            callback(true);
+                                        }
+                                        writer.write(new Blob([data]));
+                                    }
+                                    writer.truncate(data.byteLength);
+
+                                },function(){
+                                    callback(false);
+                                });
+                            })
 
                         },function(){
                             callback(false);
-                        });
+                        })
                     }
                 },function(){
                     callback(false);
                 })
             }
         })
+    }
+
+    function freeUpSpace(bytesNeeded,callback){
+        if (bytesNeeded <= 0){
+            callback(true);
+            return;
+        }
+        navigator.persistentStorage.queryUsageAndQuota(function(used,available){
+            var free = available - used;
+            if (free >= bytesNeeded){
+                callback(true);
+            }
+            else{
+                queryAllMetadata(function(metadataList){
+                    var list = [];
+                    for (var member in metadataList){
+                        if (metadataList[member] == null)
+                            metadataList[member] = {shouldBeInLongTerm: false,lastAccessTime:new Date(0)};
+                        if (!metadataList[member].shouldBeInLongTerm)
+                            list.push($.extend(metadataList[member],{id:member}));
+                    }
+                    list.sort(function(obj1,obj2){
+                        return obj1.lastAccessTime.getTime() - obj2.lastAccessTime.getTime();
+                    });
+                    function removeAnother(){
+                        if (free >= bytesNeeded){
+                            callback(true);
+                            return;
+                        }
+                        if (list.length == 0){
+                            callback(false);
+                            return;
+                        }
+                        var fileToDelete = list.shift();
+                        deleteFile(fileToDelete.id,function(success){
+                            //do something on failure?
+                            navigator.persistentStorage.queryUsageAndQuota(function(used,available){
+                                free = available - used;
+                                removeAnother();
+                            });
+
+                        });
+
+                    }
+                    removeAnother();
+                });
+            }
+
+
+        });
+    }
+
+    function deleteFile(id,callback){
+        getFileSystem(function(fileSystem){
+            if (fileSystem == null){
+                callback(false);
+                return;
+            }
+            fileSystem.root.getFile("longTermGDrive/" + id,{create:false},function(file){
+                if (file == null){
+                    tryShortTerm();
+                }
+                else{
+                    doRemove(file);
+                }
+
+            },function(){
+                tryShortTerm();
+            });
+            function tryShortTerm(){
+                fileSystem.root.getFile("shortTermGDrive/" + id,{create:false},function(file){
+                    if (file == null){
+                        afterRemove();
+                    }
+                    else{
+                        doRemove(file);
+                    }
+
+                },function(){
+                    afterRemove();
+                });
+            }
+            function doRemove(file){
+                file.remove(function(){
+                    afterRemove();
+                },function(){
+                    callback(false);
+                    return;
+                })
+            }
+            function afterRemove(){
+                delete cacheMetadata.fileMetadata[id];
+                syncCacheMetadata(function(success){
+                    callback(success);
+                });
+            }
+        });
+    }
+
+    function queryAllMetadata(callback){
+        var files = [];
+        for (var member in cacheMetadata.fileMetadata)
+            files.push(member);
+        OfflineUtils.getGoogleDriveFileMetadata(files,callback)
+
     }
 
 
@@ -362,8 +481,12 @@ define(function(){
                 function doWrite(){
                     fileSystem.root.getFile(pathStart + id,{create:true},function(file){
                         file.createWriter(function(writer){
+                            console.log("truncating file");
                             writer.onwriteend = function(){
+                                console.log("truncating finished");
+                                console.log("writing file");
                                 writer.onwriteend = function(){
+                                    console.log("write finished");
                                     //done writing file store its modified date
 
                                     //if we don't get a date its local modification
@@ -400,8 +523,17 @@ define(function(){
                     localStorage.extraNeededQuota = JSON.stringify(JSON.parse(localStorage.extraNeededQuota) + sizeChange);
                     verifyStorageQuota(function(success){
                         if (success){
-                            //TODO: check if we have enough storage, if we don't delete least accessed short term files
-                            doWrite();
+                            var bytesNeeded = data.byteLength;
+                            if (oldMetadata != null){
+                                bytesNeeded -= oldMetadata.size;
+                            }
+                            freeUpSpace(bytesNeeded,function(success){
+                                if (!success){
+                                    callback(false);
+                                    return;
+                                }
+                                doWrite();
+                            })
                         }
                         else{
                             callback(false);
@@ -409,8 +541,17 @@ define(function(){
                     });
                 }
                 else{
-                    //TODO: check if we'll have enough storage, if we won't we should delete least accessed files until we do
-                    doWrite();
+                    var bytesNeeded = data.byteLength;
+                    if (oldMetadata != null){
+                        bytesNeeded -= oldMetadata.size;
+                    }
+                    freeUpSpace(bytesNeeded,function(success){
+                        if (!success){
+                            callback(false);
+                            return;
+                        }
+                        doWrite();
+                    })
                 }
 
 
@@ -640,7 +781,6 @@ define(function(){
         })
     }
 
-    //TODO: Offline utils needs a way to get an offline filesystem for caching drive files
 
     //persists user info from googulator server into the offline cache
     //TODO: determine scheme to be able to sync local user info changes (really only needed if metadata file changed)
