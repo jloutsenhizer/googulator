@@ -210,7 +210,25 @@ define(function(){
         var files = [];
         for (var member in cacheMetadata.fileMetadata)
             files.push(member);
-        OfflineUtils.getGoogleDriveFileMetadata(files,callback)
+        OfflineUtils.getGoogleDriveFileMetadata(files,callback);
+    }
+
+    OfflineUtils.getListOfResyncFiles = function(callback){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
+            callback(null);
+            return;
+        }
+        queryAllMetadata(function(metadataList){
+            var fileIdList = [];
+            for (var fileId in metadataList){
+                var metadata = metadataList[fileId];
+                if (metadata.needResync){
+                    fileIdList.push(fileId);
+                }
+            }
+            callback(fileIdList);
+
+        });
 
     }
 
@@ -461,8 +479,8 @@ define(function(){
             }
 
         });
-
     }
+
 
     OfflineUtils.cacheGoogleDriveFile = function(id,data,dateModified,callback){
         if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
@@ -497,6 +515,7 @@ define(function(){
                                         meta = cacheMetadata.fileMetadata[id] = {};
                                     meta.contentsModifiedDate = dateModified.getTime();
                                     meta.lastAccessTime = new Date().getTime();
+                                    meta.needResync = meta.needResync || App.googleOffline;
                                     syncCacheMetadata(function(success){
                                         //should we delete the file if we fail???
                                         callback(success);
@@ -558,6 +577,21 @@ define(function(){
             });
 
         });
+    }
+
+    OfflineUtils.unmarkFileNeedResync = function(id,callback){
+        if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){
+            callback(false);
+            return;
+        }
+        var metadata = cacheMetadata.fileMetadata[id];
+        if (metadata != null){
+            metadata.needResync = false;
+            syncCacheMetadata(callback);
+        }
+        else{
+            callback(true);
+        }
     }
 
     OfflineUtils.unmarkFileForLongTermStorage = function(id,callback){

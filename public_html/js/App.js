@@ -251,20 +251,34 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
             }
 
         }
-        if (!App.googulatorOffline){
-            $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
-                success: function(result){
-                    App.userInfo = result;
-                    onDone()
-                },
-                error: function(){
-                    App.userInfo = {websiteState: "broken", roles:["ROLE_USER"]};
-                    onDone();
-                }
-            });
+        function afterResync(){
+            if (!App.googulatorOffline){
+                $.ajax("/php/getUserData.php?googletoken=" + GoogleAPIs.getAuthToken(),{
+                    success: function(result){
+                        App.userInfo = result;
+                        onDone()
+                    },
+                    error: function(){
+                        App.userInfo = {websiteState: "broken", roles:["ROLE_USER"]};
+                        onDone();
+                    }
+                });
+            }
+            else{//googulator is offline so we have to depend on the cache
+                onDone();
+            }
         }
-        else{//googulator is offline so we have to depend on the cache
-            onDone();
+        if (!App.googleOffline){
+            var overlay = App.createMessageOverlay($("body"),$("<div>Syncing changes made offline to Google Drive...</div><div class='pbar'></div>"));
+            GoogleAPIs.uploadAllOutOfSyncFiles(function(){
+                overlay.remove();
+                afterResync();
+            },function(done,total){
+                overlay.find(".pbar").progressbar({value:done / total * 100});
+            })
+        }
+        else{
+            afterResync();
         }
 
     }

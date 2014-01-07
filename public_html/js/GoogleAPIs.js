@@ -248,6 +248,53 @@ define(["OfflineUtils"], function(OfflineUtils){
         });
     }
 
+    GoogleAPIs.uploadAllOutOfSyncFiles = function(callback,progresscallback){
+        if (progresscallback == null) progresscallback = function(){};
+        progresscallback(0,100);
+        if (App.googleOffline){
+            callback();
+            return;
+        }
+        OfflineUtils.getListOfResyncFiles(function(fileList){
+            if (fileList == null){
+                callback();
+                return;
+            }
+            function processNext(i){
+                function proceed(){
+                    progresscallback(i+1,fileList.length);
+                    processNext(i+1);
+                }
+                if (i == fileList.length){
+                    callback();
+                    return;
+                }
+                OfflineUtils.getGoogleDriveFileContents(fileList[i],function(data){
+                    if (data == null){
+                        proceed();
+                        return;
+                    }
+                    GoogleAPIs.updateBinaryFile(fileList[i],data,function(success){
+                        if (success){
+                            OfflineUtils.unmarkFileNeedResync(fileList[i],function(){
+                                proceed();
+
+                            });
+                        }
+                        else{
+                            proceed();
+                            processNext(i+1);
+                        }
+
+                    },function(current,total){
+                        progresscallback(i + current / total,fileList.length);
+                    });
+                })
+            }
+            processNext(0);
+        })
+    }
+
     GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback){
         if (progresscallback == null) progresscallback = function(){};
 
