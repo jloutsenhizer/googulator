@@ -1,3 +1,4 @@
+//TODO: implement a system for switching to and from offline mode on the fly
 define(function(){
     var OfflineUtils = {};
 
@@ -16,7 +17,7 @@ define(function(){
      * local fileSystem:
      * longTermGDrive/ - used to store google drive files that are meant to be maintained forever (they are named by their id)
      * shortTermGDrive/ - used to store google drive files that are meant to be stored temporarily (they are named by their id)
-     *
+     * cache.metadata - this file stores additional information about the files in the cache
      */
 
     var cacheMetadata = null;

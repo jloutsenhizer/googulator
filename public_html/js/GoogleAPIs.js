@@ -296,6 +296,7 @@ define(["OfflineUtils"], function(OfflineUtils){
     }
 
     GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback){
+        //TODO: we should check if the file has been changed since we last fetched it, if it is we should prompt the user
         if (progresscallback == null) progresscallback = function(){};
 
         if (App.googleOffline){//if google is offline then we should just update the local file
