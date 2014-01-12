@@ -749,47 +749,55 @@ define(function(){
             callback(false);
             return;
         }
-        if (localStorage.extraNeededQuota == null){
-            localStorage.extraNeededQuota = JSON.stringify(0);
-        }
-        verifyStorageQuota(function(haveEnoughStorage){
-            if (!haveEnoughStorage){
+        App.showModalConfirmation("WARNING","Please note that Offline mode has not been thoroughly tested, is missing some functionality and could potentially be unstable. Most importantly for each session on Googulator, you must be online the whole time or you must be Offline the whole time." +
+            " If you go offline in the middle of a session or go online in the middle of a session, Googulator won't properly switch to Offline mode or online mode. If you are worried about losing save data, click no and do NOT enable offline mode!",function(accepted){
+            if (!accepted){
                 alterLocalStorageEnabledProperty(false);
                 callback(false);
                 return;
             }
-            verifyBasicLocalFileSystemSetup(function(verified){
-                if (!verified){
+            if (localStorage.extraNeededQuota == null){
+                localStorage.extraNeededQuota = JSON.stringify(0);
+            }
+            verifyStorageQuota(function(haveEnoughStorage){
+                if (!haveEnoughStorage){
+                    alterLocalStorageEnabledProperty(false);
                     callback(false);
                     return;
                 }
-                function afterDone(){
-                    alterLocalStorageEnabledProperty(true);
-                    callback(true);
-                }
-                if (App.userInfo != null && App.userInfo.metadataFileId != null){
-                    //we need to hackily enable it so the call to mark the metadata file as a long term file doesn't fail
-                    alterLocalStorageEnabledProperty(true);
-                    OfflineUtils.markFileForLongTermStorage(App.userInfo.metadataFileId,function(success){
-                        alterLocalStorageEnabledProperty(false);
-                        if (success){
-                            afterDone();
+                verifyBasicLocalFileSystemSetup(function(verified){
+                    if (!verified){
+                        callback(false);
+                        return;
+                    }
+                    function afterDone(){
+                        alterLocalStorageEnabledProperty(true);
+                        callback(true);
+                    }
+                    if (App.userInfo != null && App.userInfo.metadataFileId != null){
+                        //we need to hackily enable it so the call to mark the metadata file as a long term file doesn't fail
+                        alterLocalStorageEnabledProperty(true);
+                        OfflineUtils.markFileForLongTermStorage(App.userInfo.metadataFileId,function(success){
+                            alterLocalStorageEnabledProperty(false);
+                            if (success){
+                                afterDone();
 
-                        }
-                        else{
-                            callback(false);
-                        }
+                            }
+                            else{
+                                callback(false);
+                            }
 
-                    });
-                }
-                else{
-                    afterDone();
-                }
+                        });
+                    }
+                    else{
+                        afterDone();
+                    }
+
+                });
+
+
 
             });
-
-
-
         });
     }
 
