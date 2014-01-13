@@ -141,7 +141,6 @@
             ?>
         </script>
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
-        <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=googleAPILoaded" onerror="window.gapi = null; try{window.googleAPILoaded();}catch(e){}"></script>
         <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
         <script src="/lib/jszip/jszip.js"></script>
         <script src="/lib/jszip/jszip-load.js"></script>
@@ -164,7 +163,7 @@
         ?>
         <title><?php echo $title; ?></title>
     </head>
-    <body onload="htmlLoaded();">
+    <body>
         <div class="container-fluid mainContainer">
             <div class="navbar navbar-fixed-top">
                 <div class="navbar-inner">
