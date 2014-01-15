@@ -44,6 +44,7 @@ html, body, .mainContainer{
     right: 0px;
     top: 48px;
     overflow:auto;
+    background:white;
 }
 
 .HomeHTML{

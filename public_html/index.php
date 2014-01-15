@@ -2,8 +2,8 @@
 <?php
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings","goPro","admin");
-    $tabNames = array("Home","Library","Play","Settings","Go Pro","Admin");
+    $tabs = array("home","library","play","settings","help","goPro","admin");
+    $tabNames = array("Home","Library","Play","Settings","Help","Go Pro","Admin");
     $tabDefaultShow = array(true,true,true,true,true,false);
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
@@ -109,6 +109,10 @@
             else if (strpos($requestURI,"/admin") === 0){
                 $title .= " - Administrative Center";
                 $defaultTab = array_search("admin",$tabs);
+            }
+            else if (strpos($requestURI,"/help") === 0){
+                $title .= " - Help";
+                $defaultTab = array_search("help",$tabs);
             }
 
         ?>
