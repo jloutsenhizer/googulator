@@ -96,5 +96,34 @@
             <button id="closeBtn" class="btn" onclick="$('#gameRenameDialog').modal('hide')">Cancel</button>
         </div>
     </div>
+</template>
 
+<template id="doneLoadingDialog">
+    <div class="modal fade" id="doneLoadingDialog">
+        <div class="modal-header">
+            <h3>Done Adding to Library<a href="javascript:$('#doneLoadingDialog').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            {{numSuccessful}} of {{numTried}} files were successfully added to your library!
+            {{#someFilesFailed}}<br> The following files could not be added to your library:{{/someFilesFailed}}
+            <table class="table" style="{{^someFilesFailed}}display:none{{/someFilesFailed}}">
+                <thead>
+                    <th>Filename</th>
+                    <th>Reason</th>
+                </thead>
+                <tbody>
+                {{#filesFailed}}
+                    <tr>
+                        <td>{{fileName}}</td>
+                        <td>{{reason}}</td>
+                    </tr>
+                {{/filesFailed}}
+                </tbody>
+            </table>
+            {{#someFilesFailed}}For more details on failures, visit the help section{{/someFilesFailed}}
+        </div>
+        <div class="modal-footer">
+            <button id="closeBtn" class="btn" onclick="$('#doneLoadingDialog').modal('hide')">Ok</button>
+        </div>
+    </div>
 </template>

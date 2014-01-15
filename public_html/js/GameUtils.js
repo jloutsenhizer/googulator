@@ -43,6 +43,8 @@ define(function(){
             return getGBCHeader(gameData);
         if (this.isNESGame(gameData))
             return getNESHeader(gameData);
+        if (this.isGBAGame(gameData))
+            return getGBAHeader(gameData);
         return null;
     }
 
@@ -50,6 +52,27 @@ define(function(){
 
     for (var i = 0; i < 5; i++){
         NESIdentifierBytes[i] = "NES\x1a".charCodeAt(i);
+    }
+
+    function getGBAHeader(gameData){
+        //TODO: process the entire game header
+        var header = {};
+        header.valid = true;
+        header.type = "gba";
+        header.checksum = gameData[0xBD];
+
+        var checksum = 0;
+
+        for (var i = 0xA0; i <= 0xBC; i++){
+            checksum -= gameData[i];
+        }
+        checksum -= 0x19;
+        checksum &= 0xFF;
+
+        header.valid = checksum == header.checksum;
+        if (!header.valid)
+            return header;
+        return header;
     }
 
     function getNESHeader(gameData){
@@ -105,6 +128,20 @@ define(function(){
         var header = {};
 
         header.type = "gameboy";
+
+        //verify header checksum
+
+        var checksum = 0
+        header.headerChecksum = gameData[0x14D];
+
+        for (var i = 0x0134; i < 0x14D; i++){
+            checksum -= gameData[i] + 1;
+            checksum &= 0xFF;
+        }
+
+        header.valid = header.headerChecksum == checksum;
+        if (!header.valid)
+            return header;
 
         var id = '';
         header.gbcEnabled = (gameData[0x143] & 0x80) == 0x80;
@@ -204,26 +241,16 @@ define(function(){
                 break;
         }
 
-        //verify header checksum
-
-        var checksum = 0
-        header.headerChecksum = gameData[0x14D];
-
-        for (var i = 0x0134; i < 0x14D; i++){
-            checksum -= gameData[i] + 1;
-            checksum &= 0xFF;
-        }
-
-        header.headerChecksumMatch = header.headerChecksum == checksum;
         return header;
     }
 
     GameUtils.isGame = function(gameData){
+        this.isGBAGame(gameData);
         return this.isGameboyGame(gameData) || this.isNESGame(gameData);
     }
 
     GameUtils.isGameboyGame = function(gameData){
-        return getGBCHeader(gameData).headerChecksumMatch;
+        return getGBCHeader(gameData).valid;
     }
 
     var patchIdentifierBytes = new Uint8Array(5);
@@ -242,6 +269,10 @@ define(function(){
 
     GameUtils.isNESGame = function(gameData){
         return getNESHeader(gameData).valid;
+    }
+
+    GameUtils.isGBAGame = function(gameData){
+        return getGBAHeader(gameData).valid;
     }
 
     var patchEOF = new Uint8Array(3);

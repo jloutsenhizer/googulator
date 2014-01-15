@@ -389,6 +389,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
 
     function addFiles(files,callback){
         if (callback == null) callback = function(){};
+        var failedFiles = [];
         var doneWithFile = function(i){
             if (overlay != null)
                 overlay.remove();
@@ -398,8 +399,18 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                 loadFile(i);
             }
             else{
-                onLibraryLoaded();
-                callback();
+                App.loadMustacheTemplate("modules/library/template.html","doneLoadingDialog",function(template){
+                    onLibraryLoaded();
+                    var dialog = App.makeModal(template.render({
+                        numSuccessful: files.length - failedFiles.length,
+                        numTried: files.length,
+                        someFilesFailed: failedFiles.length != 0,
+                        filesFailed: failedFiles
+                    }));
+                    dialog.on("hidden",function(){
+                        callback();
+                    });
+                });
             }
         }
         var loadFile = function(i){
@@ -454,6 +465,15 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                     });
                 }
                 else{
+                    var header = GameUtils.getHeader(data);
+                    var failedFileDesc = {fileName: curFile.name};
+                    if (header == null)
+                        failedFileDesc.reason = "Unsupported or Corrupted File";
+                    else if (header.type == "gba")
+                        failedFileDesc.reason = "Gameboy Advance is not Supported";
+                    else
+                        failedFileDesc.reason = "Unknown";
+                    failedFiles.push(failedFileDesc);
                     doneWithFile(i);
                 }
             },function(loaded,total){
