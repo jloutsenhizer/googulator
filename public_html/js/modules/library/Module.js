@@ -471,6 +471,8 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                         failedFileDesc.reason = "Unsupported or Corrupted File";
                     else if (header.type == "gba")
                         failedFileDesc.reason = "Gameboy Advance is not Supported";
+                    else if (header.type == "snes")
+                        failedFileDesc.reason = "SNES is not Supported";
                     else
                         failedFileDesc.reason = "Unknown";
                     failedFiles.push(failedFileDesc);

@@ -45,6 +45,8 @@ define(function(){
             return getNESHeader(gameData);
         if (this.isGBAGame(gameData))
             return getGBAHeader(gameData);
+        if (this.isSNESGame(gameData))
+            return getSNESHeader(gameData);
         return null;
     }
 
@@ -72,6 +74,36 @@ define(function(){
         header.valid = checksum == header.checksum;
         if (!header.valid)
             return header;
+        return header;
+    }
+
+    function getSNESHeader(gameData){
+        //TODO: process the entire game header
+        var dataLength = gameData.byteLength;
+        var extraLength = dataLength % 1024;
+        var header = {};
+        header.type = "snes";
+        header.valid = true;
+        if (extraLength != 0 && extraLength != 512){
+            header.valid = false;
+            return header;
+        }
+        header.smcHeaderPresent = extraLength == 512;
+        header.checksum = (gameData[0x7FDF + extraLength] << 8) | gameData[0x7FDE + extraLength];
+        header.checksumComplement = (gameData[0x7FDD + extraLength] << 8) | gameData[0x7FDC + extraLength];
+        if ((header.checksum ^ 0xFFFF) == header.checksumComplement){
+            header.romType = "loROM";
+        }
+        else{
+            extraLength += 0x8000;
+            header.checksum = (gameData[0x7FDF + extraLength] << 8) | gameData[0x7FDE + extraLength];
+            header.checksumComplement = (gameData[0x7FDD + extraLength] << 8) | gameData[0x7FDC + extraLength];
+            header.romType = "hiROM";
+            if ((header.checksum ^ 0xFFFF) != header.checksumComplement){
+                header.valid = false;
+                return header;
+            }
+        }
         return header;
     }
 
@@ -245,7 +277,6 @@ define(function(){
     }
 
     GameUtils.isGame = function(gameData){
-        this.isGBAGame(gameData);
         return this.isGameboyGame(gameData) || this.isNESGame(gameData);
     }
 
@@ -273,6 +304,10 @@ define(function(){
 
     GameUtils.isGBAGame = function(gameData){
         return getGBAHeader(gameData).valid;
+    }
+
+    GameUtils.isSNESGame = function(gameData){
+        return getSNESHeader(gameData).valid;
     }
 
     var patchEOF = new Uint8Array(3);
