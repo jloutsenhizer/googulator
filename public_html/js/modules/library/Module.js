@@ -410,6 +410,9 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                     dialog.on("hidden",function(){
                         callback();
                     });
+                    dialog.find(".helplink").click(function(){
+                        dialog.modal("hide");
+                    })
                 });
             }
         }

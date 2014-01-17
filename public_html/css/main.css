@@ -340,3 +340,7 @@ html, body, .mainContainer{
 .gPlusLoginButton .text{
     padding: 0.25em;
 }
+
+.smallerHR hr{
+    margin: 10px 0px;
+}
