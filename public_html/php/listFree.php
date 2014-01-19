@@ -24,9 +24,9 @@ while ($row = mysql_fetch_assoc($query)){
     }
     else{
         $element["fileName"] = $row["fileName"];
-        $element["path"] = "ROM/" . $row["fileName"];
+        $element["path"] = "/ROM/" . $row["fileName"];
     }
-    $element["image"] = "img/ROMPictures/" . $row["gameid"] . ".png";
+    $element["image"] = "/img/ROMPictures/" . $row["gameid"] . ".png";
     $element["id"] = $row["gameid"];
     $element["title"] = getGameTitle($row["gameid"],$con);
     array_push($games,$element);
