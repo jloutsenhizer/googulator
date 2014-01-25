@@ -643,10 +643,12 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
         if (rebindingButton != null){
             var controller = App.settings.controller[rebindingButton.attr("player")];
             if (controller.type == App.constants.TYPE_KEYBOARD){
+                event.preventDefault();
                 controller[rebindingButton.attr("button")] = event.keyCode;
                 finishRebind();
             }
             else if (controller.type == App.constants.TYPE_ICADE){
+                event.preventDefault();
                 event.up = false;
                 event = getICadeEvent(event);
                 if (event != null){

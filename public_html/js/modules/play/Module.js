@@ -181,7 +181,9 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
         var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
             returnValue = returnValue && !keyhandler(events[i]);
-        return returnValue;
+        if (!returnValue){
+            event.preventDefault();
+        }
     });
 
     $(document).keydown(function(event){
@@ -190,7 +192,9 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
         var returnValue = true;
         for (var i = 0, li = events.length; i < li; i++)
             returnValue = returnValue && !keyhandler(events[i]);
-        return returnValue;
+        if (!returnValue){
+            event.preventDefault();
+        }
     });
 
     Gamepad.addListener(function(event){
