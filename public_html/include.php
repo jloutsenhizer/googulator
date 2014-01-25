@@ -134,38 +134,44 @@ function sendEmail($to,$message){
     global $PREFERRED_HOSTNAME, $UPDATE_EMAIL_ADDRESS, $UPDATE_EMAIL_NAME, $UPDATE_MAIL_SERVER, $UPDATE_MAIL_SERVER_PORT,
            $UPDATE_MAIL_SERVER_SSL, $UPDATE_MAIL_SERVER_USERNAME, $UPDATE_MAIL_SERVER_PASSWORD, $emailer_transport, $emailer_mailer;
 
-    if (!isset($emailer_transport)){
+    try{
+
         if (!isset($emailer_transport)){
-            if (!isset($UPDATE_MAIL_SERVER)) {
-                $emailer_transport = Swift_SmtpTransport::newInstance();
-            }
-            else{
-                if ($UPDATE_MAIL_SERVER_SSL){
-                    $emailer_transport = Swift_SmtpTransport::newInstance($UPDATE_MAIL_SERVER, $UPDATE_MAIL_SERVER_PORT, 'ssl');
+            if (!isset($emailer_transport)){
+                if (!isset($UPDATE_MAIL_SERVER)) {
+                    $emailer_transport = Swift_SmtpTransport::newInstance();
                 }
                 else{
-                    $emailer_transport = Swift_SmtpTransport::newInstance($UPDATE_MAIL_SERVER, $UPDATE_MAIL_SERVER_PORT);
+                    if ($UPDATE_MAIL_SERVER_SSL){
+                        $emailer_transport = Swift_SmtpTransport::newInstance($UPDATE_MAIL_SERVER, $UPDATE_MAIL_SERVER_PORT, 'ssl');
+                    }
+                    else{
+                        $emailer_transport = Swift_SmtpTransport::newInstance($UPDATE_MAIL_SERVER, $UPDATE_MAIL_SERVER_PORT);
+                    }
+                    $emailer_transport->setUsername($UPDATE_MAIL_SERVER_USERNAME)
+                        ->setPassword($UPDATE_MAIL_SERVER_PASSWORD);
                 }
-                $emailer_transport->setUsername($UPDATE_MAIL_SERVER_USERNAME)
-                    ->setPassword($UPDATE_MAIL_SERVER_PASSWORD);
+
             }
-
         }
+
+
+        $emailMessage = Swift_Message::newInstance()
+            ->setSubject("New Updates to Googulator")
+            ->setFrom(array($UPDATE_EMAIL_ADDRESS => $UPDATE_EMAIL_NAME))
+            ->setTo($to)
+            ->setBody($message . "\r\n\r\n" . "Tired of these messages? Use the following url to unsubscribe:\r\n"
+                . "http://$PREFERRED_HOSTNAME/?unsubscribe=" . encodeURIComponent($to));
+
+        if (!isset($emailer_mailer)){
+            $emailer_mailer = Swift_Mailer::newInstance($emailer_transport);
+        }
+
+        return $emailer_mailer->send($emailMessage);
     }
-
-
-    $emailMessage = Swift_Message::newInstance()
-        ->setSubject("New Updates to Googulator")
-        ->setFrom(array($UPDATE_EMAIL_ADDRESS => $UPDATE_EMAIL_NAME))
-        ->setTo($to)
-        ->setBody($message . "\r\n\r\n" . "Tired of these messages? Use the following url to unsubscribe:\r\n"
-            . "http://$PREFERRED_HOSTNAME/?unsubscribe=" . encodeURIComponent($to));
-
-    if (!isset($emailer_mailer)){
-        $emailer_mailer = Swift_Mailer::newInstance($emailer_transport);
+    catch(Exception $e){
+        return false;
     }
-
-    return $emailer_mailer->send($emailMessage);
 
 
 
