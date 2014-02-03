@@ -211,12 +211,10 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
             CPUEmulator.setSaveState(saveState.cpu);
             Joypad.setSaveState(saveState.joypad);
             SGB.setSaveState(saveState.SGB);
-            loadedGame = GameLoader.createFromSaveState(saveState.loadedGame);
+            loadedGame.setSaveState(saveState.loadedGame)
             MemoryController.setSaveState(saveState.mcontroller,loadedGame);
 
             gb.resume();
-            if (!gb.isRunning())
-                gb.run();
         }
 
         doLoad();

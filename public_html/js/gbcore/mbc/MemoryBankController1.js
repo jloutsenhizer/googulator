@@ -111,7 +111,6 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
         controller.getSaveState = function(){
             return {
                 type: GameUtils.MBC_1,
-                romData: CopyUtils.makeUntypedArrayCopy(this.ROMData),
                 ramData: CopyUtils.makeUntypedArrayCopy(this.RAMData),
                 romBanks: this.ROMBanks,
                 currentSecondaryBank: this.currentSecondaryBank,
@@ -126,8 +125,6 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
                 console.error("Attempted to load wrong bank type");
                 return;
             }
-            this.ROMData = new Uint8Array(saveState.romData.length);
-            CopyUtils.copy(saveState.romData,this.ROMData);
             CopyUtils.copy(saveState.ramData,this.RAMData);
             this.ROMBanks = saveState.romBanks;
             this.currentSecondaryBank = saveState.currentSecondaryBank;
