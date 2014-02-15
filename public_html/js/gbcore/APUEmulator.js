@@ -294,7 +294,7 @@ define(["gbcore/audio/audio"], function(Audio){
     }
 
     APUEmulator.updateCycles = function(cycles){
-        audio.clock(cycles);
+        audio.clock(cycles << 1);
     }
 
     APUEmulator.IORegisterWritten = function(address,value){
