@@ -16,7 +16,7 @@
 </template>
 
 <template id="inputConfiguration">
-    <div class="inputConfiguration" id="inputConfiguartion-{{player}}"></div>
+    <div class="inputConfiguration" id="inputConfiguration-{{player}}">
         <h4>Player {{playerPlusOne}} input configuration</h4>
         <label class="checkbox">
             <input class="enabledCheckbox" type="checkbox" player="{{player}}"> Enabled
@@ -25,7 +25,11 @@
             <option>Keyboard</option>
             <option>iCade</option>
             <option>Gamepad</option>
+            <option class="hidden twitchOption" disabled="true">Twitch Chat</option>
         </select></div>
+        <div class="hidden twitchOptions">
+            <a href="javascript:void(0);" class="twitchLogin hidden"><img src="/img/twitch_connect_dark.png"/></a>
+        </div>
         <div class="gamepadSelectorDiv" player="{{player}}">
             Gamepad: <select class="gamepadSelector" player="{{player}}">
             <option>1</option>

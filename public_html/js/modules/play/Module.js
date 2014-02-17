@@ -213,6 +213,38 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             currentApp.handleMouseEvent(event);
     });
 
+    /*(function setupTwitchStreamListener(){
+        if (App.twitchAccessToken == null && window.irc == null){
+            setTimeout(setupTwitchStreamListener,100);
+            return;
+        }
+        Twitch.api({method:"user"},function(error,success){
+            var ircConnection = new window.irc("irc.twitch.tv",6667,success.name,"oauth:" + App.twitchAccessToken,function(){
+                ircConnection.onIRCMessage = function(message){
+                   if (message.serverMessage){
+
+                   }
+                   else if (message.messageType == "PRIVMSG"){
+                       var events = App.settings.controller.transformTextInput(message.message);
+                       if (events.length == 0){
+
+                       }
+                       else{
+                           console.log(message.nickName + ": " + message.message);
+                           keyhandler(events[0]);
+                           setTimeout(function(){keyhandler(events[1]);},40);
+                       }
+
+                   }
+                };
+                ircConnection.joinChannel("#twitchplayspokemon",function(){
+
+                });
+            });
+        });
+
+    })();*/
+
     //listen for visibility events
     (function() {
         var hidden = "hidden";

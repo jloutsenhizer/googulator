@@ -2,8 +2,9 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark){
     var Gameboy = {};
 
-    var html = $("<canvas style='height:100%'></canvas>");
-    var canvas = html[0];
+    var html = $("<div style='height:100%'><canvas style='height:100%'></canvas><div class='twitchOutput' style='height:100%;display:inline-block;background:black;color:white;font:PokemonGB;'></div></div>");
+    var canvas = html.find("canvas")[0];
+    var twitchOutput = html.find(".twitchOutput");
 
     var loadedGame;
     var game;
@@ -264,7 +265,8 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
     Gameboy.onResize = function(){
         var canvasHeight = $(canvas).height();
-        var canvasWidth =  canvasHeight/144*160;
+        var canvasWidth =  canvasHeight/9*10;
+        twitchOutput.css("width",canvasWidth*54/90);
         $(canvas).attr("width",canvasWidth);
         $(canvas).attr("height",canvasHeight);
 

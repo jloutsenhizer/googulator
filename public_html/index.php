@@ -141,11 +141,16 @@
             echo $GOOGLE_CLIENT_OAUTH_CLIENT_ID;
             echo "',apiKey:'";
             echo $GOOGLE_CLIENT_DEVELOPER_KEY;
+            echo "'},";
+            echo "twitch:{";
+            echo "clientId:'";
+            echo $TWITCH_CLIENT_ID;
             echo "'}};";
             ?>
         </script>
         <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
         <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+        <script src="/lib/ircPluginWrapper.js"></script>
         <script src="/lib/jszip/jszip.js"></script>
         <script src="/lib/jszip/jszip-load.js"></script>
         <script src="/lib/jszip/jszip-inflate.js"></script>
@@ -153,6 +158,7 @@
         <script src="/lib/jQuery.js"></script>
         <script src="/lib/jquery-ui-1.10.3.custom.1/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="/lib/jquery.fullscreen.1.1.4.js"></script>
+        <script src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
         <script src="/lib/doTimeout.1.0.js"></script>
         <script src="/lib/hogan.2.0.0.js"></script>
         <script src="/lib/bootstrap.2.3.0/js/bootstrap.min.js"></script>

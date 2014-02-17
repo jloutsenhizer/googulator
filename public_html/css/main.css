@@ -344,3 +344,7 @@ html, body, .mainContainer{
 .smallerHR hr{
     margin: 10px 0px;
 }
+
+@font-face {
+    font-family:"PokemonGB";
+    src:url("../font/Pokemon_GB.eot?") format("eot"),url("../font/Pokemon_GB.woff") format("woff"),url("../font/Pokemon_GB.ttf") format("truetype"),url("../font/Pokemon_GB.svg#PokemonGB") format("svg");font-weight:normal;font-style:normal;}

@@ -4,6 +4,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
     App.constants.TYPE_KEYBOARD = 0;
     App.constants.TYPE_ICADE = 1;
     App.constants.TYPE_GAMEPAD = 2;
+    App.constants.TYPE_TWITCH = 3;
     App.constants.BUTTON_INVALID = -1;
     App.constants.BUTTON_A = 0;
     App.constants.BUTTON_B = 1;
@@ -96,7 +97,54 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     }
                 });
             });
+
+            function enableTwitchInputOptions(){
+                container.find("#inputConfiguration-0 .inputTypeSelector .twitchOption").removeClass("hidden").removeAttr("disabled");
+            }
+
+            if (window.irc != null){
+                enableTwitchInputOptions();
+            }
+            else{
+                window.onIRCReady = enableTwitchInputOptions;
+            }
+
+            if (localStorage["controllerSettings"] != null){
+                App.settings.controller = JSON.parse(localStorage["controllerSettings"]);
+                App.settings.controller.transformKeyInput = transformKeyInput;
+                App.settings.controller.transformGamepadInput = transformGamepadInput;
+                App.settings.controller.transformTextInput = transformTextInput;
+                updateAllButtons();
+            }
+            else{
+                for (var i = 0; i < App.settings.controller.numPlayers; i++){
+                    setControllerToDefault(i);
+                }
+            }
+
+            (function waitForTwitchReady(){
+                if (!App.twitchReady){
+                    setTimeout(waitForTwitchReady,100);
+                    return;
+                }
+                if (App.twitchAccessToken){
+                    container.find(".twitchOptions .twitchLogin").replaceWith("<div>Logged into Twitch as <b class='twitchName'></b></div>");
+                    Twitch.api({method:"user"},function(error,success){
+                        App.twitchUsername = success.name;
+                        container.find(".twitchName").text(success.name);
+                        initializeTwitchIRCClient();
+                    });
+
+                }
+                else{
+                    container.find(".twitchOptions .twitchLogin").removeClass("hidden").click(function(){
+                        App.twitchLogin();
+                    });
+                }
+            })();
         });
+
+
     }
 
     Module.onActivate = function(params){
@@ -259,6 +307,43 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
         return events;
     }
 
+    function transformTextInput(text){
+        var events = [];
+        var button = App.constants.BUTTON_INVALID;
+        switch (text.toLowerCase()){
+            case "up":
+                button = App.constants.BUTTON_UP;
+                break;
+            case "down":
+                button = App.constants.BUTTON_DOWN;
+                break;
+            case "left":
+                button = App.constants.BUTTON_LEFT;
+                break;
+            case "right":
+                button = App.constants.BUTTON_RIGHT;
+                break;
+            case "a":
+                button = App.constants.BUTTON_A;
+                break;
+            case "b":
+                button = App.constants.BUTTON_B;
+                break;
+            case "start":
+                button = App.constants.BUTTON_START;
+                break;
+            case "select":
+                button = App.constants.BUTTON_SELECT;
+                break;
+        }
+        if (button != App.constants.BUTTON_INVALID){
+            events.push(generateEvent(0,button,true));
+            events.push(generateEvent(0,button,false));
+        }
+        return events;
+
+    }
+
     function getGamepadKeycode(event){
         var keycode = event.buttonid;
         if (keycode == null)
@@ -408,10 +493,24 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     down: 13,
                     quickSaveState: 4,
                     quickLoadState: 5
+                },
+                3:{//Twitch Chat
+                    a:"a",
+                    b:"b",
+                    start:"start",
+                    select:"select",
+                    left:"left",
+                    right:"right",
+                    up:"up",
+                    down:"down",
+                    quickSaveState: null,
+                    quickLoadState: null,
+                    channel: null
                 }
             },
             transformKeyInput: transformKeyInput,
-            transformGamepadInput: transformGamepadInput
+            transformGamepadInput: transformGamepadInput,
+            transformTextInput: transformTextInput
         }
     };
 
@@ -434,6 +533,12 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
             else{
                 gamepadSelectorDivs[i].addClass("hidden");
             }
+            if (App.settings.controller[i].type == App.constants.TYPE_TWITCH){
+                $("#inputConfiguration-" + i + " .twitchOptions").removeClass("hidden");
+            }
+            else{
+                $("#inputConfiguration-" + i + " .twitchOptions").addClass("hidden");
+            }
             for (var button in buttonMappers[i]){
                 buttonMappers[i][button].text(App.getKeyName(App.settings.controller[i][button],App.settings.controller[i].type));
             }
@@ -441,18 +546,6 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
 
         }
 
-    }
-
-    if (localStorage["controllerSettings"] != null){
-        App.settings.controller = JSON.parse(localStorage["controllerSettings"]);
-        App.settings.controller.transformKeyInput = transformKeyInput;
-        App.settings.controller.transformGamepadInput = transformGamepadInput;
-        updateAllButtons();
-    }
-    else{
-        for (var i = 0; i < App.settings.controller.numPlayers; i++){
-            setControllerToDefault(i);
-        }
     }
 
 
@@ -668,6 +761,20 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
             }
         }
     });
+
+    var twitchIRC;
+
+    function initializeTwitchIRCClient(){
+        twitchIRC = new window.irc("irc.twitch.tv",6667,App.twitchUsername,"oauth:" + App.twitchAccessToken,function(){
+            if (App.settings.controller[0].twitchChannel == null){
+                App.settings.controller[0].twitchChannel = App.twitchUsername;
+            }
+            twitchIRC.joinChannel("#" + App.settings.controller[0].twitchChannel);
+        });
+        twitchIRC.onIRCMessage = function(message){
+            console.log(message.fullText);
+        }
+    }
 
 
     return Module;

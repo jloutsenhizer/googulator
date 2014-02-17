@@ -1,5 +1,5 @@
 
-
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || function(callback){setTimeout(callback,1000/60)};
 
 var listeners = [];
 
@@ -16,14 +16,7 @@ function update(){
 }
 
 function scheduleNextUpdate(){
-    if (window.requestAnimationFrame) {
-        window.requestAnimationFrame(update);
-    } else if (window.mozRequestAnimationFrame) {
-        window.mozRequestAnimationFrame(update);
-    } else if (window.webkitRequestAnimationFrame) {
-        window.webkitRequestAnimationFrame(update);
-    }
-
+    window.requestAnimationFrame(update);
 }
 
 function fireEvents(oldpad,newpad){

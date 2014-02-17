@@ -47,9 +47,26 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
 
     }
 
+    App.twitchLogin = function(){
+        if (!App.twitchReady)
+            return;
+        Twitch.login({
+            redirect_uri: "http://localhost:8081/settings",
+            scope: ['chat_login',"user_read"]
+        });
+
+    }
+
 
 
     App.initialize = function(){
+        Twitch.init({clientId: configuration.twitch.clientId}, function(error, status) {
+            App.twitchReady = true;
+            if (status.authenticated){
+                App.twitchAccessToken = status.token;
+            }
+            console.log(arguments);
+        });
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
             OfflineUtils.initialize(function(){
