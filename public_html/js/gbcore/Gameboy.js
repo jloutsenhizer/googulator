@@ -2,7 +2,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark){
     var Gameboy = {};
 
-    var html = $("<div style='height:100%'><canvas style='height:100%'></canvas><div class='twitchOutput' style='height:100%;display:inline-block;background:black;color:white;font:PokemonGB;'></div></div>");
+    var html = $("<div style='height:100%'><canvas style='height:100%'></canvas></div>");
     var canvas = html.find("canvas")[0];
     var twitchOutput = html.find(".twitchOutput");
 
