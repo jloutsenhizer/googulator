@@ -434,88 +434,88 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
     }
 
     App.settings = {
-        controller: {
-            numPlayers: 4,
-            0:{
-                enabled:true,
-                type:App.constants.TYPE_KEYBOARD,
-                gamepadNum:0
+        "controller": {
+            "numPlayers": 4,
+            "0":{
+                "enabled":true,
+                "type":App.constants.TYPE_KEYBOARD,
+                "gamepadNum":0
             },
-            1:{
-                enabled:false,
-                type:App.constants.TYPE_KEYBOARD,
-                gamepadNum:1
+            "1":{
+                "enabled":false,
+                "type":App.constants.TYPE_KEYBOARD,
+                "gamepadNum":1
             },
-            2:{
-                enabled:false,
-                type: App.constants.TYPE_KEYBOARD,
-                gamepadNum:2
+            "2":{
+                "enabled":false,
+                "type": App.constants.TYPE_KEYBOARD,
+                "gamepadNum":2
             },
-            3:{
-                enabled:false,
-                type:App.constants.TYPE_KEYBOARD,
-                gamepadNum:3
+            "3":{
+                "enabled":false,
+                "type":App.constants.TYPE_KEYBOARD,
+                "gamepadNum":3
             },
-            type: 0,
-            default: {
-                0:{//keyboard
-                    a: 90,
-                    b: 88,
-                    start: 13,
-                    select: 32,
-                    left: 37,
-                    right: 39,
-                    up: 38,
-                    down: 40,
-                    quickSaveState: 53,
-                    quickLoadState: 54
+            "type": 0,
+            "default": {
+                "0":{//keyboard
+                    "a": 90,
+                    "b": 88,
+                    "start": 13,
+                    "select": 32,
+                    "left": 37,
+                    "right": 39,
+                    "up": 38,
+                    "down": 40,
+                    "quickSaveState": 53,
+                    "quickLoadState": 54
                 },
-                1:{ //iCade
-                    a: 6,
-                    b: 8,
-                    start: 11,
-                    select: 10,
-                    left: 3,
-                    right: 4,
-                    up: 1,
-                    down: 2,
-                    quickSaveState: 7,
-                    quickLoadState: 9
+                "1":{ //iCade
+                    "a": 6,
+                    "b": 8,
+                    "start": 11,
+                    "select": 10,
+                    "left": 3,
+                    "right": 4,
+                    "up": 1,
+                    "down": 2,
+                    "quickSaveState": 7,
+                    "quickLoadState": 9
                 },
-                2:{//Gamepad
-                    a: 0,
-                    b: 1,
-                    start: 9,
-                    select: 8,
-                    left: 14,
-                    right: 15,
-                    up: 12,
-                    down: 13,
-                    quickSaveState: 4,
-                    quickLoadState: 5
+                "2":{//Gamepad
+                    "a": 0,
+                    "b": 1,
+                    "start": 9,
+                    "select": 8,
+                    "left": 14,
+                    "right": 15,
+                    "up": 12,
+                    "down": 13,
+                    "quickSaveState": 4,
+                    "quickLoadState": 5
                 },
-                3:{//Twitch Chat
-                    a:"a",
-                    b:"b",
-                    start:"start",
-                    select:"select",
-                    left:"left",
-                    right:"right",
-                    up:"up",
-                    down:"down",
-                    quickSaveState: null,
-                    quickLoadState: null,
-                    channel: null
+                "3":{//Twitch Chat
+                    "a":"a",
+                    "b":"b",
+                    "start":"start",
+                    "select":"select",
+                    "left":"left",
+                    "right":"right",
+                    "up":"up",
+                    "down":"down",
+                    "quickSaveState": null,
+                    "quickLoadState": null,
+                    "channel": null
                 }
             },
-            transformKeyInput: transformKeyInput,
-            transformGamepadInput: transformGamepadInput,
-            transformTextInput: transformTextInput
+            "transformKeyInput": transformKeyInput,
+            "transformGamepadInput": transformGamepadInput,
+            "transformTextInput": transformTextInput
         }
     };
 
     function setControllerToDefault(player){
-        for (var member in App.settings.controller.default[App.settings.controller[player].type]){
+        for (var member in App.settings.controller["default"][App.settings.controller[player].type]){
             App.settings.controller[player][member] = App.settings.controller.default[App.settings.controller[player].type][member];
         }
         localStorage["controllerSettings"] = JSON.stringify(App.settings.controller);

@@ -334,13 +334,13 @@ define(function(){
         }
         else{
             bitsToGo--;
-            var byte = bitsRead >> 3;
+            var curByte = bitsRead >> 3;
             var byteBit = bitsRead & 7;
             if (value == 1){
-                commandData[byte] |= 1 << byteBit;
+                commandData[curByte] |= 1 << byteBit;
             }
             else{
-                commandData[byte] &= ~(1 << byteBit);
+                commandData[curByte] &= ~(1 << byteBit);
             }
             bitsRead++;
         }

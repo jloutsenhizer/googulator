@@ -50,12 +50,12 @@
         ircInstanceMap[curId] = this;
         this.onIRCMessage = function(){};
         extensionConnectionPort.postMessage({
-            id: curId++,
-            function: "createIRC",
-            server: server,
-            port: port,
-            nickname: nickname,
-            password: password
+            "id": curId++,
+            "function": "createIRC",
+            "server": server,
+            "port": port,
+            "nickname": nickname,
+            "password": password
         })
     };
 
@@ -64,10 +64,10 @@
         callbackMap[curId] = callback;
         ircInstanceMap[curId] = this;
         extensionConnectionPort.postMessage({
-            id: curId++,
-            ircID: this.ircID,
-            function: "joinChannel",
-            channelName: channelName
+            "id": curId++,
+            "ircID": this.ircID,
+            "function": "joinChannel",
+            "channelName": channelName
         });
     }
 
@@ -76,10 +76,10 @@
         callbackMap[curId] = callback;
         ircInstanceMap[curId] = this;
         extensionConnectionPort.postMessage({
-            id: curId++,
-            ircID: this.ircID,
-            function: "leaveChannel",
-            channelName: channelName
+            "id": curId++,
+            "ircID": this.ircID,
+            "function": "leaveChannel",
+            "channelName": channelName
         });
     }
 

@@ -167,7 +167,7 @@
         <script src="/lib/waapisim.js"></script>
         <script src="/lib/davis.min.js"></script>
         <script src="/lib/davis.google_analytics.js"></script>
-        <script src="/lib/require.2.1.4.js" data-main="/js/main"></script>
+        <script src="/lib/require.js" data-main="/js/main"></script>
         <?php
             echo $ANALYTICS_TRACKING_CODE;
         ?>
