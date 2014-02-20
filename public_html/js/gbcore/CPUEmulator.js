@@ -1679,7 +1679,7 @@ define (function(){
             IME = true;
             suspended = true;
             PC += 1;
-            return 8;
+            return 4;
         },
         function(parent){//0x77: LD (HL),A
             memoryController.writeByte(HL,parent.getA());
