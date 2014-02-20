@@ -1,4 +1,6 @@
 define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,MetadataManager,OfflineUtils){
+    "use strict";
+
     var App = {};
 
     var compiledTemplates = {};

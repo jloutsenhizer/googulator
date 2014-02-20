@@ -1,4 +1,5 @@
 define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils, OfflineUtils){
+    "use strict";
 
     var GameLibrary = {};
 
@@ -117,7 +118,7 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                         App.metadataManager.setGameSaveStateFileId(i,fileid);
                         App.metadataManager.persistChanges(function(){
                             if (isLongTerm){
-                                function afterUnmarkOld(){
+                                var afterUnmarkOld = function (){
                                     if (fileid != null && fileid != ""){
                                         OfflineUtils.markFileForLongTermStorage(fileid,function(success){
                                             //do something if it fails?
@@ -127,7 +128,7 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                                     else{
                                         callback(true);
                                     }
-                                }
+                                };
                                 if (oldId != null && oldId != ""){
                                     OfflineUtils.unmarkFileForLongTermStorage(oldId,function(success){
                                         //do something if it fails?
@@ -153,7 +154,7 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                         App.metadataManager.setGameSaveFileId(i,fileid);
                         App.metadataManager.persistChanges(function(){
                             if (isLongTerm){
-                                function afterUnmarkOld(){
+                                var afterUnmarkOld = function (){
                                     if (fileid != null && fileid != ""){
                                         OfflineUtils.markFileForLongTermStorage(fileid,function(success){
                                             //do something if it fails?
@@ -163,7 +164,7 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                                     else{
                                         callback(true);
                                     }
-                                }
+                                };
                                 if (oldId != null && oldId != ""){
                                     OfflineUtils.unmarkFileForLongTermStorage(oldId,function(success){
                                         //do something if it fails?

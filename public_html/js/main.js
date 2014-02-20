@@ -1,5 +1,7 @@
 
 (function(){
+    "use strict";
+
     function googleAPILoaded(){
         delete window.googleAPILoaded;
         $(document).ready(function(){

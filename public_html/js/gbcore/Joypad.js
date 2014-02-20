@@ -1,4 +1,5 @@
 define(["CopyUtils"], function(CopyUtils){
+    "use strict";
 
     var Joypad = {};
 

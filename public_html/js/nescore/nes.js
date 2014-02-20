@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom"],function(CPU,PPU,PAPU,Joypad,ROM){
+    "use strict";
+
     var JSNES = function(opts) {
         this.opts = {
             preferredFrameRate: 60,

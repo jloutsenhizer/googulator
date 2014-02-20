@@ -1,3 +1,4 @@
+"use strict";
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || function(callback){setTimeout(callback,1000/60)};
 
@@ -95,14 +96,14 @@ function addListener(listener){
     listeners.push(listener);
 }
 
-Gamepad = {gamepads:[],
+window.Gamepad = {gamepads:[],
     addListener:addListener,
     getButtonName: getButtonName,
     getAxisName: getAxisName};
 
-Gamepad.supported = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
+window.Gamepad.supported = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
 
-if (Gamepad.supported){
+if (window.Gamepad.supported){
     update();
 }
 

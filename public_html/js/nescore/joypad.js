@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Keyboard events are bound in the UI
 define([],function(){
+    "use strict";
+
     var Joypad = function() {
         this.state = new Array(4);
         for (var i = 0, li = this.state.length; i < li; i++){

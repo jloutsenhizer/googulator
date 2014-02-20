@@ -1,4 +1,5 @@
 define (function(){
+    "use strict";
 
     var CPUEmulator = {};
 
@@ -21,7 +22,7 @@ define (function(){
     var doubleSpeedMode;
     var enteringDoubleSpeedMode;
     var gbcEnabled;
-    INT_VBLANK = 0, INT_LCDSTAT = 1, INT_TIMER = 2, INT_SERIAL = 3, INT_JPAD = 4;
+    window.INT_VBLANK = 0, window.INT_LCDSTAT = 1, window.INT_TIMER = 2, window.INT_SERIAL = 3, window.INT_JPAD = 4;
 
     var gameShark;
 

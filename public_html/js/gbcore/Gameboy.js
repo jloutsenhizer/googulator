@@ -1,5 +1,7 @@
 define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
         "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark){
+    "use strict";
+
     var Gameboy = {};
 
     var html = $("<div style='height:100%'><canvas style='height:100%'></canvas></div>");

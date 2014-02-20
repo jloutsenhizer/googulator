@@ -1,4 +1,6 @@
 define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils"], function(GameLibrary,FreeGamePicker,GoogleAPIs, GameUtils, OfflineUtils){
+    "use strict";
+
     var Module = {};
 
     var container;

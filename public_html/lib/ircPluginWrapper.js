@@ -1,4 +1,6 @@
 (function(){
+    "use strict";
+
     if (chrome == null || chrome.runtime == null)
         return;
     var extensionID = "ppiglcdmigpbibdfbldkjpgbggfnmppc";
@@ -85,7 +87,7 @@
 
     function objectToArray(obj){
         var arr = [];
-        for (member in obj){
+        for (var member in obj){
             arr[parseInt(member)] = obj[member];
         }
         return arr;

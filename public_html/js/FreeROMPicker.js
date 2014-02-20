@@ -1,4 +1,6 @@
 define(["FreeGameLibrary"],function(FreeGameLibrary){
+    "use strict";
+
     var FreeROMPicker = {};
 
     FreeROMPicker.show = function(callback){

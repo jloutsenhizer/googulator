@@ -1,4 +1,6 @@
 define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
+    "use strict";
+
     var Module = {};
 
     App.constants.TYPE_KEYBOARD = 0;
@@ -263,7 +265,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                 if (!controller.enabled)
                     continue;
                 if (controller.type == App.constants.TYPE_GAMEPAD && controller.gamepadNum == event.gamepadid){
-                    var button =  button = App.constants.BUTTON_INVALID;
+                    var button =  App.constants.BUTTON_INVALID;
                     switch(getGamepadKeycode(event)){
                         case controller.a:
                             button = App.constants.BUTTON_A;

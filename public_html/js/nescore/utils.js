@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 define([],function(){
+    "use strict";
+
     var Utils = {
         copyArrayElements: function(src, srcPos, dest, destPos, length) {
             for (var i = 0; i < length; ++i, destPos++, srcPos++) {

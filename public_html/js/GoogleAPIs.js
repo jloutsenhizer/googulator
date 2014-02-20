@@ -1,4 +1,6 @@
 define(["OfflineUtils"], function(OfflineUtils){
+    "use strict";
+
     var GoogleAPIs = {};
 
     var clientId = window.configuration.google.clientId;

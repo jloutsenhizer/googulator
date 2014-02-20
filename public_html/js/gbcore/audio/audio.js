@@ -4,6 +4,8 @@ define([
     "gbcore/audio/noise",
     "CopyUtils"
 ], function (SquareChannel, WaveformChannel, NoiseChannel, CopyUtils) {
+    "use strict";
+
     var BUFFER_LENGTH = 2048,               // ~91ms buffer
        LONG_BUFFER   = BUFFER_LENGTH * 2,  // Render to a much larger buffer
     CLOCK_RATE    = 8388608;

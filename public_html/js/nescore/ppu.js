@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
+    "use strict";
+
     var PPU = function(nes) {
         this.nes = nes;
 
@@ -149,7 +151,6 @@ define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
                 buffer: CopyUtils.makeUntypedArrayCopy(this.buffer),
                 bgbuffer: CopyUtils.makeUntypedArrayCopy(this.bgbuffer),
                 pixrendered: CopyUtils.makeUntypedArrayCopy(this.pixrendered),
-                validTileData: this.validTileData,
                 scantile: this.scantile,
                 scanline: this.scanline,
                 lastRenderedScanline: this.lastRenderedScanline,

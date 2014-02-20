@@ -1,4 +1,5 @@
 define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
+    "use strict";
 
     var MetadataManager = {};
 
@@ -159,7 +160,7 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                         }
                         else{
                             MetadataManager.metadata = metadata;
-                            function loadTitleDB(){
+                            (function loadTitleDB(){
                                 $.ajax("/php/titlesDB.php",{
                                     success:function(dbInfo){
                                         MetadataManager.titlesDB = dbInfo.db;
@@ -174,8 +175,7 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                                         loadTitleDB();
                                     }
                                 })
-                            }
-                            loadTitleDB();
+                            })();
                         }
                     });
                 }

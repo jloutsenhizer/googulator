@@ -1,4 +1,6 @@
 define(["GoogleAPIs"],function(GoogleAPIs){
+    "use strict";
+
     var Module = {};
 
     var container;
@@ -39,13 +41,11 @@ define(["GoogleAPIs"],function(GoogleAPIs){
         });
         if (getParams.finishPurchase){
             var overlay = App.createMessageOverlay(container,"Finalizing Your purchase...");
-            function onError(){
-
+            var onError = function (){
                 overlay.remove();
                 alert("An error occurred processing your order!");
                 location.assign("/goPro");
-
-            }
+            };
             $.ajax("/php/paypal/approvePurchase.php?googleid=" + encodeURIComponent(getParams.googleid) + "&token=" + encodeURIComponent(getParams.token) + "&PayerID=" + encodeURIComponent(getParams.PayerID),{
                 success:function(result){
 
@@ -71,8 +71,6 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                         overlay.remove();
                         alert("Congratulations! You now have Googulator Pro!");
                         return;
-                        location.assign("/home");
-
                     }
                     else{
                         onError();

@@ -1,5 +1,7 @@
 //TODO: implement a system for switching to and from offline mode on the fly
 define(function(){
+    "use strict";
+
     var OfflineUtils = {};
 
     var MINIMUM_LOCAL_STORAGE = 1024 * 1024 * 40;//40MB used to swap in and out temporary files and for the metadata storage
@@ -346,9 +348,10 @@ define(function(){
     }
 
     OfflineUtils.getGoogleDriveFileMetadata = function(id,callback){
+
         if (id instanceof Array){//if id is an array we return a dictionary for all the results
             var returnVal = {};
-            function process(i){
+            (function process(i){
                 if (i == id.length){
                     callback(returnVal);
                     return;
@@ -357,8 +360,7 @@ define(function(){
                     returnVal[id[i]] = metadata;
                     process(i+1);
                 });
-            }
-            process(0);
+            })(0);
             return;
         }
         if (localStorage.fileSystemEnabled == null || !JSON.parse(localStorage.fileSystemEnabled)){

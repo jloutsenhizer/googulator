@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 define(["GameUtils","nescore/ppu","nescore/mappers"],function(GameUtils,PPU,Mappers){
+    "use strict";
+
     var ROM = function(nes) {
         this.nes = nes;
 

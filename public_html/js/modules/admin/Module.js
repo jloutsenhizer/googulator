@@ -1,4 +1,6 @@
 define(["GoogleAPIs"],function(GoogleAPIs){
+    "use strict";
+
     var Module = {};
 
     var container;
@@ -102,7 +104,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                                         overlay.find(".pbar").progressbar({value:0});
                                         var totalSent = 0;
                                         var startId = 0;
-                                        function sendMore(){
+                                        (function sendMore(){
                                             $.ajax("/php/admin/dispatchUpdateEmail.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()) + "&message=" + encodeURIComponent(text) + "&startId=" + startId,{
                                                 success:function(result){
                                                     if (result.status == "success"){
@@ -127,8 +129,7 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                                                     sendMore();
                                                 }
                                             });
-                                        }
-                                        sendMore();
+                                        })();
                                     }
                                     else{
                                         overlay.remove();

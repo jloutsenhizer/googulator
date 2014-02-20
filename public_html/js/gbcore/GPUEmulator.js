@@ -1,4 +1,6 @@
 define(["CopyUtils"],function(CopyUtils){
+    "use strict";
+
     var GPUEmulator = {};
     var vram = new Uint8Array(0x4000);
     var oam = new Uint8Array(0xA0);
@@ -192,7 +194,7 @@ define(["CopyUtils"],function(CopyUtils){
 
         currentFrame = internalDisplay.createImageData(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        frameTimes = [];
+        var frameTimes = [];
         for (var i = 0, li = vram.length; i < li; i++)
             vram[i] = 0;
         for (var i = 0, li = oam.length; i < li; i++)

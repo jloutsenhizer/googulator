@@ -1,4 +1,6 @@
 define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
+    "use strict";
+
     var MemoryBankController1 = {};
 
     MemoryBankController1.loadROM = function(romData){

@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
+    "use strict";
+
     var Mappers = [];
 
     Mappers[0] = function(nes) {

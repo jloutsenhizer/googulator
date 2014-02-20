@@ -1,4 +1,5 @@
 define(["html5apps/HTML5_TICTACTOE/Header","modules/play/GameApp"],function(header,GameApp){
+    "use strict";
 
     var game = new GameApp();
 

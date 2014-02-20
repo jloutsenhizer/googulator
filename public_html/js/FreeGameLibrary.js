@@ -1,4 +1,6 @@
 define(function(){
+    "use strict";
+
     var FreeGameLibrary = {};
 
     var library = null;

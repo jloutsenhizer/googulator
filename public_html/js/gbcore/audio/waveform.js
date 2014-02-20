@@ -1,4 +1,6 @@
 define(["CopyUtils"], function (CopyUtils) {
+    "use strict";
+
     function WaveformChannel() {
         this.waveform = new Uint8Array(0x10);
     }

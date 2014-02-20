@@ -1,5 +1,6 @@
 define(["GameUtils", "gbcore/mbc/NoMemoryBankController", "gbcore/mbc/MemoryBankController1", "gbcore/mbc/MemoryBankController2", "gbcore/mbc/MemoryBankController3", "gbcore/mbc/MemoryBankController5",
         "gbcore/mbc/MemoryBankCamera"],function(GameUtils, NoMBC, MBC1, MBC2, MBC3, MBC5, MBCAMERA){
+    "use strict";
 
     var GameLoader = {};
 

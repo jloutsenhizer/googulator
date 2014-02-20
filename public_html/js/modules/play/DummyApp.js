@@ -1,4 +1,5 @@
 define(["modules/play/GameApp"],function(GameApp){
+    "use strict";
 
     var app = new GameApp();
 

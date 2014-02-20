@@ -1,3 +1,4 @@
+"use strict";
 
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -45,6 +46,6 @@ function getFrame(width,height){
     return ctx.getImageData(0,0,width,height);
 }
 
-Webcam = {initVideo: initVideo,
+window.Webcam = {initVideo: initVideo,
           getFrame: getFrame,
     stopVideo: stopVideo};

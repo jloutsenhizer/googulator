@@ -1,4 +1,6 @@
 define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
+    "use strict";
+
     var MemoryBankCamera = {};
 
     MemoryBankCamera.loadROM = function(romData){

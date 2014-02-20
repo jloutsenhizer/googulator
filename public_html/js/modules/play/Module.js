@@ -1,4 +1,6 @@
 define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameboy,NES,DummyApp){
+    "use strict";
+
     //TODO: this merged UI works but is really messy. Need to normalize an emulator interface and clean this up
     var Module = {};
 

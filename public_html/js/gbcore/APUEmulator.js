@@ -1,5 +1,7 @@
 define(["gbcore/audio/audio"], function(Audio){
-    APUEmulator = {};
+    "use strict";
+
+    var APUEmulator = {};
 
     /*//SO1 is left sound and SO2 is right sound
 

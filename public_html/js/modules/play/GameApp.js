@@ -1,4 +1,5 @@
 define([],function(){
+    "use strict";
 
     var GameApp = function(){
         this.baseHtml = $("<div style='width:100%;height:100%'></div>");
