@@ -1,4 +1,6 @@
 (function(){
+    if (chrome == null || chrome.runtime == null)
+        return;
     var extensionID = "ppiglcdmigpbibdfbldkjpgbggfnmppc";
 
     var extensionConnectionPort = chrome.runtime.connect(extensionID,{name:"twitchPlaysPluginConnection"});

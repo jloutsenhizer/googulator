@@ -87,7 +87,11 @@
             "FreeROMPicker",
             "text!dialogTemplates.html",
             "text!globalTemplates.html",
-            "html5apps/HTML5_TICTACTOE/App"
+            "html5apps/HTML5_TICTACTOE/App",
+            "modules/admin/Module",
+            "text!modules/admin/template.html",
+            "modules/help/Module",
+            "text!modules/help/template.html",
 
         ]);
     }
