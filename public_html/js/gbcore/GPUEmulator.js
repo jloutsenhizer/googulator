@@ -123,7 +123,8 @@ define(["CopyUtils"],function(CopyUtils){
             hdmaTransferRemaining: hdmaTransferRemaining,
             hdmaRunning: hdmaRunning,
             SGBPal: CopyUtils.makeUntypedArrayCopy(SGBPal),
-            SGBAttrMap: CopyUtils.makeUntypedArrayCopy(SGBAttrMap)
+            SGBAttrMap: CopyUtils.makeUntypedArrayCopy(SGBAttrMap),
+            maskingMode: maskingMode
         };
     }
 
@@ -172,6 +173,8 @@ define(["CopyUtils"],function(CopyUtils){
         hdmaRunning = saveState.hdmaRunning;
         CopyUtils.copy(saveState.SGBPal,SGBPal);
         CopyUtils.copy(saveState.SGBAttrMap,SGBAttrMap);
+        if (saveState.maskingMode != null)
+            maskingMode = maskingMode;
     }
 
     var internalDisplay = $("<canvas width='" + SCREEN_WIDTH + "'height='" + SCREEN_HEIGHT + "'></canvas>")[0].getContext("2d");

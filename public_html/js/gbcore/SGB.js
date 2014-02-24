@@ -77,7 +77,8 @@ define(function(){
             cmd: cmd,
             enabled: sgbEnabled,
             bitsToGo: bitsToGo,
-            bitsRead: bitsRead
+            bitsRead: bitsRead,
+            mode: mode
         };
     }
 
@@ -88,9 +89,11 @@ define(function(){
             attributeData[i] = saveState.attr[i];
         for (var i = 0, li = saveState.cmd.length; i < li; i++)
             commandData[i] = saveState.cmd[i];
-        sgbEnabled = saveState.sgbEnabled;
+        sgbEnabled = saveState.enabled;
         bitsToGo = saveState.bitsToGo;
         bitsRead = saveState.bitsRead;
+        if (saveState.mode != null)
+            mode = saveState.mode;
     }
 
     function doVRAMTransfer(destination){
@@ -406,6 +409,7 @@ define(function(){
 
     function executeCommand(){
         var command = commandData[0] >> 3;
+        printCommandName();
         if (command < commandFunctions.length)
             commandFunctions[command]();
         else

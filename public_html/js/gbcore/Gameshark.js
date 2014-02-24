@@ -1,7 +1,7 @@
 define(function(){
     "use strict";
 
-    var Gameshark = [];
+    var Gameshark = {};
 
     var mc;
 
