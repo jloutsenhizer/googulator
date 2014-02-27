@@ -230,25 +230,32 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                 $(".moduleTabadmin").remove();
             }
             GoogleAPIs.getUserInfo(function(userInfo){
-                $("#googleUserInfo").html("");
-                $("#googleUserInfo").append($("<div class= 'center' style='margin-top:0.25em'><img style='height:32px' onerror='this.src = \"/img/genericProfilePicture.png\"' src='" + (userInfo.picture ? userInfo.picture : "/img/genericProfilePicture.png") + "'></img> Welcome " + (userInfo.name ? userInfo.name : "Stranger") + "</div>"));
-                if (!App.websiteBrokenMode){
-                    App.metadataManager.loadMetadata(function(){
+                App.loadMustacheTemplate("globalTemplates.html","userInfoDisplay",function(template){
+                    $("#googleUserInfo").html(template.render({
+                        picture: userInfo.picture == null ? "/img/genericProfilePicture.png" : userInfo.picture,
+                        name: userInfo.name == null ? "Stranger" : userInfo.name
+                    }));
+                    $("#googleUserInfo .logoutLink").click(function(){
+                        console.log("blah!");
+                    });
+                    if (!App.websiteBrokenMode){
+                        App.metadataManager.loadMetadata(function(){
+                            for (var modulename in modules){
+                                modules[modulename].onAuthenticated();
+                            }
+                            if (getParams.state != null){
+                                App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
+                                driveOverlay = null;
+                            }
+
+                        });
+                    }
+                    else{
                         for (var modulename in modules){
                             modules[modulename].onAuthenticated();
                         }
-                        if (getParams.state != null){
-                            App.setActiveModule("library",{driveState:JSON.parse(getParams.state),driveOverlay:driveOverlay});
-                            driveOverlay = null;
-                        }
-
-                    });
-                }
-                else{
-                    for (var modulename in modules){
-                        modules[modulename].onAuthenticated();
                     }
-                }
+                });
             });
         }
 

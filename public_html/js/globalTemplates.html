@@ -4,3 +4,17 @@
         <div class="messageOverlay">{{content}}</div>
     </div>
 </template>
+<template id="userInfoDisplay">
+    <div class= 'center' style='margin-top:0.25em'>
+        <span class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);" style="display:inline-block; color:inherit; text-decoration: none;">
+                <img style='height:32px' alt="" onerror='this.src = "/img/genericProfilePicture.png"' src='{{picture}}'/>
+                {{name}} <span class="caret" style="margin-top:12px;"></span>
+            </a>
+            <ul class="dropdown-menu" style="width:100%; margin-top:12px;">
+                <li><a href="javascript:void(0);" class="logoutLink">Sign Out</a></li>
+            </ul>
+        </span>
+
+    </div>
+</template>
