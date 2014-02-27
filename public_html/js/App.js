@@ -236,7 +236,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                         name: userInfo.name == null ? "Stranger" : userInfo.name
                     }));
                     $("#googleUserInfo .logoutLink").click(function(){
-                        console.log("blah!");
+                        GoogleAPIs.revokeAccess();
                     });
                     if (!App.websiteBrokenMode){
                         App.metadataManager.loadMetadata(function(){

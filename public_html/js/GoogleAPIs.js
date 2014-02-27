@@ -59,7 +59,26 @@ define(["OfflineUtils"], function(OfflineUtils){
                     initialized = true;
                     authenticated = authResult != null && !authResult.error;
                     if (authenticated){
-                        onAuthenticate(callback);
+                        if (window.getParams.revokeGoogleAccess){//if we are logging out we do a jsonp request to revoke the access token. Otherwise we just ignore this parameter since it doesn't matter
+                            $.ajax("https://accounts.google.com/o/oauth2/revoke",{
+                                type: "GET",
+                                data: {"token": gapi.auth.getToken().access_token},
+                                dataType: 'jsonp',
+                                success:function(){
+                                    authenticated = false;
+                                    callback(false);
+                                }, error: function(){
+                                    console.error("Failed to revoke access token");
+                                    console.error(arguments);
+                                    var modal = App.showModalMessage("Failed to Log Out","Sorry but we have failed to log out!, you can manually logout by going here:\nhttps://security.google.com/settings/security/permissions",function(){
+                                        onAuthenticate(callback);
+                                    });
+                                }
+                            })
+                        }
+                        else{
+                            onAuthenticate(callback);
+                        }
                     }
                     else
                         callback(authenticated)
@@ -70,6 +89,12 @@ define(["OfflineUtils"], function(OfflineUtils){
             callback(authenticated);
         }
     };
+
+    GoogleAPIs.revokeAccess = function(){
+        //we do it this way as an easy way to trigger the might loose data notification from closing a game without saving
+        window.getParams = {"revokeGoogleAccess":"true"};
+        App.refreshPage();
+    }
 
     GoogleAPIs.authenticate = function(callback){
         if (initialized){
