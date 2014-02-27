@@ -24,7 +24,7 @@
 <html manifest="/appcache.php">
     <head>
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lchmgljjkaeadokijkhefbhpfbihhhda">
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <?php
             if (strpos($requestURI,"/library/game/") === 0){
                 $gameid = substr($requestURI,strlen("/library/game/"));
