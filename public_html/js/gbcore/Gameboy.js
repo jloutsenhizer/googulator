@@ -1,5 +1,5 @@
 define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
-        "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark){
+        "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark","gbcore/GameGenie"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark,GameGenie){
     "use strict";
 
     var Gameboy = {};
@@ -49,6 +49,10 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         MemoryController.setGBCEnabled(game.header.gbcEnabled);
         SGB.setSGBEnabled(game.header.sgbEnabled);
         MemoryController.setLoadedGame(loadedGame);
+        GameGenie.reset();
+        Gameshark.reset();
+        GameGenie.setLoadedGame(loadedGame);
+        GameGenie.addCode("324-EE9-E6E");
         MemoryController.reset();
         SGB.reset();
         loadedGame.reset();
@@ -103,6 +107,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
         var repeatFunction = function(){
             if (onterminate != null){
+                GameGenie.removeAllCodes();
                 loadedGame.cleanup();
                 APUEmulator.stop();
                 var callback = onterminate;

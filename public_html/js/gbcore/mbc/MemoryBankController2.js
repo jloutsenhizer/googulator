@@ -20,6 +20,24 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
         controller.cleanup = function(){
         }
 
+        controller.readROMByte = function(offset,secondaryBank){
+            if (offset < 0x4000){
+                return this.ROMData[offset];
+            }
+            else{
+                return this.ROMData[offset - 0x4000 + (secondaryBank << 14)];
+            }
+        }
+
+        controller.writeROMByte = function(offset,secondaryBank,data){
+            if (offset < 0x4000){
+                this.ROMData[offset] = data;
+            }
+            else{
+                this.ROMData[offset - 0x4000 + (secondaryBank << 14)] = data;
+            }
+        }
+
         controller.readByte = function(offset) {
             switch (offset & 0xF000){
                 case 0x0000:

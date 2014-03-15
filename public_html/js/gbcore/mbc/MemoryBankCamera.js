@@ -31,7 +31,7 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
                         color = 0;
                     if (color >= 1)
                         color = 0.999;
-                    var pixelColor = Math.floor(color * 4);
+                    var pixelColor = Math.floor(color << 2);
                     var pixelColorHi = pixelColor >> 1;
                     var pixelColorLo = pixelColor & 1;
                     var dataOffset = 0x100 + ((y & 0xF8) << 5) + ((y & 7) << 1) + ((x & 0xF8) << 1);
@@ -45,6 +45,24 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
                     else
                         controller.RAMData[dataOffset] &= ~(1 << innerDataOffset);
                 }
+            }
+        }
+
+        controller.readROMByte = function(offset,secondaryBank){
+            if (offset < 0x4000){
+                return this.ROMData[offset];
+            }
+            else{
+                return this.ROMData[offset - 0x4000 + (secondaryBank << 14)];
+            }
+        }
+
+        controller.writeROMByte = function(offset,secondaryBank,data){
+            if (offset < 0x4000){
+                this.ROMData[offset] = data;
+            }
+            else{
+                this.ROMData[offset - 0x4000 + (secondaryBank << 14)] = data;
             }
         }
 
@@ -70,7 +88,7 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
                 case 0x5000:
                 case 0x6000:
                 case 0x7000:
-                    return this.ROMData[offset - 0x4000 + this.currentSecondaryBank * 0x4000];
+                    return this.ROMData[offset - 0x4000 + (this.currentSecondaryBank << 14)];
                 case 0xA000:
                 case 0xB000://RAM
                     if (this.registerMode){
@@ -78,7 +96,7 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
                         return 0xFF;
                     }
                     else{
-                        return this.RAMData[offset - 0xA000 + this.currentRAMBank * 0x2000];
+                        return this.RAMData[offset - 0xA000 + (this.currentRAMBank << 13)];
                     }
             }
             //console.error("MBC tried to: read from 0x" + offset.toString(16).toUpperCase());
@@ -120,7 +138,7 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
                         }
                     }
                     else{
-                        this.RAMData[offset - 0xA000 + this.currentRAMBank * 0x2000] = data;
+                        this.RAMData[offset - 0xA000 + (this.currentRAMBank << 13)] = data;
                     }
                     return;
             }
@@ -131,7 +149,7 @@ define(["GameUtils","CopyUtils"], function(GameUtils, CopyUtils){
             switch (offset & 0xF000){
                 case 0xA000:
                 case 0xB000://RAM
-                    this.ramData[offset - 0xA000 + bank * 0x2000] = data;
+                    this.ramData[offset - 0xA000 + (bank << 13)] = data;
                     return;
                 default:
             }

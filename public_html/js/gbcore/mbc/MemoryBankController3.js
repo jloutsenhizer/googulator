@@ -24,6 +24,24 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
         controller.cleanup = function(){
         }
 
+        controller.readROMByte = function(offset,secondaryBank){
+            if (offset < 0x4000){
+                return this.ROMData[offset];
+            }
+            else{
+                return this.ROMData[offset - 0x4000 + (secondaryBank << 14)];
+            }
+        }
+
+        controller.writeROMByte = function(offset,secondaryBank,data){
+            if (offset < 0x4000){
+                this.ROMData[offset] = data;
+            }
+            else{
+                this.ROMData[offset - 0x4000 + (secondaryBank << 14)] = data;
+            }
+        }
+
         controller.readByte = function(offset) {
             switch (offset & 0xF000){
                 case 0x0000:
@@ -35,7 +53,7 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
                 case 0x5000:
                 case 0x6000:
                 case 0x7000:
-                    return this.ROMData[offset + (this.currentSecondaryBank - 1) * 0x4000] & 0xFF;
+                    return this.ROMData[offset - 0x4000 + this.currentSecondaryBank * 0x4000] & 0xFF;
                 case 0xA000:
                 case 0xB000://RAM
                     if (this.RAMEnabled){

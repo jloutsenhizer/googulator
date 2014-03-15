@@ -6,11 +6,20 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
     NoMemoryBankController.loadROM = function(romData){
         var controller = {};
         controller.romData = romData;
+        controller.ROMBanks = 2;
         controller.ramData = new Uint8Array(0x2000);
 
         controller.reset = function(){};
 
         controller.cleanup = function(){
+        }
+
+        controller.readROMByte = function(offset){
+            return this.ROMData[offset];
+        }
+
+        controller.writeROMByte = function(offset,secondaryBank,data){
+            this.ROMData[offset] = data;
         }
 
         controller.readByte = function(offset) {
