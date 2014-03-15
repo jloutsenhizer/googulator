@@ -52,7 +52,6 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
         GameGenie.reset();
         Gameshark.reset();
         GameGenie.setLoadedGame(loadedGame);
-        GameGenie.addCode("324-EE9-E6E");
         MemoryController.reset();
         SGB.reset();
         loadedGame.reset();
