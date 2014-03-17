@@ -42,9 +42,13 @@ html, body, .mainContainer{
     bottom: 0px;
     left: 0px;
     right: 0px;
-    top: 48px;
+    top: 60px;
     overflow:auto;
     background:white;
+}
+
+.noAds .coreModuleContainer{
+    top:40px;
 }
 
 .HomeHTML{

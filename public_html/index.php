@@ -178,15 +178,6 @@
             <div class="navbar navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container" style="width: auto; padding: 0 20px;">
-                        <div class="adUnit" style="position: absolute; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
-                            <div style="position: absolute; left: 50%; z-index:100;">
-                                <div style="position: relative; left: -50%">
-                                    <?php
-                                    echo $GOOGLE_AD_CODE;
-                                    ?>
-                                </div>
-                            </div>
-                        </div>
                         <ul class="nav">
                             <?php
                                 for ($i = 0; $i < count($tabs); $i++){
@@ -217,6 +208,15 @@
                                 <span class="verticalDivider"></span>
                                 <span class="text"> Sign In</span></button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="adUnit" style="position: absolute; top:40px; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
+                <div style="position: absolute; left: 50%; z-index:100;">
+                    <div style="position: relative; left: -50%">
+                        <?php
+                        echo $GOOGLE_AD_CODE;
+                        ?>
                     </div>
                 </div>
             </div>

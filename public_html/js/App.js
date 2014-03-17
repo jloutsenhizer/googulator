@@ -222,6 +222,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
             if (App.userHasRole("ROLE_PRO")){
                 $(".adUnit").remove();
                 $(".moduleTabgoPro").remove();
+                $("body").addClass("noAds");
             }
             if (App.userHasRole("ROLE_ADMIN")){
                 $(".moduleTabadmin").removeClass("hidden");
