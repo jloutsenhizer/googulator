@@ -211,7 +211,7 @@
                     </div>
                 </div>
             </div>
-            <div class="adUnit" style="position: absolute; top:40px; left: 0px; height: 40px; display: inline; right: 0px; text-align: center;">
+            <div class="adUnit" style="position: absolute; top:42px; left: 0px; height: 20px; display: inline; right: 0px; text-align: center;">
                 <div style="position: absolute; left: 50%; z-index:100;">
                     <div style="position: relative; left: -50%">
                         <?php
