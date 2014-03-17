@@ -41,7 +41,12 @@ define(function(){
 
     Gameshark.addCode = function(code){
         if (code.length != 8)
-            return;
+            return false;
+        for (var i = 0, li = codes.length; i < li; i++){ //no duplicates
+            if (codes[i].code == code){
+                return false;
+            }
+        }
         codes.push({
             rawCode: code.toUpperCase(),
             ramBankNum:  parseInt(code.substring(0,2), 16),
@@ -49,7 +54,15 @@ define(function(){
             address: parseInt(code.substring(6,8) + code.substring(4,6), 16),
             code: code
         });
+        return true;
+    }
 
+    Gameshark.getCodeList = function(){
+        var result = [];
+        for (var i = 0, li = codes.length; i < li; i++){
+            result.push(codes[i].code);
+        }
+        return result;
     }
 
     return Gameshark;

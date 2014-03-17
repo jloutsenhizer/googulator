@@ -66,6 +66,7 @@
     gapiScript.type = "text/javascript";
     gapiScript.src = "https://apis.google.com/js/client.js?onload=googleAPILoaded&t=" + new Date().getTime();
     gapiScript.onerror = function(){
+        console.error("error loading gapi");
         window.gapi = null;
         try{
             googleAPILoaded();

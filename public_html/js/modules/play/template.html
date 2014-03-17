@@ -19,6 +19,10 @@
         </div>
         <div class="modal-body">
             <table class="table table-hover">
+                <colgroup>
+                    <col span="1" style="width:80%">
+                    <col span="1" style="width:20%">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>Cheat</th>
@@ -26,15 +30,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>12345634</td>
-                        <td><i class="fa fa-trah-o"></i></td>
-                    </tr>
+                    {{#codes}}
+                        <tr>
+                            <td>{{.}}</td>
+                            <td><a class="deleteCheat" href="#"><i class="fa fa-trash-o"></i></a></td>
+                        </tr>
+                    {{/codes}}
                 </tbody>
             </table>
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    <label class="sr-only" for="cheatCodeEntry">Cheat Code</label>
+                    <input type="text" class="form-control" id="cheatCodeEntry" placeholder="Enter Cheat Code">
+                    <button type="submit" class="btn btn-default addCheatBtn">Add Cheat Code</button>
+                </div>
+            </form>
         </div>
         <div class="modal-footer">
             <button id="createMetadataFile" class="btn" onclick="$('#cheatsDialog').modal('hide');">Close</button>
         </div>
     </div>
+</template>
+<template id="singleCheat">
+    <tr>
+        <td>{{code}}</td>
+        <td><a class="deleteCheat" href="#"><i class="fa fa-trash-o"></i></a></td>
+    </tr>
 </template>

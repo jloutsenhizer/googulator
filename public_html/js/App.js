@@ -116,8 +116,11 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                     App.showModalMessage("Cookies are Required!","Due to issues with google's picker api, games cannot be added to your library with cookies disabled. Hopefully google will fix these issues or we'll come up with a work around, but unfortunately for the time being you need to enable cookies for the app to function correctly. Sorry to be a nuisance!");
                 }
 
-                GoogleAPIs.checkAuthentication(function(authenticated){
+                GoogleAPIs.checkAuthentication(function(authenticated,wasBecauseOfError){
                     if (!authenticated){
+                        if (wasBecauseOfError){
+                            App.showModalMessage("Google API Failed to Load","The Google API failed to load properly. Unfortunately Googulator can't work without access to the API.");
+                        }
                         $("#loadText").addClass("hidden");
                         $("#loadButton").removeClass("hidden");
                         $("#loadButton").click(function(){

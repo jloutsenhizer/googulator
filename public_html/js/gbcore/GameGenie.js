@@ -74,6 +74,12 @@ define(function(){
         if (code.length != 11 || code.charAt(3) != '-' || code.charAt(7) != '-')
             return false;
 
+        for (var i = 0, li = codes.length; i < li; i++){ //no duplicates
+            if (codes[i].code == code){
+                return false;
+            }
+        }
+
         var newData = parseInt(code.substring(0,2),16);
         var address = parseInt(code.charAt(6) + code.charAt(2) + code.substring(4,6),16) ^ 0xF000;
         if (address >= 0x8000)
@@ -93,6 +99,14 @@ define(function(){
         codes.push(code);
         applyCode(code);
         return true;
+    }
+
+    GameGenie.getCodeList = function(){
+        var result = [];
+        for (var i = 0, li = codes.length; i < li; i++){
+            result.push(codes[i].code);
+        }
+        return result;
     }
 
     return GameGenie;

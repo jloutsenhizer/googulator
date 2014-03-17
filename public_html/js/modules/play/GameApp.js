@@ -80,6 +80,7 @@ define([],function(){
 
     GameApp.prototype.addCode = function(code){
         console.warn("GameApp.addCode not implemented, using stub.");
+        return false;
     }
 
     GameApp.prototype.removeCode = function(code){

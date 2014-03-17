@@ -27,7 +27,7 @@ define(["OfflineUtils"], function(OfflineUtils){
                 });
             }
             else{
-                callback(false);
+                callback(false,true);
             }
             return;
         }

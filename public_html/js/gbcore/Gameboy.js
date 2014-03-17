@@ -286,5 +286,18 @@ define(["GameUtils","modules/play/GameApp","gbcore/CPUEmulator","gbcore/GameLoad
         return html;
     }
 
+    Gameboy.addCode = function(code){
+        return Gameshark.addCode(code) || GameGenie.addCode(code);//short circuits if gameshark successfully adds. Gameshark was more popular than Gamegenie so in general should be faster this way
+    }
+
+    Gameboy.removeCode = function(code){
+        Gameshark.removeCode(code);
+        GameGenie.removeCode(code);
+    }
+
+    Gameboy.getCodeList = function(){
+        return Gameshark.getCodeList().concat(GameGenie.getCodeList())
+    }
+
     return Gameboy;
 });

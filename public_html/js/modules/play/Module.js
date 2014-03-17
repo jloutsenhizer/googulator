@@ -286,7 +286,8 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
                 visible = this[hidden] ? h : v;
             if (active){
                 if (visible){
-                    currentApp.resume();
+                    if (cheatsModal == null)
+                        currentApp.resume();
                 }
                 else{
                     currentApp.clearButtonStates();
@@ -342,6 +343,7 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
 
     function showCheatDialog(){
         App.loadMustacheTemplate("modules/play/template.html","cheatEditor",function(template){
+            currentApp.clearButtonStates();
             currentApp.pause();
             cheatsModal = App.makeModal(template.render({codes:currentApp.getCodeList()}));
             cheatsModal.on("hidden.resume",function(){
@@ -350,6 +352,28 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             cheatsModal.on("hidden.unassign",function(){
                 cheatsModal = null;
             });
+
+            var cheatEntry = cheatsModal.find("#cheatCodeEntry");
+
+            function deleteCheatClickHandler(){
+                currentApp.removeCode($($(event.currentTarget).parent().parent().children()[0]).text());
+                $(event.currentTarget).parent().parent().remove();
+                event.preventDefault();
+            }
+
+            cheatsModal.find(".addCheatBtn").click(function(event){
+                var cheatCode = cheatEntry.val();
+                cheatEntry.val("");
+                if (currentApp.addCode(cheatCode)){
+                    App.loadMustacheTemplate("modules/play/template.html","singleCheat",function(cheatTemplate){
+                        var newRow = $(cheatTemplate.render({code:cheatCode}));
+                        newRow.find(".deleteCheat").click(deleteCheatClickHandler);
+                        cheatsModal.find("tbody").append(newRow);
+                    });
+                }
+                event.preventDefault();
+            });
+            cheatsModal.find(".deleteCheat").click(deleteCheatClickHandler)
 
         })
     }
