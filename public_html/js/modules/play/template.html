@@ -2,6 +2,7 @@
     <div style="text-align:center">
         <button id="gameboyOff" disabled>Shut Game Off</button>
         <button id="fullscreenEnable" disabled>Fullscreen</button>
+        <button id="cheats" disabled>Cheats</button>
     </div>
     <div id="gbOuterContainer">
         <div id="gbInnerContainer">
@@ -10,4 +11,30 @@
     <div style="text-align: center;">FPS:<span id="FPSCounter"></span></div>
     <div style="text-align: center;">Volume: <div id="volumeSlider" style="display:inline-block; width:100px"></div><div>Running Slow? Try turning off sound</div></div>
     <div style="text-align:center;"><div class="gameCommentContainer"><div id="gameboyComments"></div></div></div>
+</template>
+<template id="cheatEditor">
+    <div class="modal fade" id="cheatsDialog">
+        <div class="modal-header">
+            <h3>Manage Cheats<a href="javascript:$('#cheatsDialog').modal('hide')" class="close">&times;</a></h3>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Cheat</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12345634</td>
+                        <td><i class="fa fa-trah-o"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button id="createMetadataFile" class="btn" onclick="$('#cheatsDialog').modal('hide');">Close</button>
+        </div>
+    </div>
 </template>

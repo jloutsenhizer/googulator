@@ -351,4 +351,4 @@ html, body, .mainContainer{
 
 @font-face {
     font-family:"PokemonGB";
-    src:url("../font/Pokemon_GB.eot?") format("eot"),url("../font/Pokemon_GB.woff") format("woff"),url("../font/Pokemon_GB.ttf") format("truetype"),url("../font/Pokemon_GB.svg#PokemonGB") format("svg");font-weight:normal;font-style:normal;}
+    src:url("../fonts/Pokemon_GB.eot?") format("eot"),url("../fonts/Pokemon_GB.woff") format("woff"),url("../fonts/Pokemon_GB.ttf") format("truetype"),url("../fonts/Pokemon_GB.svg#PokemonGB") format("svg");font-weight:normal;font-style:normal;}

@@ -1,8 +1,8 @@
-define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
-        "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark","gbcore/GameGenie"],function(GameUtils, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark,GameGenie){
+define(["GameUtils","modules/play/GameApp","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator","gbcore/MemoryController","gbcore/Joypad",
+        "gbcore/APUEmulator", "gbcore/SGB","gbcore/Gameshark","gbcore/GameGenie"],function(GameUtils, GameApp, CPUEmulator,GameLoader,GPUEmulator,MemoryController, Joypad, APUEmulator, SGB,Gameshark,GameGenie){
     "use strict";
 
-    var Gameboy = {};
+    var Gameboy = new GameApp();
 
     var html = $("<div style='height:100%'><canvas style='height:100%'></canvas></div>");
     var canvas = html.find("canvas")[0];
@@ -106,7 +106,7 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
         var repeatFunction = function(){
             if (onterminate != null){
-                GameGenie.removeAllCodes();
+                GameGenie.unapplyAllCodes();
                 loadedGame.cleanup();
                 APUEmulator.stop();
                 var callback = onterminate;
@@ -267,6 +267,10 @@ define(["GameUtils","gbcore/CPUEmulator","gbcore/GameLoader","gbcore/GPUEmulator
 
     Gameboy.handleMouseEvent = function(){
 
+    }
+
+    Gameboy.supportsCheats = function(){
+        return true;
     }
 
     Gameboy.onResize = function(){

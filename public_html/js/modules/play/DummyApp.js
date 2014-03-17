@@ -24,6 +24,7 @@ define(["modules/play/GameApp"],function(GameApp){
     app.resume = function(){};
     app.pause = function(){};
     app.terminateGame = function(callback){callback();};
+    app.supportsCheats = function(){return false;}
 
 
     return app;

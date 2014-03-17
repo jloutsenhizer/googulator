@@ -30,6 +30,15 @@ define(function(){
         }
     }
 
+    Gameshark.removeCode = function(code){
+        for (var i = 0, li = codes.length; i < li; i++){
+            if (codes[i].code == code){
+                codes.splice(i,1);
+                break;
+            }
+        }
+    }
+
     Gameshark.addCode = function(code){
         if (code.length != 8)
             return;
@@ -37,7 +46,8 @@ define(function(){
             rawCode: code.toUpperCase(),
             ramBankNum:  parseInt(code.substring(0,2), 16),
             newData: parseInt(code.substring(2,4), 16),
-            address: parseInt(code.substring(6,8) + code.substring(4,6), 16)
+            address: parseInt(code.substring(6,8) + code.substring(4,6), 16),
+            code: code
         });
 
     }

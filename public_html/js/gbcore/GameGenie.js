@@ -17,13 +17,13 @@ define(function(){
     var codes = [];
 
     GameGenie.setLoadedGame = function(m){
-        this.removeAllCodes();
+        this.unapplyAllCodes();
         mbc = m;
         this.reapplyAllCodes();
     }
 
     GameGenie.reset = function(){
-        this.removeAllCodes();
+        this.unapplyAllCodes();
         codes = [];
     }
 
@@ -39,7 +39,7 @@ define(function(){
         }
 
     }
-    function removeCode(code){
+    function unapplyCode(code){
         if (mbc != null){
             for (var bank in code.affectedBanks){
                 mbc.writeROMByte(code.address,bank,code.oldData);
@@ -54,10 +54,20 @@ define(function(){
         }
     }
 
-    GameGenie.removeAllCodes = function(){
+    GameGenie.unapplyAllCodes = function(){
         for (var i = 0, li = codes.length; i < li; i++){
-            removeCode(codes[i]);
+            unapplyCode(codes[i]);
         }
+    }
+
+    GameGenie.removeCode = function(code){
+       for (var i = 0, li = codes.length; i < li; i++){
+           if (codes[i].code == code){
+               unapplyCode(codes[i]);
+               codes.splice(i,1);
+               break;
+           }
+       }
     }
 
     GameGenie.addCode = function(code){
@@ -77,7 +87,8 @@ define(function(){
             address: address,
             oldData: oldData,
             H: H,
-            affectedBanks: {}
+            affectedBanks: {},
+            code: code
         }
         codes.push(code);
         applyCode(code);

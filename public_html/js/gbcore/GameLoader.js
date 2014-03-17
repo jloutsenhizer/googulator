@@ -1,10 +1,11 @@
-define(["GameUtils", "gbcore/mbc/NoMemoryBankController", "gbcore/mbc/MemoryBankController1", "gbcore/mbc/MemoryBankController2", "gbcore/mbc/MemoryBankController3", "gbcore/mbc/MemoryBankController5",
-        "gbcore/mbc/MemoryBankCamera"],function(GameUtils, NoMBC, MBC1, MBC2, MBC3, MBC5, MBCAMERA){
+define(["GameUtils", "CopyUtils", "gbcore/mbc/NoMemoryBankController", "gbcore/mbc/MemoryBankController1", "gbcore/mbc/MemoryBankController2", "gbcore/mbc/MemoryBankController3", "gbcore/mbc/MemoryBankController5",
+        "gbcore/mbc/MemoryBankCamera"],function(GameUtils, CopyUtils, NoMBC, MBC1, MBC2, MBC3, MBC5, MBCAMERA){
     "use strict";
 
     var GameLoader = {};
 
     GameLoader.loadGame = function(gameData){
+        gameData = CopyUtils.makeUntypedArrayCopy(gameData);//we copy it so that we don't mess up the original game
         var header = GameUtils.getHeader(gameData);
         switch (header.mbcType){
             case GameUtils.MBC_N:

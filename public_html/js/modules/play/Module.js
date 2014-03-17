@@ -5,7 +5,6 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
     var Module = {};
 
     var container;
-    var canvas;
     var active = false;
     var overlay = null;
     var fullScreenSupported = false;
@@ -13,8 +12,7 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
     var currentGameTitle = null;
     var nes = new NES();
 
-    var canvasWidth = 1;
-    var canvasHeight = 1;
+    var cheatsModal = null;
 
     var currentApp = DummyApp;
 
@@ -102,6 +100,10 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             return true;
         });
 
+        $("#cheats").click(function(){
+            showCheatDialog();
+        });
+
 
 
         loadApp(currentApp,null);
@@ -151,6 +153,10 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
     function turnGameOff(callback){
         $("#gameboyOff").attr('disabled',"disabled");
         overlay = App.createMessageOverlay(container,"Turning Game Off...");
+        if (cheatsModal != null){
+            cheatsModal.off("hidden.resume");
+            cheatsModal.modal("hide");
+        }
         currentApp.terminateGame(function(){
             currentGameTitle = null;
             currentGameId = null
@@ -168,8 +174,6 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
         currentApp.clearButtonStates();
         currentApp.pause();
     }
-
-    var quickSaveState = null;
 
     var keyhandler = function(event){
         if (!active)
@@ -323,10 +327,31 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             currentApp.start();
             $("#gameboyOff").removeAttr("disabled");
             $("#noGameLoadedDisplay").addClass("hidden");
+
             $(window).resize();
+        }
+        if (app.supportsCheats()){
+            $("#cheats").removeAttr("disabled");
+        }
+        else{
+            $("#cheats").attr("disabled","disabled");
         }
 
 
+    }
+
+    function showCheatDialog(){
+        App.loadMustacheTemplate("modules/play/template.html","cheatEditor",function(template){
+            currentApp.pause();
+            cheatsModal = App.makeModal(template.render({codes:currentApp.getCodeList()}));
+            cheatsModal.on("hidden.resume",function(){
+                currentApp.resume();
+            });
+            cheatsModal.on("hidden.unassign",function(){
+                cheatsModal = null;
+            });
+
+        })
     }
 
     checkFrames();

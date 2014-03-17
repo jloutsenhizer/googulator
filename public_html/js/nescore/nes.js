@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom"],function(CPU,PPU,PAPU,Joypad,ROM){
+define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom"],function(GameApp,CPU,PPU,PAPU,Joypad,ROM){
     "use strict";
 
     var JSNES = function(opts) {
@@ -352,6 +352,11 @@ define(["nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom
             $(this.opts.canvas).attr("height",canvasHeight);
         }
     };
+
+    for (var member in GameApp.prototype){//poor man's inheritance
+        if (JSNES.prototype[member] == null)
+            JSNES.prototype[member] = GameApp.prototype[member];
+    }
 
     return JSNES;
 })

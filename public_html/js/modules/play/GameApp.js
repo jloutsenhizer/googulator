@@ -73,6 +73,24 @@ define([],function(){
         callback();
     }
 
+    GameApp.prototype.supportsCheats = function(){
+        console.warn("GameApp.supportsCheats not implemented, using stub.");
+        return false;
+    }
+
+    GameApp.prototype.addCode = function(code){
+        console.warn("GameApp.addCode not implemented, using stub.");
+    }
+
+    GameApp.prototype.removeCode = function(code){
+        console.warn("GameApp.removeCode not implemented, using stub.");
+    }
+
+    GameApp.prototype.getCodeList = function(){
+        console.warn("GameAPp.getCodeList not implemented, using stub.");
+        return [];
+    }
+
     return GameApp;
 
 });
