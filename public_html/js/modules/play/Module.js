@@ -362,7 +362,8 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             }
 
             cheatsModal.find(".addCheatBtn").click(function(event){
-                var cheatCode = cheatEntry.val();
+                event.preventDefault();
+                var cheatCode = cheatEntry.val().trim();
                 cheatEntry.val("");
                 if (currentApp.addCode(cheatCode)){
                     App.loadMustacheTemplate("modules/play/template.html","singleCheat",function(cheatTemplate){
@@ -371,7 +372,6 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
                         cheatsModal.find("tbody").append(newRow);
                     });
                 }
-                event.preventDefault();
             });
             cheatsModal.find(".deleteCheat").click(deleteCheatClickHandler)
 

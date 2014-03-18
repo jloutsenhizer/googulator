@@ -481,6 +481,9 @@ define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
             //var data = this.nes.rom.rom[bank];
             //cpuMem.write(address,data,data.length);
             Utils.copyArrayElements(this.nes.rom.rom[bank], 0, this.nes.cpu.mem, address, 16384);
+            if (address >= 0x8000 - 16384){
+                this.nes.gameGenie.reapplyAllCodes();
+            }
         },
 
         loadVromBank: function(bank, address) {
@@ -557,6 +560,9 @@ define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
             //this.nes.cpu.mem.write(address,this.nes.rom.rom[bank16k],offset,8192);
             Utils.copyArrayElements(this.nes.rom.rom[bank16k], offset,
                 this.nes.cpu.mem, address, 8192);
+            if (address >= 0x8000 - 8192){
+                this.nes.gameGenie.reapplyAllCodes();
+            }
         },
 
         clockIrqCounter: function() {

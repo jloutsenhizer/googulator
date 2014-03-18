@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom"],function(GameApp,CPU,PPU,PAPU,Joypad,ROM){
+define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nescore/joypad","nescore/rom","nescore/GameGenie"],function(GameApp,CPU,PPU,PAPU,Joypad,ROM,GameGenie){
     "use strict";
 
     var JSNES = function(opts) {
@@ -59,6 +59,7 @@ define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nesco
         this.cpu = new CPU(this);
         this.ppu = new PPU(this);
         this.papu = new PAPU(this);
+        this.gameGenie = new GameGenie(this);
         this.mmap = null; // set in loadRom()
         this.joypad = new Joypad();
         this.quickSaveState = null;
@@ -71,6 +72,7 @@ define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nesco
 
         // Resets the system
         reset: function() {
+            this.gameGenie.reset();//reset this first so we don't get random data in memory
             this.cpu.reset();
             this.ppu.reset();
             this.papu.reset();
@@ -350,6 +352,18 @@ define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nesco
             var canvasWidth =  canvasHeight/240*256;
             $(this.opts.canvas).attr("width",canvasWidth);
             $(this.opts.canvas).attr("height",canvasHeight);
+        },
+        supportsCheats: function(){
+            return true;
+        },
+        addCode: function(code){
+            return this.gameGenie.addCode(code);
+        },
+        removeCode: function(code){
+            this.gameGenie.removeCode(code);
+        },
+        getCodeList: function(){
+            return this.gameGenie.getCodeList();
         }
     };
 

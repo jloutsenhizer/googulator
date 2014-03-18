@@ -31,9 +31,9 @@ define(function(){
         if (mbc != null){
             for (var i = 1; i < mbc.ROMBanks; i++){
                 var oldData = mbc.readROMByte(code.address,i);
-                if (oldData == code.oldData){
+                if (code.oldData == null || oldData == code.oldData){
                     mbc.writeROMByte(code.address,i,code.newData);
-                    code.affectedBanks[i] = true;
+                    code.affectedBanks[i] = oldData;
                 }
             }
         }
@@ -42,36 +42,39 @@ define(function(){
     function unapplyCode(code){
         if (mbc != null){
             for (var bank in code.affectedBanks){
-                mbc.writeROMByte(code.address,bank,code.oldData);
+                if (mbc.readROMByte(code.address,bank) == code.newData)//sanity check
+                    mbc.writeROMByte(code.address,bank,code.affectedBanks[bank]);
             }
             code.affectedBanks = {};
         }
     }
 
     GameGenie.reapplyAllCodes = function(){
+        this.unapplyAllCodes();
         for (var i = 0, li = codes.length; i < li; i++){
             applyCode(codes[i]);
         }
     }
 
     GameGenie.unapplyAllCodes = function(){
-        for (var i = 0, li = codes.length; i < li; i++){
+        for (var i = codes.length - 1; i >= 0; i--){//in reverse order in case two codes were using the same address
             unapplyCode(codes[i]);
         }
     }
 
     GameGenie.removeCode = function(code){
+       this.unapplyAllCodes();//remove all changes in case two codes were using the same address and then redo all changes
        for (var i = 0, li = codes.length; i < li; i++){
            if (codes[i].code == code){
-               unapplyCode(codes[i]);
-               codes.splice(i,1);
-               break;
+               codes.splice(i--,1);
+               li--;
            }
        }
+       this.reapplyAllCodes();
     }
 
     GameGenie.addCode = function(code){
-        if (code.length != 11 || code.charAt(3) != '-' || code.charAt(7) != '-')
+        if (!(code.charAt(3) == '-' && ((code.length == 11  && code.charAt(7) == '-') || code.length == 7)))
             return false;
 
         for (var i = 0, li = codes.length; i < li; i++){ //no duplicates
@@ -84,9 +87,15 @@ define(function(){
         var address = parseInt(code.charAt(6) + code.charAt(2) + code.substring(4,6),16) ^ 0xF000;
         if (address >= 0x8000)
             return false;
-        var oldData = parseInt(code.charAt(8) + code.charAt(10), 16);
-        oldData = (((oldData) >>> 2) | ((oldData & 0x03) << 6));
-        oldData ^= 0xBA;
+        var oldData;
+        if (code.length == 11){
+            oldData = parseInt(code.charAt(8) + code.charAt(10), 16);
+            oldData = (((oldData) >>> 2) | ((oldData & 0x03) << 6));
+            oldData ^= 0xBA;
+        }
+        else{
+            oldData = null;
+        }
         var H = code.charAt(9);
         code = {
             newData: newData,
