@@ -1,0 +1,1 @@
+UPDATE `freeGames` SET `fileName`='Sgt. Helmet - Training Day.nes' WHERE `gameid`='NES_002B96F7';

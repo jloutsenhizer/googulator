@@ -52,20 +52,32 @@ if (!$sql->select_db($MYSQL_DATABASE)){
 
 
 //schema exists and now we need to create the necessary tables
-$queries = explode(";",file_get_contents("resetServer.sql"));
+$queries = explode(";",file_get_contents("db/resetServer.sql"));
 foreach ($queries as $query){
     $sql->query($query . ";");
 }
 
-$queries = explode(";",file_get_contents("gameNames.sql"));
+$queries = explode(";",file_get_contents("db/gameNames.sql"));
 foreach ($queries as $query){
     $sql->query($query . ";");
 }
 
-$queries = explode(";",file_get_contents("freeGames.sql"));
+$queries = explode(";",file_get_contents("db/freeGames.sql"));
 foreach ($queries as $query){
     $sql->query($query . ";");
 }
+
+$queries = explode(";",file_get_contents("db/dbUpdate01.sql"));
+foreach ($queries as $query){
+    $sql->query($query . ";");
+}
+
+$queries = explode(";",file_get_contents("db/dbUpdate02.sql"));
+foreach ($queries as $query){
+    $sql->query($query . ";");
+}
+
+
 
 $sql->close();
 

@@ -4,7 +4,9 @@ DirectoryIndex index.php
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
     RewriteCond %{REQUEST_URI} !index
+    RewriteCond %{REQUEST_URI} !.*\.(nes|zip|js|css|jpg|gif|gb|gbc|png)
     RewriteRule (.*) index.php [L]
 </ifModule>
 #gzip compression
