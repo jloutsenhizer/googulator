@@ -81,6 +81,8 @@ foreach ($queries as $query){
 
 $sql->close();
 
+touch("../../appcache.php");//force cache referesh
+
 
 
 echo json_encode(["status"=>"success"]);
