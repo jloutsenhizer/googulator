@@ -38,6 +38,6 @@
             hoist_vars: false,
             unsafe: false
         }
-    }
-
+    },
+    optimizeCss: "standard"
 })
