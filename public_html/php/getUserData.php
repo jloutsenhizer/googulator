@@ -36,6 +36,15 @@ if (!mysql_select_db($MYSQL_DATABASE, $con)){
 //this insures that the user is created in the database and has ROLE_USER at a minimum
 addRole($google_id,"ROLE_USER",$con);
 
-echo json_encode(getUserData($google_id,$con));
+$userData = getUserData($google_id,$con);
 mysql_close($con);
+if ($userData == null){
+    $roles = ["ROLE_USER"];
+    if (strcmp($PRIMARY_ADMIN_USER,$google_id) == 0){
+        array_push($roles,"ROLE_ADMIN");
+
+    }
+    die(json_encode(["roles" => $roles,"websiteState" => "broken"]));
+}
+echo json_encode($userData);
 

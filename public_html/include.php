@@ -3,6 +3,10 @@ require_once "php/lib/google_php/Google_Client.php";
 require_once "php/lib/SwiftMailer/lib/swift_required.php";
 require_once "configuration.php";
 
+
+error_reporting(0);
+
+
 function getGoogleId($access_token){
     try{
         $access_token = json_decode($access_token);
@@ -22,6 +26,8 @@ function getGoogleId($access_token){
         return null;
     }
 }
+
+
 
 function getRoles($googleId,$con){
     $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
@@ -49,6 +55,8 @@ function addRole($googleId,$newRole,$con){
     global $PRIMARY_ADMIN_USER;
 
     $query = mysql_query("select roles from users where googleid='$googleId' limit 1;",$con);
+    if (!$query)
+        return;
     if ($row = mysql_fetch_assoc($query)){
         $roles = explode("|",$row["roles"]);
         foreach ($roles as $role){
@@ -70,6 +78,8 @@ function addRole($googleId,$newRole,$con){
 
 function getUserData($googleId,$con){
     $query = mysql_query("select * from users where googleid='$googleId' limit 1;",$con);
+    if (!$query)
+        return null;
     if ($row = mysql_fetch_assoc($query)){
         $row["roles"] = explode("|",$row["roles"]);
         $query = mysql_query("select count(*) from gameLibrary where googleid='$googleId';",$con);

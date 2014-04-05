@@ -2909,7 +2909,7 @@ define (function(){
         },
         function (parent){//0xFF: RST 0x38
             PC += 1;
-            call(0x10);
+            call(0x38);
             return 16;
         }
     ];
