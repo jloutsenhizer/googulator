@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
     include "configuration.php";
     include "include.php";
@@ -21,6 +20,7 @@
 
     $title = "Googulator";
 ?>
+<!DOCTYPE html>
 <html manifest="/appcache.php">
     <head>
         <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lchmgljjkaeadokijkhefbhpfbihhhda">
