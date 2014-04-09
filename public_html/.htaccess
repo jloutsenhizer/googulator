@@ -4,7 +4,6 @@ DirectoryIndex index.php
 <ifModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-l
     RewriteCond %{REQUEST_URI} !index
     RewriteCond %{REQUEST_URI} !.*\.(nes|zip|js|css|jpg|gif|gb|gbc|png)
@@ -52,3 +51,11 @@ DirectoryIndex index.php
       AddOutputFilterByType DEFLATE image/svg+xml application/vnd.ms-fontobject application/x-font-ttf font/opentype
     </IfModule>
 </IfModule>
+
+#disablecaching:
+<filesMatch "\.(html|htm|js|css|php)$">
+  FileETag None
+  <ifModule mod_expires.c>
+     ExpiresActive off
+  </ifModule>
+</filesMatch>

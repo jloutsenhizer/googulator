@@ -4,11 +4,10 @@ include "include.php";
 header('Content-Type: text/cache-manifest');
 ?>CACHE MANIFEST
 
-##
-
 #appcache modficationtime: <?php echo filemtime(__FILE__); ?>
 #index modificationtime: <?php echo filemtime("index.php"); ?>
 #configuration modificationtime: <?php echo filemtime("configuration.php");?>
+#htaccess modificationtime: <?php echo filemtime(".htaccess");?>
 
 CACHE:
 <?php
