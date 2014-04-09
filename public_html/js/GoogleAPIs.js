@@ -268,6 +268,8 @@ define(["OfflineUtils"], function(OfflineUtils){
                 });
             }
             else{
+                console.error("Upload failed trying again in 1 second...");
+                console.error(rawResponse);
                 setTimeout(function(){
                     GoogleAPIs.uploadBinaryFile(filename,contents,callback,progresscallback);
                 },1000);//wait a second and try again
@@ -374,6 +376,8 @@ define(["OfflineUtils"], function(OfflineUtils){
                 });
             }
             else{
+                console.error("Update failed trying again in 1 second...");
+                console.error(rawResponse);
                 setTimeout(function(){
                     GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
                 },1000);//wait a second and try again
