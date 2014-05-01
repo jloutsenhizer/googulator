@@ -128,7 +128,7 @@ function outputDirectoryListing($directory,$recursive = true){
                 }
             }
         }
-        else{
+        else if ($file !== ".htaccess"){
             echo encodeUrlEntity($directory . $file);
             echo " #modification time: ";
             echo filemtime($directory . $file);
