@@ -17,6 +17,7 @@ outputDirectoryListing("lib");
 outputDirectoryListing("img/icons");
 outputDirectoryListing("img/html5apps");
 outputDirectoryListing("img",false);
+outputDirectoryListing("img/newgraphics");
 outputDirectoryListing("fonts");
 ?>
 fonts/fontawesome-webfont.ttf?v=4.0.3 #<?php echo filemtime("fonts/fontawesome-webfont.ttf") ?>
