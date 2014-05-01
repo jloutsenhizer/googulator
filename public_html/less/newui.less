@@ -6,6 +6,7 @@
 @homePagePadding: 4em;
 @gameboyWidth: 430px;
 @gameboyWidthRatio: 0.31478770131;
+@mainBarLogoWidthToHeight: 94 / 77;
 @buttonColor: #4386fc;
 
 @import "fonts.less";
@@ -111,10 +112,20 @@ html, body{
   }
 
   .mainNavBarLogo{
+
       height: @topbarheight * 0.8;
+      width: @topbarheight * 0.8 * @mainBarLogoWidthToHeight;
       margin-top: @topbarheight * 0.1;
       margin-bottom:@topbarheight * 0.1;
       vertical-align:top;
+      background-image: url(/img/newgraphics/logo.png);
+      display:inline-block;
+      background-size: 100%;
+
+    .homeContained &{
+      background-image: url(/img/newgraphics/WhiteLogo.png);
+    }
+
   }
 
   .linkhome{

@@ -196,7 +196,7 @@
                                 echo $tabs[$i];
                                 echo '">';
                                 if ($tabs[$i] == "home"){
-                                    echo "<img class='mainNavBarLogo' src='/img/newgraphics/logo.png' /> Googulator";
+                                    echo "<i class='mainNavBarLogo'></i> Googulator";
                                     echo '<li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>';
                                 }
                                 else{
