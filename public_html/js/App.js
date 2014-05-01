@@ -210,6 +210,10 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                     activeModuleName = modulename;
                     container.removeClass("unactive");
                     activeModule.onActivate(params);
+                    for (var mname in modules){
+                        $(".mainContainer").removeClass(mname + "Contained");
+                    }
+                    $(".mainContainer").addClass(modulename + "Contained")
                 }
             });
 

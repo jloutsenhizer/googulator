@@ -1,0 +1,492 @@
+@topbarheight: 38px;
+@linkcolor: #FFF;
+@defaultFont: Roboto;
+@classicFont: Visitor;
+@homePagePadding: 4em;
+@gameboyWidth: 430px;
+@gameboyWidthRatio: 0.31478770131;
+@buttonColor: #4386fc;
+
+@import "fonts.less";
+
+
+
+html{
+  overflow:hidden;
+}
+
+html, body, .mainContainer{
+  height: 100%
+}
+
+html, body{
+  font-family: @defaultFont;
+  font-weight: 300;
+  font-size: 16pt;
+  line-height: 16pt;
+  color:white;
+
+  a{
+    color:@linkcolor;
+
+    &:visited{
+      color:@linkcolor;
+    }
+    &:focus{
+      color: @linkcolor;
+    }
+
+    &:hover{
+      color: darken(@linkcolor,10%);
+    }
+  }
+}
+
+.coreModuleContainer{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  top: @topbarheight;
+  overflow:auto;
+}
+
+
+.mainContainer{
+  background-color: #323232;
+  background-image:url("/img/newgraphics/background_repeat.png");
+  background-repeat: repeat;
+}
+
+.homeContained{
+  background-color: #2e6794;
+  background-image:url("/img/newgraphics/homepage/background.jpg");
+  background-position: center center;
+  background-repeat: none;
+}
+
+#moduleContainerhome{
+  color: white;
+}
+
+.moduleContainer.unactive{
+  position:absolute;
+  right:500%;
+  bottom:500%;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.mainNavBar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height: @topbarheight;
+  z-index: 100;
+  background:rgba(0,0,0,0.2);
+  .mainNavBar-inner{
+    ul{
+      li{
+       display:inline-block;
+        line-height:@topbarheight;
+        a{
+          padding-left:0.5em;
+          padding-right:0.5em;
+          &:hover{
+            background:rgba(0,0,0,0.1);
+          }
+        }
+      }
+    }
+  }
+
+  .profileImage{
+    border-radius:100%;
+    height: @topbarheight - 6px;
+  }
+}
+
+.caret{
+  border-top:4px solid white;
+}
+
+#HomeHTML{
+  padding-left: @homePagePadding;
+  width:calc(~"100%" - @homePagePadding * 2.5 ~"- 100% *" @gameboyWidthRatio);
+
+  h1, h2{
+    text-align: center;
+  }
+  h1{
+    margin-top:1em;
+    font-size: 50pt;
+    line-height: 50pt;
+  }
+  h2{
+    font-size: 18pt;
+    font-weight:300;
+    line-height: 18pt;
+    margin-bottom:2em;
+  }
+  p{
+    font-size: 20pt;
+    line-height:24pt;
+    margin-bottom:2em;
+  }
+}
+
+#googulatorHandheldImage{
+  position:absolute;
+  bottom:0;
+  right:@homePagePadding;
+  width: calc(~"100% *" @gameboyWidthRatio);
+}
+
+#buttons{
+  text-align:center;
+}
+
+.googBtn{
+  background-color:@buttonColor;
+  padding:1em;
+  margin-left:2em;
+  margin-right:2em;
+  display:inline-block;
+  &:hover{
+    background-color:lighten(@buttonColor,5%);
+    text-decoration:none;
+  }
+}
+
+#noteText{
+  position:absolute;
+  font-family: @classicFont;
+  left:0px;
+  bottom:0px;
+  padding-left:1em;
+}
+
+
+//-----Everything below this line is from the old UI-----
+.googleLoadingOverlay{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100000;
+}
+
+.greyOverlay{
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  opacity: 0.75;
+  z-index: 100;
+}
+
+.messageOverlay{
+  background: white;
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right:10%;
+  padding: 1em;
+  z-index: 200;
+  text-align:center;
+  color:black;
+}
+
+.modal{
+  color:black;
+}
+
+.changelog{
+  max-height: 300px;
+  overflow-y: scroll;
+  max-width: 1024px;
+  background: lightgrey;
+  border: 1px solid black;
+  border-radius: 1em;
+  padding: 1em;
+}
+
+
+.libraryGameCard{
+  display: inline-block;
+  text-align: center;
+  padding: 1em;
+  border: 1px black solid;
+  border-radius: 1em;
+  margin:0.5em;
+  max-width:160px;
+}
+
+.libraryGameCard img{
+  display:block;
+  height:144px;
+  width:160px;
+}
+
+.libraryGameLink, .libraryGameLink:hover{
+  color: black;
+  text-decoration: none;
+}
+
+.center{
+  text-align: center;
+}
+
+.hidden{
+  display:none !important;
+}
+
+#library{
+  left: 0;
+  bottom: 3em;
+  right: 0;
+  position: absolute;
+  overflow-y: auto;
+  top: 0;
+}
+
+.libraryBottom{
+  position: absolute;
+  bottom: 0;
+  left: 1em;
+  right: 1em;
+  margin-bottom: 0;
+}
+
+#gbOuterContainer{
+  text-align:center;
+
+}
+
+#gbOuterContainer.fullscreen{
+  background:black;
+  width:100%;
+}
+
+#gbInnerContainer{
+  width:100%;
+  height:500px;
+  display:inline-block;
+}
+
+#gbOuterContainer.fullscreen {
+  width:100%;
+  height:100%;
+}
+
+.fullscreen #gbInnerContainer{
+  width:100%;
+  height:100%;
+}
+
+#noGameLoadedDisplay{
+  width:100%;
+  height:100%;
+  display:inline;
+}
+
+#nesOuterContainer{
+  text-align:center;
+
+}
+
+#nesOuterContainer.fullscreen{
+  background:black;
+  width:100%;
+}
+
+#nesInnnerContainer{
+  width:384px;
+  height:360px;
+  display:inline-block;
+}
+
+.fullscreen #nesInnnerContainer{
+  width:inherit;
+  height:100%;
+}
+
+#nesLCD{
+  height:100%;
+}
+
+#libraryListContainer{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:300px;
+  border-right: 1px solid black;
+}
+#GameDisplayArea{
+  position:absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  left:300px;
+  border-left: 1px solid black;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: center;
+}
+
+#GameDisplayArea img{
+  max-width: 100%;
+  max-height: 50%;
+}
+
+#libraryListContainer .btn-group{
+  width: 100%;
+}
+
+#libraryListContainer .btn-group .btn{
+  width:100%;
+  padding-left:0;
+  padding-right:0;
+  border-left:none;
+  border-right:none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  height:20px;
+}
+
+#libraryListContainer .btn-group .dropdown-menu{
+  width: 100%;
+  text-align:center;
+}
+
+#libraryList{
+  background:white;
+  position:absolute;
+  top: 30px;
+  left:0;
+  right:0;
+  bottom:0;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  margin:0;
+  user-select:none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+
+#libraryList li{
+  width: 100%;
+  padding-left: 5px;
+  color: black;
+}
+
+#libraryList li:hover{
+  cursor: pointer;
+}
+
+#libraryList li.selected, #libraryList li:hover{
+  background-color: #0081c2;
+  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+  color: white;
+}
+
+#libraryList li i{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-size: 100% 100%;
+}
+
+#libraryList li i.gameicon-nes{
+  background-image: url("../img/icons/systems/nes.png");
+}
+#libraryList li i.gameicon-gb{
+  background-image: url("../img/icons/systems/gb.png");
+}
+#libraryList li i.gameicon-gbc{
+  background-image: url("../img/icons/systems/gbc.png");
+}
+#libraryList li i.gameicon-html5{
+  background-image: url("../img/icons/systems/html5.png");
+}
+
+.gameCommentContainer{
+  width: 625px;
+  display:inline-block;
+}
+
+.gPlusLoginButton{
+  background: #cc3732;
+  color: white;
+  padding: 0;
+  margin: 0px;
+  border: 0;
+  height: 100%;
+  border-radius: 0;
+  padding-right: 10px;
+}
+
+.gPlusLoginButton:hover, .gPlusLoginButton:focus{
+  background: #dc4742;
+}
+
+.navbar-inner .gPlusLoginButton{
+  background-image: -moz-linear-gradient(top,#cc3732,#b5201a);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#cc3732),to(#b5201a));
+  background-image: -webkit-linear-gradient(top,#cc3732,#b5201a);
+  background-image: -o-linear-gradient(top,#cc3732,#b5201a);
+  background-image: linear-gradient(to bottom,#cc3732,#b5201a);
+  background-repeat: repeat-x;
+}
+
+.navbar-inner .gPlusLoginButton:hover, .navbar-inner .gPlusLoginButton:focus{
+  background-image: -moz-linear-gradient(top,#dc4742,#c5302a);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#dc4742),to(#c5302a));
+  background-image: -webkit-linear-gradient(top,#dc4742,#c5302a);
+  background-image: -o-linear-gradient(top,#dc4742,#c5302a);
+  background-image: linear-gradient(to bottom,#dc4742,#c5302a);
+}
+
+.gPlusLoginButton:active{
+  -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.gPlusLoginButton .gPlusIcon{
+  background-image: url("/img/googleSignInIcon.png");
+  width: 2em;
+  height: 2em;
+  display: inline-block;
+  vertical-align: middle;
+  background-size: 100%;
+}
+.gPlusLoginButton .verticalDivider{
+  display: inline-block;
+  height: 100%;
+  width: 1px;
+  vertical-align: middle;
+  border-right: 1px solid #aC1702;
+}
+.gPlusLoginButton .text{
+  padding: 0.25em;
+}
+
+.smallerHR hr{
+  margin: 10px 0px;
+}

@@ -1,6 +1,6 @@
 <template id="mainDisplay">
     <a href="https://github.com/jloutsenhizer/googulator" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/img/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
-    <div id="HomeHTML" style="padding-left:1em;">
+    <!--<div id="HomeHTML" style="padding-left:1em;"> <!-- This is the old home html ->
         <h1>Welcome to Googulator!</h1>
         To make it short and simple, Googulator is a gameboy emulator that you can run in your web browser using your google account!<br>
         <br>
@@ -24,7 +24,18 @@
         <strong>Changelog:</strong><br>
         <div class="g-post" data-href="https://plus.google.com/116661379917790523031/posts/3joYkgKyYte"></div>
 
+    </div>  -->
 
+    <div id="HomeHTML">
+        <h1>Welcome to Gogulator!</h1>
+        <h2>Gameboy Emulator + Google Drive storage = Googulator</h2>
+        <p>How cool would it be to play your favorite retro games* in your browserand being able to access those games (and saves) from any browser?</p>
+        <p>That's Googulator.</p>
+        <div id="buttons">
+            <a id="tellMeMoreBtn" href="javascript:void(0);" class="googBtn">Tell Me More</a><a id="getStartedBtn" href="javascript:void(0);" class="googBtn">Get Started</a>
+        </div>
 
     </div>
+    <span id="noteText">*Supports GB and NES ROMs</span>
+    <img id="googulatorHandheldImage" src="/img/newgraphics/homepage/handheld.png"/>
 </template>

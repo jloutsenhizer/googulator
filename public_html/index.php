@@ -125,7 +125,7 @@
         ?>
         <link rel="stylesheet" type="text/css" href="/lib/bootstrap.2.3.0/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="/lib/font-awesome.min.css" />
-        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="/css/newui.css" />
         <link rel="stylesheet" type="text/css" href="/lib/jquery-ui-1.10.3.custom.1/css/smoothness/jquery-ui-1.10.3.custom.min.css">
         <?php
             }
@@ -174,40 +174,38 @@
         <title><?php echo $title; ?></title>
     </head>
     <body>
-        <div class="container-fluid mainContainer">
-            <div class="navbar navbar-fixed-top">
-                <div class="navbar-inner">
-                    <div class="container" style="width: auto; padding: 0 20px;">
-                        <ul class="nav">
-                            <?php
-                                for ($i = 0; $i < count($tabs); $i++){
-                                    echo '<li class="moduleTab';
-                                    echo $tabs[$i];
-                                    if ($i == $defaultTab){
-                                        echo ' active primary';
-                                    }
-                                    if (!$tabDefaultShow[$i]){
-                                        echo ' hidden';
-                                    }
-                                    echo '"><a href="javascript:void(0);" modulename="';
-                                    echo $tabs[$i];
-                                    echo '">';
-                                    echo $tabNames[$i];
-                                    echo '</a></li>';
+        <div class="container-fluid mainContainer  <?php echo $tabs[$defaultTab];?>Contained">
+            <div class="mainNavBar">
+                <div class="mainNavBar-inner">
+                    <ul class="nav">
+                        <?php
+                            for ($i = 0; $i < count($tabs); $i++){
+                                echo '<li class="moduleTab';
+                                echo $tabs[$i];
+                                if ($i == $defaultTab){
+                                    echo ' active primary';
                                 }
-                            ?>
-                            <li>
-                                <a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a>
-                            </li>
-                        </ul>
+                                if (!$tabDefaultShow[$i]){
+                                    echo ' hidden';
+                                }
+                                echo '"><a href="javascript:void(0);" modulename="';
+                                echo $tabs[$i];
+                                echo '">';
+                                echo $tabNames[$i];
+                                echo '</a></li>';
+                            }
+                        ?>
+                        <li>
+                            <a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a>
+                        </li>
+                    </ul>
 
-                        <div id="googleUserInfo" style="padding-right:1em; position:absolute; right: 0px; top: 0px;bottom: 0px;">
-                            <div id="loadText" style='margin-top:0.25em'>Loading Google Credentials...</div>
-                            <button id="loadButton" class="gPlusLoginButton hidden" style="margin-right: -1em;">
-                                <span class="gPlusIcon"></span>
-                                <span class="verticalDivider"></span>
-                                <span class="text"> Sign In</span></button>
-                        </div>
+                    <div id="googleUserInfo" style="padding-right:1em; position:absolute; right: 0px; top: 0px;bottom: 0px;">
+                        <div id="loadText" style='margin-top:0.25em'>Loading Google Credentials...</div>
+                        <button id="loadButton" class="gPlusLoginButton hidden" style="margin-right: -1em;">
+                            <span class="gPlusIcon"></span>
+                            <span class="verticalDivider"></span>
+                            <span class="text"> Sign In</span></button>
                     </div>
                 </div>
             </div>
