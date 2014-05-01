@@ -1,9 +1,9 @@
 <?php
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings","help","goPro","admin");
-    $tabNames = array("Home","Library","Play","Settings","Help","Go Pro","Admin");
-    $tabDefaultShow = array(true,true,true,true,true,false);
+    $tabs = array("home","library","play","settings","help","goPro","about","admin");
+    $tabNames = array("Home","Library","Play","Settings","Help","Go Pro","About","Admin");
+    $tabDefaultShow = array(true,false,false,false,true,false,true,false);
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
@@ -173,8 +173,8 @@
         ?>
         <title><?php echo $title; ?></title>
     </head>
-    <body>
-        <div class="container-fluid mainContainer  <?php echo $tabs[$defaultTab];?>Contained">
+    <body class="<?php echo $tabs[$defaultTab];?>Contained">
+        <div class="container-fluid mainContainer">
             <div class="mainNavBar">
                 <div class="mainNavBar-inner">
                     <ul class="nav">
@@ -188,11 +188,16 @@
                                 if (!$tabDefaultShow[$i]){
                                     echo ' hidden';
                                 }
-                                echo '"><a href="javascript:void(0);" modulename="';
+                                echo '"><a';
+                                echo ' class="link';
+                                echo $tabs[$i];
+                                echo '"';
+                                echo ' href="javascript:void(0);" modulename="';
                                 echo $tabs[$i];
                                 echo '">';
                                 if ($tabs[$i] == "home"){
-                                    echo "<img class='mainNavBarLogo' src='/img/newgraphics/logo.png' />";
+                                    echo "<img class='mainNavBarLogo' src='/img/newgraphics/logo.png' /> Googulator";
+                                    echo '<li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>';
                                 }
                                 else{
                                     echo $tabNames[$i];
@@ -200,9 +205,6 @@
                                 echo '</a></li>';
                             }
                         ?>
-                        <li>
-                            <a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a>
-                        </li>
                     </ul>
 
                     <div id="googleUserInfo" style="padding-right:1rem; position:absolute; right: 0px; top: 0px;bottom: 0px;">

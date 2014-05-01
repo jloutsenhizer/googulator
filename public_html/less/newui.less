@@ -1,6 +1,7 @@
 @topbarheight: 38px;
 @linkcolor: #FFF;
 @defaultFont: Roboto;
+@defaultFontCondensed: 'Roboto Condensed';
 @classicFont: VolterGoldfish;
 @homePagePadding: 4em;
 @gameboyWidth: 430px;
@@ -56,13 +57,12 @@ html, body{
   background-color: #323232;
   background-image:url("/img/newgraphics/background_repeat.png");
   background-repeat: repeat;
-}
-
-.homeContained{
-  background-color: #2e6794;
-  background-image:url("/img/newgraphics/homepage/background_new.jpg");
-  background-position: center center;
-  background-repeat: none;
+  .homeContained &{
+    background-color: #2e6794;
+    background-image:url("/img/newgraphics/homepage/background_new.jpg");
+    background-position: center center;
+    background-repeat: none;
+  }
 }
 
 #moduleContainerhome{
@@ -87,10 +87,12 @@ html, body{
   height: @topbarheight;
   z-index: 100;
   background:rgba(0,0,0,0.2);
+  font-family: @defaultFontCondensed;
   .mainNavBar-inner{
     ul{
       li{
        display:inline-block;
+        vertical-align:top;
         line-height:@topbarheight;
         a{
           padding-left:0.5em;
@@ -109,10 +111,15 @@ html, body{
   }
 
   .mainNavBarLogo{
-      height: @topbarheight - 6px;
-      margin-top: 3px;
-      margin-bottom:3px;
+      height: @topbarheight * 0.8;
+      margin-top: @topbarheight * 0.1;
+      margin-bottom:@topbarheight * 0.1;
       vertical-align:top;
+  }
+
+  .linkhome{
+    font-family: @classicFont;
+
   }
 
   .profileImage{

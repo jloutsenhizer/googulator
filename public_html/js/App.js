@@ -151,7 +151,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                 if (typeof chrome != "undefined"){
                     if (chrome.app != null && chrome.app.getIsInstalled != null && chrome.webstore != null && chrome.webstore.install != null){
                         if (!chrome.app.getIsInstalled()){
-                            $("ul.nav").append($("<li id='webstoreinstallparent'><a href='javascript:void(0);' id='webstoreinstalllink'>Add to Chrome</a></li>"));
+                            $("<li id='webstoreinstallparent'><a href='javascript:void(0);' id='webstoreinstalllink'>Add to Chrome</a></li>").insertAfter($("ul.nav .moduleTabhome"));
                             $("#webstoreinstalllink").click(function(){
                                 event.preventDefault();
                                 chrome.webstore.install($("link[rel='chrome-webstore-item']").attr("href"),function(){
@@ -216,9 +216,9 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                     container.removeClass("unactive");
                     activeModule.onActivate(params);
                     for (var mname in modules){
-                        $(".mainContainer").removeClass(mname + "Contained");
+                        $("body").removeClass(mname + "Contained");
                     }
-                    $(".mainContainer").addClass(modulename + "Contained")
+                    $("body").addClass(modulename + "Contained")
                 }
             });
 

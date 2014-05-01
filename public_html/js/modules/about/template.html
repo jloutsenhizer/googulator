@@ -1,0 +1,119 @@
+<template id="mainDisplay">
+    <div class="center">
+        <div class="smallerHR" style="width:50%; display:inline-block; text-align:left">
+            <h1 class="center">Googulator Help and Information Center</h1>
+            <hr>
+            <p>Welcome to the Googulator Help and Information Center. Here, you will find information to help you
+            troubleshoot issues with Googulator and get started using it!</p>
+            <hr>
+            <h3>I can't login!</h3>
+            <hr>
+            <p>Logging into Googulator can be troublesome, but can be resolved relatively easily. First, try these steps:
+            <ol>
+                <li>Make sure you have a Google Account</li>
+                <li>Make sure you aren't using any antitracking software</li>
+                <li>Make sure cookies are enabled for www.googulator.com</li>
+                <li>If you still can't login try disabling all extensions/plugins in your browser
+                    <ul>
+                        <li>If this resolves the problem. Reenable extensions/plugins one by one until you find the one causing the issue and <a target="_blank" href="mailto:support@googulator.com">let us know about it</a></li>
+                    </ul>
+                </li>
+            </ol>
+            If, after trying all of these steps, <a target="_blank" href="mailto:support@googulator.com">email us</a> and we can try to fix the issue</p>
+            <hr>
+            <h3>How do I get/play games?</h3>
+            <hr>
+            <p>On the <a href="javascript:void(0)" modulename="library">Library tab</a>, there is a button towards the upper left corner that says "Add Games". Click this and a menu appears where you can choose to add
+            games from google drive or from the free library. Games from the free library must be saved too google drive to be played. Game files that Googulator runs
+            are called ROMs. These are copies of the data from game cartridges. You can try searching <a target="_blank" href="https://www.google.com/">Google</a> for
+            ROMs of the games you want to play. However, if you don't own the games it's illegal for you to download and play ROMs of commercial games.<br>
+            Additionally, you can't add games if you're not logged in. If you're having issues adding games make sure you're logged in.</p>
+            <hr>
+            <h3>Can I move my games inside Google Drive?</h3>
+            <hr>
+            <p>Yes! Googulator references files by ID, so you can move them to any directory you would like and they should still be able to load perfectly fine.</p>
+            <hr>
+            <h3>My games aren't being added to my library!</h3>
+            <hr>
+            <p>This could happen for a few different reasons:
+            <ol>
+                <li>The file is corrupted</li>
+                <li>The file isn't a game file</li>
+                <li>The file is for a game system that is not supported</li>
+            </ol>
+            Googulator supports the following systems:
+            <ol>
+                <li>Gameboy Pocket</li>
+                <li>Gameboy Color</li>
+                <li>Super Gameboy</li>
+                <li>Nintendo Entertainment System</li>
+            </ol>
+            Games for other systems, including Gameboy Advance and Super Nintendo Entertainment System, can not be added to your library nor played in Googulator.</p>
+            <hr>
+            <h3>How do I edit controls?</h3>
+            <hr>
+            <p>This can be done from the <a href="javascript:void(0);" modulename="settings">Settings tab</a>. You can enable/disable each controller for each player
+            you want to be playing. You can then select which controller type you want that player to use. When you switch a controller type the default buttons for that
+            controller are enabled. You can click the button for each mapping and then press the key/button that you want to switch it to.</p>
+            <hr>
+            <h3>What are save states?</h3>
+            <p>Save states (also known as snapshots) are saves that contain all of the state of the emulator when they are created. For instance, if you enable save states
+            for a game that does not have any save support, then when you turn off the game and load it again later you will resume exactly where you had stopped previously.
+            Not only do you get saves for games that don't have built in saving, but you also get the ability to stop playing a game at any point and have a save.<br>
+            Googulator also supports quick save states. These are not saved to files anywhere but instead are only kept until you turn a game off. These can be used to quickly
+            make checkpoints before you try and play a challenging part of the game and if you lose you can simply press the load quick save state button and then try again.</p>
+            <hr>
+            <h3>Why do my games have weird names and no cover art?</h3>
+            <hr>
+            <p>ROMs don't store this information in them so a separate database has to be maintained. Some games like NES games, don't even have any type of real game ID in the ROM.
+            In that case we take a checksum of the entire game to produce it's unique ID and try to map IDs from games to names. If we don't have a mapping, Googulator just shows the
+            ID it has assigned to the game. When viewing a game, you can click the pencil next to the title in order to edit the name locally for your library. At this time we don't have
+            support for users to edit the cover art of a game.</p>
+            <hr>
+            <h3>How do I use offline mode?</h3>
+            <hr>
+            <p>Before reading further, please understand that offline mode is currently in <b>beta</b>. This means that it is not fully complete and there is risk of your data
+            becoming corrupted which could mean loss of save data. If that didn't scare you off then here are the details of offline mode. There are two types of offline mode
+            for googulator: with and without local storage. Offline mode without local storage is always enabled for all accounts since it doesn't run any risk of damaging files.
+            This mode will allow googulator to work if www.googulator.com becomes unavailable, <b>but</b> google.com is still accessible. In this mode you can do all tasks the same
+            way as you do when you're online except access the free game library.<br>
+            The other type of offline mode is with local storage. In this mode a local filesystem is created for Googulator to cache files from google drive. So that when you are
+            offline or if Google ever goes offline you can still access some of your games. This is the part of the offline mode that could run into issues and has some drawbacks.
+            Here's a list of issues that could possibly happen due to offline mode:
+            <ol>
+                <li>Offline mode is in <b>beta</b>. This means it could possibly cause permanent damage/loss of save data for your games!</li>
+                <li>Only games that have been previously downloaded can be played in offline mode</li>
+                <li>Currently you cannot switch from offline to online or vice versa in the same session</li>
+                <li>Updated save data while offline does not synchronise with Google Drive until you load the app in online mode from the same computer</li>
+                <li>Offline mode uses up hard drive space on your computer</li>
+                <li>Offline mode currently only works on Google Chrome and Opera</li>
+            </ol>
+            To enable offline mode perform the following steps:
+            <ol>
+                <li>Go to the <a href="javascript:void(0);" modulename="settings">Settings tab</a></li>
+                <li>Click the checkbox to enable offline mode</li>
+                <li>If prompted to allow more local storage click yes</li>
+                <li>Go to the <a href="javascript:void(0);" modulename="library">Library tab</a></li>
+                <li>Select games you want available offline and check "Make available offline"</li>
+                <li>If during this process you are prompted for more storage, click yes</li>
+            </ol>
+            Once offline mode is enabled, the games you check to have available offline are guaranteed to have their files stored locally for you to use offline.
+            Additionally, Googulator requests an extra 40MB of storage to use for temporarily storing files. As you play games the ones played most recently will be stored
+            in temporarily offline and you will be able to play those games in offline mode even if you haven't checked the make available offline option.
+            </p>
+            <hr>
+            <h3>Why's the sound all messed up?</h3>
+            <hr>
+            <p>The sound emulation for Gameboy games is currently very bad. It will be fixed eventually, I'm sorry.</p>
+            <hr>
+            <h3>How can I make the game run faster?</h3>
+            <hr>
+            <p>If your game is running slow, right now the only option is to disable sound by dragging the volume slider all the way to the left. In the future, the emulator will
+            get more optimizations and more options for speeding it up.</p>
+            <hr>
+
+            <p><b>Still having issues? </b> Send us an email at <a target="_blank" href="mailto:support@googulator.com">support@googulator.com</a></p>
+
+        </div>
+    </div>
+</template>
