@@ -95,7 +95,12 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                 if (getParams.state != null)
                     driveOverlay = App.createMessageOverlay($("body"),"Loading your file...");
                 $(document).on("click","a",function(event){
-                    var moduleName = event.target.getAttribute("modulename");
+                    var target = event.target;
+                    while (target.tagName.toLowerCase() != "a" && target != null)
+                        target = target.parentElement;
+                    if (target == null)
+                        return true;
+                    var moduleName = target.getAttribute("modulename");
                     if (moduleName == null){
                         return true;
                     }

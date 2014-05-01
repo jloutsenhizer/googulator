@@ -1,7 +1,7 @@
 @topbarheight: 38px;
 @linkcolor: #FFF;
 @defaultFont: Roboto;
-@classicFont: Visitor;
+@classicFont: VolterGoldfish;
 @homePagePadding: 4em;
 @gameboyWidth: 430px;
 @gameboyWidthRatio: 0.31478770131;
@@ -60,7 +60,7 @@ html, body{
 
 .homeContained{
   background-color: #2e6794;
-  background-image:url("/img/newgraphics/homepage/background.jpg");
+  background-image:url("/img/newgraphics/homepage/background_new.jpg");
   background-position: center center;
   background-repeat: none;
 }
@@ -95,12 +95,24 @@ html, body{
         a{
           padding-left:0.5em;
           padding-right:0.5em;
+
           &:hover{
             background:rgba(0,0,0,0.1);
           }
         }
       }
     }
+  }
+
+  a:hover{
+    background:rgba(0,0,0,0.1);
+  }
+
+  .mainNavBarLogo{
+      height: @topbarheight - 6px;
+      margin-top: 3px;
+      margin-bottom:3px;
+      vertical-align:top;
   }
 
   .profileImage{
@@ -113,17 +125,22 @@ html, body{
   border-top:4px solid white;
 }
 
+.classicFont{
+  font-family: Visitor;
+}
+
 #HomeHTML{
   padding-left: @homePagePadding;
   width:calc(~"100%" - @homePagePadding * 2.5 ~"- 100% *" @gameboyWidthRatio);
+  text-shadow: 1px 1px rgba(0,0,0,0.2);
 
   h1, h2{
     text-align: center;
   }
   h1{
     margin-top:1em;
-    font-size: 50pt;
-    line-height: 50pt;
+    font-size: 48pt;
+    line-height: 48pt;
   }
   h2{
     font-size: 18pt;
@@ -167,6 +184,8 @@ html, body{
   left:0px;
   bottom:0px;
   padding-left:1em;
+  font-size: 8pt;
+  text-shadow: 1px 1px rgba(0,0,0,0.2);
 }
 
 

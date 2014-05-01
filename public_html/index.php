@@ -191,7 +191,12 @@
                                 echo '"><a href="javascript:void(0);" modulename="';
                                 echo $tabs[$i];
                                 echo '">';
-                                echo $tabNames[$i];
+                                if ($tabs[$i] == "home"){
+                                    echo "<img class='mainNavBarLogo' src='/img/newgraphics/logo.png' />";
+                                }
+                                else{
+                                    echo $tabNames[$i];
+                                }
                                 echo '</a></li>';
                             }
                         ?>
@@ -201,7 +206,7 @@
                     </ul>
 
                     <div id="googleUserInfo" style="padding-right:1rem; position:absolute; right: 0px; top: 0px;bottom: 0px;">
-                        <div id="loadText" style='margin-top:0.25em'>Loading Google Credentials...</div>
+                        <div id="loadText" style='margin-top:3px; margin-bottom:3px;'>Loading Google Credentials...</div>
                         <button id="loadButton" class="gPlusLoginButton hidden" style="margin-right: -1rem;">
                             <span class="gPlusIcon"></span>
                             <span class="verticalDivider"></span>
