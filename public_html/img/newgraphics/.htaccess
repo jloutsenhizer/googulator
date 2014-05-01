@@ -1,0 +1,7 @@
+#disablecaching:
+<filesMatch "\.(svg|png|jpg)$">
+  FileETag None
+  <ifModule mod_expires.c>
+     ExpiresActive off
+  </ifModule>
+</filesMatch>
