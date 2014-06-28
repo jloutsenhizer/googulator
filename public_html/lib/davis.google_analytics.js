@@ -47,7 +47,8 @@ Davis.googleAnalytics = function () {
          * Track this request in google analytics
          */
         track: function () {
-            if (_gaq) _gaq.push(['_trackPageview', this.path])
+            if (window.ga !== undefined && window.ga !== null) ga('send', 'pageview', this.path);
+            else if (window._gaq !== undefined && window._gaq !== null) _gaq.push(['_trackPageview', this.path]);
         }
     })
 }
