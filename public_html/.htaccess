@@ -54,6 +54,7 @@ DirectoryIndex index.php
 
 #disablecaching:
 <filesMatch "\.(html|htm|js|css|php)$">
+  Header set Cache-Control "no-cache, no-store"
   FileETag None
   <ifModule mod_expires.c>
      ExpiresActive off
