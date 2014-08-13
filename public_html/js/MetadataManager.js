@@ -94,13 +94,15 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                                 }
                                 else{
                                     App.showModalMessage("Error","Failed to update metadata reference id!",function(){
-                                        MetadataManager.loadMEtadata(callback);
+                                        overlay.remove();
+                                        MetadataManager.loadMetadata(callback);
                                     });
                                 }
                             },
                             error: function(){
                                 App.showModalMessage("Error","Failed to update metadata reference id!",function(){
-                                    MetadataManager.loadMEtadata(callback);
+                                    overlay.remove();
+                                    MetadataManager.loadMetadata(callback);
                                 });
                             }
 
@@ -123,12 +125,14 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                                     }
                                     else{
                                         App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                            overlay.remove();
                                             MetadataManager.loadMetadata(callback);
                                         });
                                     }
                                 },
                                 error: function(){
                                     App.showModalMessage("Error","Failed to update metadata reference id!",function(){
+                                        overlay.remove();
                                         MetadataManager.loadMetadata(callback);
                                     });
 

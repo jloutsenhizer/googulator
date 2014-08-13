@@ -1,4 +1,5 @@
 <?php
+die;
 require_once "include.php";
 require_once "../../configuration.php";
 require_once "../../include.php";

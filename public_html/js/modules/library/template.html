@@ -1,6 +1,7 @@
 <template id="gameDisplay">
         <img src="{{image}}" onerror="this.src='/img/defaultCover.png'">
         <h1>{{title}} <a class="editGameTitle" href="javascript:void(0);" title="Edit Title"><i class="fa fa-pencil"></i></a></h1>
+        <div class="alert alert-warning"><b>WARNING:</b> SaveState saving has had some bugs that can lead to lost of your game save. It is recommended you have it disabled and use normal in-game saves.</div>
         <div class="btn-group">
             <label class="checkbox">
                 <input id="useSaveState" type="checkbox" {{#saveStateEnabled}}checked{{/saveStateEnabled}}> Use SaveState Saving

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-node r.js -o app.build.js
+nodejs r.js -o app.build.js
 rm public_html_optimized/build.txt #clean up build log
 
 

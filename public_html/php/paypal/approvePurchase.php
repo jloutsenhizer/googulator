@@ -1,4 +1,5 @@
 <?php
+die;
 header('Content-type: application/json');
 require_once "include.php";
 require_once "../../configuration.php";
