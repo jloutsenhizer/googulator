@@ -1,8 +1,8 @@
 <?php
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings","help","goPro","admin");
-    $tabNames = array("Home","Library","Play","Settings","Help","Go Pro","Admin");
+    $tabs = array("home","library","play","settings","help","admin");
+    $tabNames = array("Home","Library","Play","Settings","Help","Admin");
     $tabDefaultShow = array(true,true,true,true,true,false);
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
