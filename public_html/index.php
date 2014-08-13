@@ -196,8 +196,14 @@
                                     echo '</a></li>';
                                 }
                             ?>
-                            <li>
-                                <a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"">
+                                    Social <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" style="width:100%; margin-top:12px;">
+                                    <li><a href="https://www.twitter.com/googulator" target="_blank">Twitter</a></li>
+                                    <li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>
+                                </ul>
                             </li>
                         </ul>
 
