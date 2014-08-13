@@ -169,6 +169,15 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
         return false;
     }
 
+    function updateSaveStateSaving(display){
+        if (!display.find("#useSaveState")[0].checked){
+            display.find("#useSaveState")[0].disabled = "disabled";
+            display.find("#useSaveState").parent().click(function(event){
+                App.showModalMessage("SaveState saving disabled","SaveState saving is currently disabled until bugs around it are fixed. You can still save using the in game save function and shutting the game off.");
+            });
+        }
+    }
+
     function selectGame(game){
         Davis.location.assign("/library/game/" + encodeURIComponent(game.id));
         selectedGame = game;
@@ -223,6 +232,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                         }
 
                     });
+                    updateSaveStateSaving(display);
                     display.find("#useSaveState").click(function(event){
                         //App.showModalConfirmation
                         if (event.delegateTarget.checked){
@@ -275,6 +285,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                                         if (overlay != null)
                                             overlay.remove();
                                         overlay = null;
+                                        updateSaveStateSaving(display);
                                     },progressUpdate);
                                 }
                                 else{
