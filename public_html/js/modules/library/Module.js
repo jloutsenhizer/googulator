@@ -10,6 +10,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
 
     var authenticated = false;
     var gameIdFromUrl = null;
+    var active = false;
 
 
 
@@ -37,9 +38,18 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
 
         if (!authenticated)
             overlay = App.createMessageOverlay(container,"You must login with google before you can access your library!");
+
+        $(window).resize(function(){
+            if (!active){
+                return;
+            }
+            $("#GameDisplayArea img").css("max-width",$("#GameDisplayArea").width());
+            $("#GameDisplayArea img").css("max-height",$("#GameDisplayArea").height() * 0.5);
+        });
     }
 
     Module.onActivate = function(params){
+        active = true;
         if (Davis.location.current() != "/library" && Davis.location.current().indexOf("/library/") != 0){
             if (selectedGame == null)
                 Davis.location.assign("/library");
@@ -61,6 +71,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
     }
 
     Module.onFreeze = function(){
+        active = false;
 
     }
 
@@ -191,6 +202,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                         availableOffline: availableOffline
                     },game)));
                     $("#GameDisplayArea").append(display);
+                    $(window).resize();
                     display.find("#play").click(function(event){
                         event.preventDefault();
                         loadGame(game);
