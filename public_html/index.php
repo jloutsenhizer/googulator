@@ -1,9 +1,9 @@
 <?php
     include "configuration.php";
     include "include.php";
-    $tabs = array("home","library","play","settings","help","goPro","about","admin");
-    $tabNames = array("Home","Library","Play","Settings","Help","Go Pro","About","Admin");
-    $tabDefaultShow = array(true,false,false,false,true,false,true,false);
+    $tabs = array("home","library","play","settings","help","about","admin");
+    $tabNames = array("Home","Library","Play","Settings","Help","About","Admin");
+    $tabDefaultShow = array(true,false,false,false,true,true,false);
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
