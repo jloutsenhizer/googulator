@@ -1,5 +1,6 @@
 @topbarheight: 38px;
-@linkcolor: #FFF;
+@linkcolor: #DDD;
+@normalTextColor: #FFF;
 @defaultFont: Roboto;
 @defaultFontCondensed: 'Roboto Condensed';
 @classicFont: VolterGoldfish;
@@ -8,6 +9,7 @@
 @gameboyWidthRatio: 0.31478770131;
 @mainBarLogoWidthToHeight: 94 / 77;
 @buttonColor: #4386fc;
+@goodBlack: #333;
 
 @import "fonts.less";
 
@@ -26,10 +28,11 @@ html, body{
   font-weight: 300;
   font-size: 16pt;
   line-height: 16pt;
-  color:white;
+  color: @normalTextColor;
 
   a{
     color:@linkcolor;
+    font-weight: bold;
 
     &:visited{
       color:@linkcolor;
@@ -99,8 +102,10 @@ html, body{
         a{
           padding-left:0.5em;
           padding-right:0.5em;
+          font-weight: normal;
+          color: @normalTextColor;
 
-          &:hover{
+          &:hover, &:focus{
             background:rgba(0,0,0,0.1);
           }
         }
@@ -138,10 +143,11 @@ html, body{
     border-radius:100%;
     height: @topbarheight - 6px;
   }
-}
 
-.caret{
-  border-top:4px solid white;
+  .caret{
+    border-top: 4px solid white;
+    margin-top: 16px;
+  }
 }
 
 .classicFont{
@@ -187,11 +193,13 @@ html, body{
 
 .googBtn{
   background-color:@buttonColor;
+  color: @normalTextColor;
   padding:1em;
   margin-left:2em;
   margin-right:2em;
   display:inline-block;
   &:hover{
+    color: darken(@normalTextColor,10%);
     background-color:lighten(@buttonColor,5%);
     text-decoration:none;
   }
@@ -402,6 +410,17 @@ html, body{
 #libraryListContainer .btn-group .dropdown-menu{
   width: 100%;
   text-align:center;
+}
+
+.dropdown-menu{
+  color: @goodBlack;
+  .center;
+  li {
+    width: 100%;
+    a{
+      color: @goodBlack !important;
+    }
+  }
 }
 
 #libraryList{

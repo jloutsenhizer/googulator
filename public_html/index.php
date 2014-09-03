@@ -114,6 +114,10 @@
                 $title .= " - Help";
                 $defaultTab = array_search("help",$tabs);
             }
+            else if (strpos($requestURI,"/about") === 0){
+                $title .= " - About";
+                $defaultTab = array_search("about",$tabs);
+            }
 
         ?>
         <?php
@@ -196,13 +200,23 @@
                                 echo $tabs[$i];
                                 echo '">';
                                 if ($tabs[$i] == "home"){
-                                    echo "<i class='mainNavBarLogo'></i> Googulator";
-                                    echo '<li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>';
+                                    echo "<i class='mainNavBarLogo'></i> Googulator</a></li>";
+                                    ?>
+                                    <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"">
+                                            Social <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu" style="min-width:100%; margin-top:6px;">
+                                            <li><a href="https://www.twitter.com/googulator" target="_blank">Twitter</a></li>
+                                            <li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>
+                                        </ul>
+                                    </li>
+                                    <?php
                                 }
                                 else{
                                     echo $tabNames[$i];
+                                    echo '</a></li>';
                                 }
-                                echo '</a></li>';
                             }
                         ?>
                     </ul>

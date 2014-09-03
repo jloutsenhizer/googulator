@@ -6,15 +6,15 @@ define(function(){
     var container;
 
     Module.init = function(c){
-        App.davis.get("/help",function(req){
-            App.setActiveModule("help");
-            document.title = "Googulator - Help";
+        App.davis.get("/about",function(req){
+            App.setActiveModule("about");
+            document.title = "Googulator - About";
         });
     }
 
     Module.onActivate = function(params){
-        if (Davis.location.current() != "/help")
-            Davis.location.assign("/help");
+        if (Davis.location.current() != "/about")
+            Davis.location.assign("/about");
     }
 
     Module.onFreeze = function(){
