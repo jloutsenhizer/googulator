@@ -54,7 +54,6 @@ define(["GameUtils","CopyUtils"],function(GameUtils,CopyUtils){
                     return;
                 case 0xA000:
                 case 0xB000://RAM
-                    console.log("battery backed ram written!");
                     this.ramData[offset - 0xA000] = data;
                     return;
             }
