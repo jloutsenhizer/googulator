@@ -104,6 +104,10 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             showCheatDialog();
         });
 
+        $("#screenshot").click(function(){
+            takeScreenshot();
+        });
+
 
 
         loadApp(currentApp,null);
@@ -152,6 +156,7 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
 
     function turnGameOff(callback){
         $("#gameboyOff").attr('disabled',"disabled");
+        $("#screenshot").attr("disabled","disabled");
         overlay = App.createMessageOverlay(container,"Turning Game Off...");
         if (cheatsModal != null){
             cheatsModal.off("hidden.resume");
@@ -178,6 +183,10 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
     var keyhandler = function(event){
         if (!active)
             return false;
+        if (event.button == App.constants.BUTTON_SCREENSHOT){
+            takeScreenshot();
+            return currentApp.supportsScreenshot();
+        }
         return currentApp.handleKey(event);
     };
 
@@ -337,7 +346,12 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
         else{
             $("#cheats").attr("disabled","disabled");
         }
-
+        if (app.supportsScreenshot()){
+            $("#screenshot").removeAttr("disabled");
+        }
+        else{
+            $("#screenshot").attr("disabled","disabled");
+        }
 
     }
 
@@ -376,6 +390,20 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
             cheatsModal.find(".deleteCheat").click(deleteCheatClickHandler)
 
         })
+    }
+
+    function takeScreenshot(){
+        if (currentApp == null || !currentApp.supportsScreenshot()){
+            return;
+        }
+        var link = document.createElement("a");
+        link.download = "Screenshot";
+        if (currentGameTitle != null){
+            link.download += " of " + currentGameTitle
+        }
+        link.download += " on " + new Date() + ".png";
+        link.href = currentApp.screenshotDataUri();
+        link.click();
     }
 
     checkFrames();

@@ -88,8 +88,18 @@ define([],function(){
     }
 
     GameApp.prototype.getCodeList = function(){
-        console.warn("GameAPp.getCodeList not implemented, using stub.");
+        console.warn("GameApp.getCodeList not implemented, using stub.");
         return [];
+    }
+
+    GameApp.prototype.supportsScreenshot = function(){
+        console.warn("GameApp.supportsScreenshot not implemented, using stub.");
+        return false;
+    }
+
+    GameApp.prototype.screenshotDataUri = function(){
+        console.warn("GameApp.screenshotDataUri not implemented, using stub.");
+        return "";
     }
 
     return GameApp;

@@ -18,6 +18,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
     App.constants.BUTTON_RIGHT = 7;
     App.constants.QUICK_SAVE_STATE = 8;
     App.constants.QUICK_LOAD_STATE = 9;
+    App.constants.BUTTON_SCREENSHOT = 10;
 
     var container;
     var active = false;
@@ -209,6 +210,10 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                         if (event.up)
                             button = App.constants.QUICK_LOAD_STATE;
                         break;
+                    case controller.screenshot:
+                        if (event.up)
+                            button = App.constants.BUTTON_SCREENSHOT;
+                        break;
                 }
                 if (button != App.constants.BUTTON_INVALID){
                     events.push(generateEvent(i,button,!event.up));
@@ -246,7 +251,11 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                         case controller.quickLoadState:
                             if (event.up)
                                 button = App.constants.QUICK_LOAD_STATE;
-                            break;;
+                            break;
+                        case controller.screenshot:
+                            if (!event.up)
+                                button = App.constants.BUTTON_SCREENSHOT;
+                            break;
                     }
                 }
                 if (button != App.constants.BUTTON_INVALID){
@@ -296,8 +305,12 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                                 button = App.constants.QUICK_SAVE_STATE;
                             break;
                         case controller.quickLoadState:
-                            if (event.pressed)
+                            if (!event.pressed)
                                 button = App.constants.QUICK_LOAD_STATE;
+                            break;
+                        case controller.screenshot:
+                            if (event.pressed)
+                                button = App.constants.BUTTON_SCREENSHOT;
                             break;
                     }
                     if (button != App.constants.BUTTON_INVALID){
@@ -470,7 +483,8 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "up": 38,
                     "down": 40,
                     "quickSaveState": 53,
-                    "quickLoadState": 54
+                    "quickLoadState": 54,
+                    "screenshot": null
                 },
                 "1":{ //iCade
                     "a": 6,
@@ -482,7 +496,8 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "up": 1,
                     "down": 2,
                     "quickSaveState": 7,
-                    "quickLoadState": 9
+                    "quickLoadState": 9,
+                    "screenshot": null
                 },
                 "2":{//Gamepad
                     "a": 0,
@@ -494,7 +509,8 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "up": 12,
                     "down": 13,
                     "quickSaveState": 4,
-                    "quickLoadState": 5
+                    "quickLoadState": 5,
+                    "screenshot": null
                 },
                 "3":{//Twitch Chat
                     "a":"a",
@@ -507,7 +523,8 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "down":"down",
                     "quickSaveState": null,
                     "quickLoadState": null,
-                    "channel": null
+                    "channel": null,
+                    "screenshot": null
                 }
             },
             "transformKeyInput": transformKeyInput,

@@ -364,6 +364,13 @@ define(["modules/play/GameApp","nescore/cpu","nescore/ppu","nescore/papu","nesco
         },
         getCodeList: function(){
             return this.gameGenie.getCodeList();
+        },
+        supportsScreenshot: function(){
+            return true;
+        },
+
+        screenshotDataUri: function(){
+            return this.opts.canvas.toDataURL();
         }
     };
 

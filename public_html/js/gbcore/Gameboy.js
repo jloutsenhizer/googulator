@@ -299,5 +299,13 @@ define(["GameUtils","modules/play/GameApp","gbcore/CPUEmulator","gbcore/GameLoad
         return Gameshark.getCodeList().concat(GameGenie.getCodeList())
     }
 
+    Gameboy.supportsScreenshot = function(){
+        return true;
+    }
+
+    Gameboy.screenshotDataUri = function(){
+        return canvas.toDataURL();
+    }
+
     return Gameboy;
 });
