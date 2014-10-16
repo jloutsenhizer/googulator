@@ -234,6 +234,9 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
                 $(".moduleTabadmin").remove();
             }
             GoogleAPIs.getUserInfo(function(userInfo){
+                if (window.ga != null){ //sets the userid to better identify if someone is a specific user or not for analytics
+                    window.ga('set', '&uid', userInfo.id);
+                }
                 App.loadMustacheTemplate("globalTemplates.html","userInfoDisplay",function(template){
                     $("#googleUserInfo").html(template.render({
                         picture: userInfo.picture == null ? "/img/genericProfilePicture.png" : userInfo.picture,
@@ -310,7 +313,6 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
         else{
             afterResync();
         }
-
     }
 
     App.loadMustacheTemplate = function(templatePath,templateId,onLoad){
