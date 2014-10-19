@@ -69,7 +69,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
             }
             console.log(arguments);
         });
-        PushBullet.init(window.configuration.pushbullet.clientId);
+        PushBullet.init(window.configuration.pushbullet.clientId,window.configuration.pushbullet.redirectURI);
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
             OfflineUtils.initialize(function(){

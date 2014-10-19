@@ -95,9 +95,9 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     var text = mainMessageText;
                     var discussLink = dialog.find("#gPlusDiscussLink").val();
                     text += "\n\nDiscuss these updates:\n" + discussLink;
-                    text += "\n\nCheck out these updates now:\nhttp://www.googulator.com/";
-                    text += "\n\nFollow us on Twitter:\nhttp://www.twitter.com/googulator";
-                    text += "\n\nSubscribe to our Pushbullet Channel:\n" + "https://www.pushbullet.com/channel?tag=" + window.configuration.pushbullet.channelId;
+                    text += "\nCheck out these updates now:\nhttp://www.googulator.com/";
+                    text += "\nFollow us on Twitter:\nhttp://www.twitter.com/googulator";
+                    text += "\nSubscribe to our Pushbullet Channel:\n" + "https://www.pushbullet.com/channel?tag=" + encodeURIComponent(window.configuration.pushbullet.channelId);
                     dialog.modal("hide");
                     App.showModalConfirmation("Confirm Email Text","Please confirm you are certain you want to send the following email out:\n" + text,function(agreed){
                         if (agreed){

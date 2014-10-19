@@ -2,8 +2,9 @@
 
     var PushBullet = {};
 
-    PushBullet.init = function(clientId){
+    PushBullet.init = function(clientId, redirectUri){
         this.clientId = clientId;
+        this.redirectUri = redirectUri;
         this.accessToken = localStorage.pushBulletAccessToken;
     };
 
@@ -16,7 +17,7 @@
 
     //attempts to obtain a working accessToken, once Obtained it callsback with true
     PushBullet.doAuth = function(callback){
-        var popup = window.open("https://www.pushbullet.com/authorize?client_id=" + PushBullet.clientId + "&redirect_uri=" + encodeURIComponent("http://localhost:8081/pushbulletauthorization.html") + "&response_type=token",
+        var popup = window.open("https://www.pushbullet.com/authorize?client_id=" + encodeURIComponent(PushBullet.clientId) + "&redirect_uri=" + encodeURIComponent(this.redirectUri) + "&response_type=token",
                                 "_blank","height=600,width=500,left=" + Math.round($(document).width() / 2 - 250) + ",top=" + Math.round($(document).height() / 2 - 300));
 
         function onClosed(){
