@@ -62,13 +62,14 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
 
 
     App.initialize = function(){
-        Twitch.init({clientId: configuration.twitch.clientId}, function(error, status) {
+        Twitch.init({clientId: window.configuration.twitch.clientId}, function(error, status) {
             App.twitchReady = true;
             if (status.authenticated){
                 App.twitchAccessToken = status.token;
             }
             console.log(arguments);
         });
+        PushBullet.init(window.configuration.pushbullet.clientId);
         App.loadMustacheTemplate("globalTemplates.html","greyMessageOverlay",function(template){
             overlayTemplate = template;
             OfflineUtils.initialize(function(){

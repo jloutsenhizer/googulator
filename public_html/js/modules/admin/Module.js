@@ -91,10 +91,19 @@ define(["GoogleAPIs"],function(GoogleAPIs){
                     dialog.modal("hide");
                 });
                 dialog.find('.sendBtn').click(function(){
-                    var text = dialog.find(".emailMessage").val();
+                    var mainMessageText = dialog.find(".emailMessage").val();
+                    var text = mainMessageText;
+                    var discussLink = dialog.find("#gPlusDiscussLink").val();
+                    text += "\n\nDiscuss these updates:\n" + discussLink;
+                    text += "\n\nCheck out these updates now:\nhttp://www.googulator.com/";
+                    text += "\n\nFollow us on Twitter:\nhttp://www.twitter.com/googulator";
+                    text += "\n\nSubscribe to our Pushbullet Channel:\n" + "https://www.pushbullet.com/channel?tag=" + window.configuration.pushbullet.channelId;
                     dialog.modal("hide");
                     App.showModalConfirmation("Confirm Email Text","Please confirm you are certain you want to send the following email out:\n" + text,function(agreed){
                         if (agreed){
+                            //send out the pushbullet push
+                            PushBullet.pushToChannel(window.configuration.pushbullet.channelId,new PushBullet.Link("New Updates to Googulator",mainMessageText,discussLink));
+                            //send out the email to the mailing list, this code really needs to be improved :x
                             var overlay = App.createMessageOverlay(container,$("<div class='message'>Sending out update email, do not close the tab...</div><div class='pbar'></div>"));
                             $.ajax("/php/admin/getEmailListSize.php?googletoken=" + encodeURIComponent(GoogleAPIs.getAuthToken()),{
                                 success:function(result){
@@ -152,6 +161,23 @@ define(["GoogleAPIs"],function(GoogleAPIs){
             })
 
         });
+
+        container.find(".loginToPushbullet").attr("disabled","disabled");
+        function afterPushBulletAuth(loggedIn) {
+            if (!loggedIn){
+                container.find(".loginToPushbullet").removeAttr("disabled");
+            }
+            else{
+                container.find(".loginToPushbullet")[0].innerText = "Logged In To PushBullet";
+            }
+
+        }
+
+        container.find(".loginToPushbullet").click(function(){
+            container.find(".loginToPushbullet").attr("disabled","disabled");
+            PushBullet.doAuth(afterPushBulletAuth);
+        });
+        PushBullet.checkAuth(afterPushBulletAuth);
 
     }
 

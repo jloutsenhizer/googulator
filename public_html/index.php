@@ -145,6 +145,12 @@
             echo "twitch:{";
             echo "clientId:'";
             echo $TWITCH_CLIENT_ID;
+            echo "'},";
+            echo "pushbullet:{";
+            echo "clientId:'";
+            echo $PUSHBULLET_CLIENT_ID;
+            echo "', channelId:'";
+            echo $PUSHBULLET_CHANNEL_ID;
             echo "'}};";
             ?>
         </script>
@@ -167,6 +173,7 @@
         <script src="/lib/waapisim.js"></script>
         <script src="/lib/davis.min.js"></script>
         <script src="/lib/davis.google_analytics.js"></script>
+        <script src="/lib/pushbullet.js"></script>
         <script src="/lib/require.js" data-main="/js/main"></script>
         <?php
             echo $ANALYTICS_TRACKING_CODE;
@@ -203,6 +210,7 @@
                                 <ul class="dropdown-menu" style="width:100%; margin-top:12px;">
                                     <li><a href="https://www.twitter.com/googulator" target="_blank">Twitter</a></li>
                                     <li><a href="https://plus.google.com/communities/108343287295374695153" target="_blank">Google+ Community</a></li>
+                                    <li><a href="https://www.pushbullet.com/channel?tag=<?php echo $PUSHBULLET_CHANNEL_ID; ?>" target="_blank">Pushbullet Channel</a></li>
                                 </ul>
                             </li>
                         </ul>

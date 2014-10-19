@@ -13,6 +13,7 @@
     <h3>Website Initialization</h3>
     <p><button class="btn resetDB">Reset Database</button> - This action will reset the website database to an initial state (or initialize it)</p>
     <h3>Community</h3>
+    <p><button class="btn loginToPushbullet">Login to Pushbullet</button> - This allows you to send updates via pushbullet as well</p>
     <p><button class="btn sendUpdateEmail">Send Update Email</button> - This will send an email to all users who have subscribed for update emails</p>
 </template>
 <template id="updateEmailCompose">
@@ -21,10 +22,11 @@
         <h3>Compose Update Email<a href="javascript:$('#UpdateEmailCompose').modal('hide')" class="close">&times;</a></h3>
     </div>
     <div class="modal-body">
-        <textarea class="emailMessage" style="width:90%;"></textarea>
+      <textarea class="emailMessage" style="width:90%;"></textarea>
+      <label for="gPlusDiscussLink">Discuss link:</label><input type="text" id="gPlusDiscussLink">
     </div>
     <div class="modal-footer">
-        <button class="btn sendBtn">Send</button>
+        <button class="btn sendBtn">Preview</button>
         <button class="btn cancelBtn">Cancel</button>
     </div>
     </div>
