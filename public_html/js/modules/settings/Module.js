@@ -484,7 +484,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "down": 40,
                     "quickSaveState": 53,
                     "quickLoadState": 54,
-                    "screenshot": null
+                    "screenshot": 48
                 },
                 "1":{ //iCade
                     "a": 6,
@@ -497,7 +497,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "down": 2,
                     "quickSaveState": 7,
                     "quickLoadState": 9,
-                    "screenshot": null
+                    "screenshot": 5
                 },
                 "2":{//Gamepad
                     "a": 0,
@@ -510,7 +510,7 @@ define(["OfflineUtils","GoogleAPIs"],function(OfflineUtils,GoogleAPIs){
                     "down": 13,
                     "quickSaveState": 4,
                     "quickLoadState": 5,
-                    "screenshot": null
+                    "screenshot": 16
                 },
                 "3":{//Twitch Chat
                     "a":"a",
