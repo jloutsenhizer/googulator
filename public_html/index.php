@@ -156,7 +156,7 @@
             echo "'}};";
             ?>
         </script>
-        <script src="http://www.google.com/jsapi?key=AIzaSyBObarUyhNSekoMdLbUlIooxsxVEEJLHQM"></script>
+        <script src="https://apis.google.com/js/client.js"></script>
         <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
         <script src="/lib/ircPluginWrapper.js"></script>
         <script src="/lib/jszip/jszip.js"></script>

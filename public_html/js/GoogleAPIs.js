@@ -134,7 +134,7 @@ define(["OfflineUtils"], function(OfflineUtils){
             });
             return;
         }
-        if (google.picker == null){
+        if (window.google == null || google.picker == null){
             gapi.load("picker", {callback:function(){onAuthenticate(callback)}});
             return;
         }
