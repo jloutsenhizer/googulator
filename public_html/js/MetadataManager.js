@@ -157,6 +157,12 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
         else{
             GoogleAPIs.getFile(App.userInfo.metadataFileId,function(fileData){
                 try{
+                    if (fileData == null){
+                        overlay.remove();
+                        App.userInfo.metadataFileId = "";
+                        MetadataManager.loadMetadata(callback);
+                        return;
+                    }
                     var metadata = JSON.parse(App.stringFromArrayBuffer(fileData));
                     validateAndUpdateMetadata(metadata,function(metadata,changed){
                         if (changed){//need to persist the change

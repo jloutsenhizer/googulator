@@ -348,6 +348,10 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
         overlay = App.createMessageOverlay(container,$("<div>Loading " + game.title + "...</div><div class='pbar'></div>"));
         game.getGameData(function(gameData){
             overlay.remove();
+            if (gameData == null) {
+                App.showModalMessage("Failed to load Game Data","Failed to load data for " + game.title + ".");
+                return;
+            }
             overlay = App.createMessageOverlay(container,$("<div>Loading Save Data for " + game.title + "...</div><div class='pbar'></div>"));
             game.getGameSaveData(function(saveData){
                 if (saveData == null && game.header.saveableRAM){
@@ -456,6 +460,15 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
             }
             overlay = App.createMessageOverlay(container,$("<div>Loading " + curFile.name + " To Your Library...</div><div class='pbar'></div>"));
             GoogleAPIs.getFile(curFile.id,function(data){
+                if (data == null){
+                    var failedFileDesc = {
+                        fileName: curFile.name,
+                        reason: "Failed to download file"
+                    };
+                    failedFiles.push(failedFileDesc);
+                    doneWithFile(i);
+                    return;
+                }
                 data = GameUtils.decompress(data);
                 if (GameUtils.isGame(data)){
                     var header = GameUtils.getHeader(data);

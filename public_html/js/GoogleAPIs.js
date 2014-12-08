@@ -3,6 +3,8 @@ define(["OfflineUtils"], function(OfflineUtils){
 
     var GoogleAPIs = {};
 
+    var exponentialBackoffBase = 1.5; //the base ammount to backoff each api call failure
+
     var clientId = window.configuration.google.clientId;
     var apiKey = window.configuration.google.apiKey;
     var scopes = "https://www.googleapis.com/auth/drive " +
@@ -459,9 +461,10 @@ define(["OfflineUtils"], function(OfflineUtils){
         })
     }
 
-    GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback){
+    GoogleAPIs.updateBinaryFile = function(fileid,contents,callback,progresscallback,failurecount){
         //TODO: we should check if the file has been changed since we last fetched it, if it is we should prompt the user
         if (progresscallback == null) progresscallback = function(){};
+        if (failurecount == null) failurecount = 0;
 
         if (App.googleOffline){//if google is offline then we should just update the local file
             OfflineUtils.cacheGoogleDriveFile(fileid,contents,null,function(success){
@@ -511,25 +514,30 @@ define(["OfflineUtils"], function(OfflineUtils){
                 });
             }
             else{
+                console.error("Update failed!");
+                console.error("Parameters of response");
+                console.error(arguments);
                 //if we get a 401 response we lost our connection :(
                 if (result.error != null && result.error.code == 401) {
                     //here we try to get the user to reauthenticate
                     onAuthenticationLost(function(retry){
                         if (retry) {
-                            GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
+                            GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback,0);
                         }
                         else{
                             callback(false);
                         }
                     });
                 }
+                else if (failurecount > 5) {
+
+                }
                 else{
-                    console.error("Update failed with unknown error trying again in 1 second...");
-                    console.error("Parameters of response");
-                    console.error(arguments);
+                    var seconds = Math.pow(exponentialBackoffBase,failurecount);
+                    console.error("Retrying in " + seconds + " seconds....");
                     setTimeout(function(){
-                        GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback);
-                    },1000);//wait a second and try again
+                        GoogleAPIs.updateBinaryFile(fileid,contents,callback,progresscallback,failurecount+1);
+                    },seconds * 1000);
                 }
             }
         });
@@ -540,8 +548,9 @@ define(["OfflineUtils"], function(OfflineUtils){
         return fileCache[fileid] != null;
     };
 
-    GoogleAPIs.getFile = function(fileid,callback,progresscallback){
+    GoogleAPIs.getFile = function(fileid,callback,progresscallback,failurecount){
         if (progresscallback == null) progresscallback = function(){};
+        if (failurecount == null) failurecount = 0;
         progresscallback(0,100);
 
 
@@ -598,7 +607,7 @@ define(["OfflineUtils"], function(OfflineUtils){
                             if (exception.isGoogleApiError && exception.type == GoogleApiException.NO_TOKEN){
                                 onAuthenticationLost(function(retry){
                                     if (retry){
-                                        GoogleAPIs.getFile(fileid,callback,progresscallback);
+                                        GoogleAPIs.getFile(fileid,callback,progresscallback,0);
                                     }
                                     else{
                                         callback(null);
@@ -629,18 +638,23 @@ define(["OfflineUtils"], function(OfflineUtils){
                 if (driveMetadata.error.code == 401) { //need reauth
                     onAuthenticationLost(function(retry){
                         if (retry) {
-                            GoogleAPIs.getFile(fileid,callback,progresscallback);
+                            GoogleAPIs.getFile(fileid,callback,progresscallback,0);
                         }
                         else{
                             callback(null);
                         }
                     })
                 }
-                else{
-                    console.error("Retrying in one second....");
+                else if (failurecount > 5) {
+                    console.error("Failed 5 times. Giving up :(");
+                    callback(null);
+                }
+                else {
+                    var seconds = Math.pow(exponentialBackoffBase,failurecount);
+                    console.error("Retrying in " + seconds + " seconds....");
                     setTimeout(function(){
-                        GoogleAPIs.getFile(fileid,callback,progresscallback);
-                    }, 1000);
+                        GoogleAPIs.getFile(fileid,callback,progresscallback,failurecount+1);
+                    }, seconds * 1000);
                 }
             }
         });

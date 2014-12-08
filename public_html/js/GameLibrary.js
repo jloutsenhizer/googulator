@@ -39,6 +39,10 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                         }
                         else{
                             GoogleAPIs.getFile(this.fileId,function (gameData){
+                                if (gameData == null) {
+                                    callback(null,null);
+                                    return;
+                                }
                                 gameData = GameUtils.decompress(gameData);
                                 if (game.patchFileId == null){
                                     game.data = gameData;
@@ -47,6 +51,10 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                                 }
                                 else{
                                     GoogleAPIs.getFile(game.patchFileId,function(patchData){
+                                        if (patchData == null) {
+                                            callback(null,null);
+                                            return;
+                                        }
                                         patchData = GameUtils.decompress(patchData);
                                         game.data = GameUtils.applyPatch(patchData,gameData);
                                         game.header = GameUtils.getHeader(game.data);
@@ -75,6 +83,10 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                     else{
                         if (this.saveFileId != null){
                             GoogleAPIs.getFile(this.saveFileId,function (saveData){
+                                if (saveData == null) {
+                                    callback(null);
+                                    return;
+                                }
                                 saveData = GameUtils.decompress(saveData);
                                 game.saveData = saveData;
                                 callback(game.saveData);
@@ -97,6 +109,10 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
                     else{
                         if (this.saveStateFileId != null){
                             GoogleAPIs.getFile(this.saveStateFileId,function (saveState){
+                                if (saveState == null){
+                                    callback(null);
+                                    return;
+                                }
                                 saveState = GameUtils.decompress(saveState);
                                 game.saveState = JSON.parse(App.stringFromArrayBuffer(saveState));
                                 callback(game.saveState);
@@ -399,8 +415,16 @@ define(["GoogleAPIs","GameUtils","OfflineUtils"], function(GoogleAPIs, GameUtils
     GameLibrary.addGamePatch = function(basegame,patchfileid,callback){
         var that = this;
         GoogleAPIs.getFile(basegame.fileId,function(baseGameData){
+            if (baseGameData == null) {
+                callback(that.data,false);
+                return;
+            }
             baseGameData = GameUtils.decompress(baseGameData);
             GoogleAPIs.getFile(patchfileid,function(patchData){
+                if (baseGameData == null) {
+                    callback(that.data,false);
+                    return;
+                }
                 patchData = GameUtils.decompress(patchData);
                 var gameData = GameUtils.applyPatch(patchData,baseGameData);
                 var header = GameUtils.getHeader(gameData);
