@@ -167,7 +167,6 @@
         <script src="/lib/jquery-ui-1.10.3.custom.1/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="/lib/jquery.fullscreen.1.1.4.js"></script>
         <script src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
-        <script src="/lib/doTimeout.1.0.js"></script>
         <script src="/lib/hogan.2.0.0.js"></script>
         <script src="/lib/bootstrap.2.3.0/js/bootstrap.min.js"></script>
         <script src="/lib/Gamepad.js"></script>

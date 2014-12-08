@@ -95,10 +95,9 @@ define(["gbcore/Gameboy", "nescore/nes","modules/play/DummyApp"], function(Gameb
                 currentApp.onResize(newWidth,newHeight);
             }
         });
-        $.doTimeout( 100, function(){
+        setInterval(function(){
             $(window).resize();
-            return true;
-        });
+        },100);
 
         $("#cheats").click(function(){
             showCheatDialog();

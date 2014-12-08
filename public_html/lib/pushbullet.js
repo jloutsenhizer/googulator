@@ -25,14 +25,12 @@
             PushBullet.checkAuth(callback);
         }
 
-        $.doTimeout(50, function(){
+        var popupInterval = setInterval(function(){
             if (popup == null || popup.closed){
+                clearInterval(popupInterval);
                 onClosed();
             }
-            else{
-                return true;
-            }
-        });
+        },50);
     };
 
     PushBullet.Note = function(title, body){
