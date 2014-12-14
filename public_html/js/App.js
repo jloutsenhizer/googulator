@@ -542,5 +542,9 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
         }
     }
 
+    App.escapeHTML = function(str) {
+        return $('<div></div>').text(str).html();
+    }
+
     return App;
 });

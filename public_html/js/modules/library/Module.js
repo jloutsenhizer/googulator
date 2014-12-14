@@ -254,7 +254,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                                 $("#loadSave").click(function(){
                                     noEvent = false;
                                     $("#chooseRAMDialog").modal("hide");
-                                    overlay = App.createMessageOverlay(container,$("<div>Loading saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    overlay = App.createMessageOverlay(container,$("<div>Loading saveState for " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
                                     GoogleAPIs.showFilePicker(function(result){
                                         if (result != null && result.docs.length == 1){
                                             game.setGameSaveStateFileId(result.docs[0].id,function(success){
@@ -278,7 +278,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                                 $("#createSave").click(function(){
                                     noEvent = false;
                                     $("#chooseRAMDialog").modal("hide");
-                                    overlay = App.createMessageOverlay(container,$("<div>Creating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    overlay = App.createMessageOverlay(container,$("<div>Creating saveState for " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
                                     game.createGameSaveStateData(function(saveState){
                                         if (overlay != null)
                                             overlay.remove();
@@ -292,7 +292,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                                 if (result){
                                     if (overlay != null)
                                         overlay.remove();
-                                    overlay = App.createMessageOverlay(container,$("<div>Dissociating saveState for " + game.title + "...</div><div class='pbar'></div>"));
+                                    overlay = App.createMessageOverlay(container,$("<div>Dissociating saveState for " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
                                     game.setGameSaveStateFileId(null,function(success){
                                         if (overlay != null)
                                             overlay.remove();
@@ -345,14 +345,14 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
 
 
     function loadGame(game){
-        overlay = App.createMessageOverlay(container,$("<div>Loading " + game.title + "...</div><div class='pbar'></div>"));
+        overlay = App.createMessageOverlay(container,$("<div>Loading " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
         game.getGameData(function(gameData){
             overlay.remove();
             if (gameData == null) {
                 App.showModalMessage("Failed to load Game Data","Failed to load data for " + game.title + ".");
                 return;
             }
-            overlay = App.createMessageOverlay(container,$("<div>Loading Save Data for " + game.title + "...</div><div class='pbar'></div>"));
+            overlay = App.createMessageOverlay(container,$("<div>Loading Save Data for " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
             game.getGameSaveData(function(saveData){
                 if (saveData == null && game.header.saveableRAM){
                     App.loadMustacheTemplate("modules/library/template.html","saveNotFound",function(template){
@@ -407,7 +407,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
     function switchToEmulator(game){
         if (overlay != null)
             overlay.remove();
-        overlay = App.createMessageOverlay(container,$("<div>Loading SaveState for " + game.title + "...</div><div class='pbar'></div>"));
+        overlay = App.createMessageOverlay(container,$("<div>Loading SaveState for " + App.escapeHTML(game.title) + "...</div><div class='pbar'></div>"));
         game.getGameSaveStateData(function(){
             App.setActiveModule("play",{game: game});
             if (overlay != null)
@@ -458,7 +458,7 @@ define(["GameLibrary","FreeGamePicker", "GoogleAPIs", "GameUtils", "OfflineUtils
                     return;
                 }
             }
-            overlay = App.createMessageOverlay(container,$("<div>Loading " + curFile.name + " To Your Library...</div><div class='pbar'></div>"));
+            overlay = App.createMessageOverlay(container,$("<div>Loading " + App.escapeHTML(curFile.name) + " To Your Library...</div><div class='pbar'></div>"));
             GoogleAPIs.getFile(curFile.id,function(data){
                 if (data == null){
                     var failedFileDesc = {
