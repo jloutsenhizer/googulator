@@ -4,14 +4,12 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
 
 var listeners = [];
 
-function update(){
-    var gamepads = navigator.webkitGamepads;
-    if (gamepads == null)
-        gamepads = navigator.webkitGetGamepads();
+function update() {
+    var gamepads = navigator.getGamepads();
     for (var i = 0; i < gamepads.length; i++){
-        var oldpad = $.extend({},Gamepad.gamepads[i]);
-        Gamepad.gamepads[i] =  $.extend({},gamepads[i]);
-        fireEvents(oldpad,Gamepad.gamepads[i]);
+        var oldpad = $.extend({},window.Gamepad.gamepads[i]);
+        window.Gamepad.gamepads[i] = CopyGamepadState(gamepads[i]);
+        fireEvents(oldpad,window.Gamepad.gamepads[i]);
     }
     scheduleNextUpdate();
 }
@@ -87,8 +85,25 @@ function getAxisName(id){
 
 }
 
+function CopyGamepadState(gamepad) {
+    if (gamepad == null)
+        return null;
+    var copiedGamepad = {
+        buttons: [],
+        axes: [],
+        index: gamepad.index
+    };
+    for (var i = 0; i < gamepad.buttons.length; i++) {
+        copiedGamepad.buttons[i] = gamepad.buttons[i].value;
+    }
+    for (var i = 0; i < gamepad.axes.length; i++) {
+        copiedGamepad.axes[i] = gamepad.axes[i];
+    }
+    return copiedGamepad;
+}
+
 function isButtonPressed(value,deadZone){
-    if (deadZone == null) deadZone = 0.9
+    if (deadZone == null) deadZone = 0.9;
     return value >= deadZone;
 }
 
@@ -101,7 +116,7 @@ window.Gamepad = {gamepads:[],
     getButtonName: getButtonName,
     getAxisName: getAxisName};
 
-window.Gamepad.supported = !!navigator.webkitGetGamepads || !!navigator.webkitGamepads;
+window.Gamepad.supported = !!navigator.getGamepads;
 
 if (window.Gamepad.supported){
     update();
