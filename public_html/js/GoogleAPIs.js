@@ -583,7 +583,7 @@ define(["OfflineUtils"], function(OfflineUtils){
                 OfflineUtils.getGoogleDriveFileMetadata(fileid,function(metadata){
                     if (metadata == null || metadata.contentsModifiedDate.getTime() < new Date(driveMetadata.modifiedDate).getTime()){
                         try{
-                            App.downloadBinaryFile(driveMetadata.downloadUrl,{
+                            App.downloadBinaryFile("https://www.googleapis.com/drive/v2/files/" + fileid + "?alt=media",{
                                 accessToken: GoogleAPIs.getTokenMember("access_token"),
                                 success: function(data){
                                     fileCache[fileid] = data;
