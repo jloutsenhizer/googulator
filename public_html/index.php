@@ -7,12 +7,12 @@
     $defaultTab = 0;
     $requestURI = $_SERVER['REQUEST_URI'];
     $https = "";
-    if (isset($_SERVER['HTTPS'] )  && strcmp($_SERVER['HTTPS'],"off") != 0)
+    if ((isset($_SERVER['HTTPS']) && strcmp($_SERVER['HTTPS'],"off") != 0) || $FORCE_HTTPS)
         $https = "s";
     $hostName = $_SERVER["HTTP_HOST"];
 
 
-    if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0){
+    if (strcmp($hostName,$PREFERRED_HOSTNAME) != 0 || ($FORCE_HTTPS && (!isset($_SERVER['HTTPS']) || strcmp($_SERVER['HTTPS'],"off") == 0))){
         header("HTTP/1.1 301 Moved Permanently");
         header("Location: http$https://$PREFERRED_HOSTNAME$requestURI");
         die;
