@@ -270,7 +270,7 @@ define(["GoogleAPIs","MetadataManager","OfflineUtils"],function(GoogleAPIs,Metad
         function onDone(){
             App.websiteBrokenMode = App.userInfo.websiteState == "broken";
             if (App.websiteBrokenMode){
-                App.showModalMessage("The Website is Currently Broken","We apologize for the inconvenience. Check back later. If the problem has been persisting please email our administrative staff: " + window.supportEmailAddress + ". We will now attempt to switch to offline mode.",function(){
+                App.showModalMessage("Cannot Reach Googulator","We're sorry, but we cannot communicate with Googulator currently. This could mean the server is down or that there is some other networking issue. We will try to use offline mode so you can still play your gamesw, if you are having issues please email our administrative staff: " + window.supportEmailAddress + ".",function(){
                     if (OfflineUtils.enableGoogulatorOffline()){
                         App.showModalMessage("Offline Mode Enabled","You are now in offline mode!");
                         App.websiteBrokenMode = false;
