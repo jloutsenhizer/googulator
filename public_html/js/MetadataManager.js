@@ -171,18 +171,22 @@ define(["GoogleAPIs","OfflineUtils"],function(GoogleAPIs,OfflineUtils){
                         else{
                             MetadataManager.metadata = metadata;
                             (function loadTitleDB(){
+                                function dbReady() {
+                                    overlay.remove();
+                                    importLegacyLibrary(function onImportDone(){
+                                        overlay.remove();
+                                        callback();
+                                    });
+                                }
                                 $.ajax("/php/titlesDB.php",{
                                     success:function(dbInfo){
                                         MetadataManager.titlesDB = dbInfo.db;
-                                        overlay.remove();
-                                        importLegacyLibrary(function onImportDone(){
-                                            overlay.remove();
-                                            callback();
-                                        })
+                                        dbReady();
 
                                     },
                                     error:function(){
-                                        loadTitleDB();
+                                        MetadataManager.titlesDB = {};
+                                        dbReady();
                                     }
                                 })
                             })();
