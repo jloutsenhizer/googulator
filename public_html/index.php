@@ -226,14 +226,10 @@
                     </div>
                 </div>
             </div>
-            <div class="adUnit" style="position: absolute; top:42px; left: 0px; height: 20px; display: inline; right: 0px; text-align: center;">
-                <div style="position: absolute; left: 50%; z-index:100;">
-                    <div style="position: relative; left: -50%">
-                        <?php
-                        echo $GOOGLE_AD_CODE;
-                        ?>
-                    </div>
-                </div>
+            <div class="adUnit" style="position: absolute; top:42px; left: 0px; height: 20px; padding: 5px; display: inline; right: 0px; text-align: center;">
+                <?php
+                echo $GOOGLE_AD_CODE;
+                ?>
             </div>
             <div class="coreModuleContainer" id="coreModuleContainer">
                 <?php
