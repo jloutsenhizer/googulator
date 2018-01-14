@@ -733,7 +733,12 @@ define(["nescore/utils","CopyUtils"],function(Utils,CopyUtils){
 
             this.canvasContext.fillRect(sx,sy,ex - sx, ey - sy);*/
 
-            this.nes.opts.canvas.getContext("2d").drawImage(this.canvasContext.canvas,clip,clip,256 - (clip << 1), 240 - (clip << 1),0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
+            var ctx = this.nes.opts.canvas.getContext("2d");
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(this.canvasContext.canvas,clip,clip,256 - (clip << 1), 240 - (clip << 1),0,0,parseInt($(this.nes.opts.canvas).attr("width")),parseInt($(this.nes.opts.canvas).attr("height")));
         },
 
         updateControlReg1: function(value){

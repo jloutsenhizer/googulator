@@ -592,6 +592,10 @@ define(["CopyUtils"],function(CopyUtils){
         if (curSkip >= frameSkip){
             if (maskingMode == MASK_NONE){
                 internalDisplay.putImageData(currentFrame,0,0);
+                display.mozImageSmoothingEnabled = false;
+                display.webkitImageSmoothingEnabled = false;
+                display.msImageSmoothingEnabled = false;
+                display.imageSmoothingEnabled = false;
                 display.drawImage(internalDisplay.canvas,0,0,parseInt(display.canvas.getAttribute("width")),parseInt(display.canvas.getAttribute("height")));
             }
             curSkip = 0;
